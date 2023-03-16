@@ -1,15 +1,25 @@
 <template>
-	<a-button type="primary">122</a-button>
+	<ul id="container"></ul>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted } from 'vue'
 
-defineProps({
-	msg: String
+onMounted(() => {
+	let now = Date.now()
+	const total = 100000
+	let ul = document.getElementById('container')
+	for (let i = 0; i < total; i++) {
+		let li = document.createElement('li')
+		li.innerText = i
+		ul.appendChild(li)
+	}
+	console.log('js运行时间', Date.now() - now)
+
+	setTimeout(() => {
+		console.log('总运行时间', Date.now() - now)
+	})
 })
-
-const count = ref(0)
 </script>
 
 <style scoped>
