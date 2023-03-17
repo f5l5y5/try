@@ -30,6 +30,71 @@
 
 <script>
 	// 1.使用定时器，分片插入 会有卡顿
+	// let now = Date.now()
+	// let ul = document.getElementById('container')
+	// let total = 10000
+	// // 一次加载数量
+	// let once = 20
+	// // 总页数5000
+	// let page = total / once
+	// // 当前页数
+	// let index = 0
+	// // 循环加载数据
+	// function loop(curTotal, curIndex) {
+	// 	if (curTotal <= 0) {
+	// 		return false
+	// 	}
+	// 	// 每页多少条
+	// 	let pageCount = Math.min(curTotal, once)
+	// 	setTimeout(() => {
+	// 		for (let i = 0; i < pageCount; i++) {
+	// 			let li = document.createElement('li')
+	// 			li.innerText = curIndex + i
+	// 			ul.appendChild(li)
+	// 			console.log('js运行时间', Date.now() - now + 'ms')
+	// 		}
+
+	// 		loop(curTotal - pageCount, curIndex + pageCount)
+	// 	}, 0)
+	// }
+	// loop(total, index)
+</script>
+
+<script>
+	// 2. requestAnimationFrame
+	// let now = Date.now()
+	// let ul = document.getElementById('container')
+	// let total = 10000
+	// // 一次加载数量
+	// let once = 20
+	// // 总页数5000
+	// let page = total / once
+	// // 当前页数
+	// let index = 0
+	// // 循环加载数据
+	// function loop(curTotal, curIndex) {
+	// 	if (curTotal <= 0) {
+	// 		return false
+	// 	}
+	// 	// 每页多少条
+	// 	let pageCount = Math.min(curTotal, once)
+	// 	console.timeEnd(1)
+
+	// 	window.requestAnimationFrame(function () {
+	// 		for (let i = 0; i < pageCount; i++) {
+	// 			let li = document.createElement('li')
+	// 			li.innerText = curIndex + i
+	// 			ul.appendChild(li)
+	// 		}
+
+	// 		loop(curTotal - pageCount, curIndex + pageCount)
+	// 		console.time(1)
+	// 	})
+	// }
+	// loop(total, index)
+</script>
+<script>
+	// 3. DocumentFragment
 	let now = Date.now()
 	let ul = document.getElementById('container')
 	let total = 10000
@@ -46,16 +111,20 @@
 		}
 		// 每页多少条
 		let pageCount = Math.min(curTotal, once)
-		setTimeout(() => {
+		console.timeEnd(1)
+
+		window.requestAnimationFrame(function () {
+			let fragment = document.createDocumentFragment()
 			for (let i = 0; i < pageCount; i++) {
 				let li = document.createElement('li')
 				li.innerText = curIndex + i
-				ul.appendChild(li)
-				console.log('js运行时间', Date.now() - now + 'ms')
+				fragment.appendChild(li)
 			}
 
+			ul.appendChild(fragment)
 			loop(curTotal - pageCount, curIndex + pageCount)
-		}, 0)
+			console.time(1)
+		})
 	}
 	loop(total, index)
 </script>
