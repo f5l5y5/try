@@ -1,9 +1,10 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+// import HelloWorld from './components/HelloWorld.vue'
+import VirtualList from './components/VirtualList.vue'
 </script>
 
 <template>
-	<HelloWorld msg="Vite + Vue" />
+	<VirtualList />
 </template>
 
 <style scoped></style>
