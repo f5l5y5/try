@@ -68,7 +68,7 @@ const scrollEvent = e => {
 .infinite-list-container {
 	width: 500px;
 	height: 500px;
-	overflow: auto;
+	overflow-y: auto;
 	position: relative;
 	border: 1px solid;
 	margin-top: 20px;
