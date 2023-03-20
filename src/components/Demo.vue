@@ -15,13 +15,23 @@ import { onMounted, ref, computed, nextTick } from 'vue'
 
 // 表格所有数据
 const tableData = ref([])
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 100000; i++) {
 	tableData.value.push({
 		key: i,
 		id: i,
 		name: i,
 		age: 20 + i,
-		address: 'taoism'
+		address: 'taoism',
+		address1: 'taoism',
+		address2: 'taoism',
+		address3: 'taoism',
+		address4: 'taoism',
+		address5: 'taoism',
+		address6: 'taoism',
+		address7: 'taoism',
+		address8: 'taoism',
+		address9: 'taoism',
+		address10: 'taoism'
 	})
 }
 // 区域高度 每行内容定高
@@ -56,6 +66,56 @@ const columns = [
 	{
 		title: '住址',
 		dataIndex: 'address',
+		width: 30
+	},
+	{
+		title: '住址',
+		dataIndex: 'address1',
+		width: 30
+	},
+	{
+		title: '住址',
+		dataIndex: 'address2',
+		width: 30
+	},
+	{
+		title: '住址',
+		dataIndex: 'address3',
+		width: 30
+	},
+	{
+		title: '住址',
+		dataIndex: 'address4',
+		width: 30
+	},
+	{
+		title: '住址',
+		dataIndex: 'address5',
+		width: 30
+	},
+	{
+		title: '住址',
+		dataIndex: 'address6',
+		width: 30
+	},
+	{
+		title: '住址',
+		dataIndex: 'address7',
+		width: 30
+	},
+	{
+		title: '住址',
+		dataIndex: 'address8',
+		width: 30
+	},
+	{
+		title: '住址',
+		dataIndex: 'address9',
+		width: 30
+	},
+	{
+		title: '住址',
+		dataIndex: 'address10',
 		width: 30
 	}
 ]
