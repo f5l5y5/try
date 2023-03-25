@@ -1,0 +1,36 @@
+<script>
+	function http(method, url, data, successCallback, errorCallback) {
+		// 创建一个XMLHttpRequest对象
+		const xhr = new XMLHttpRequest()
+
+		// 设置请求的参数和回调函数
+		xhr.open(method, url)
+		// xhr.setRequestHeader('Content-Type', 'application/json')
+		xhr.onreadystatechange = function () {
+			// 在回调函数中，我们检查readyState属性是否为XMLHttpRequest.DONE，表示请求已完成。
+			if (xhr.readyState === XMLHttpRequest.DONE) {
+				//如果status属性为200，表示请求成功，我们调用成功回调函数并将响应内容作为参数传递。
+				if (xhr.status === 200) {
+					successCallback(xhr.responseText)
+				} else {
+					errorCallback(xhr.status)
+				}
+			}
+		}
+
+		// 发送请求
+		xhr.send(JSON.stringify(data))
+	}
+
+	http(
+		'get',
+		'http://localhost:3000/getList',
+		{},
+		function (response) {
+			console.log(response)
+		},
+		function (status) {
+			console.error('请求失败：' + status)
+		}
+	)
+</script>

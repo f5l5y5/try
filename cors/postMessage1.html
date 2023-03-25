@@ -1,0 +1,11 @@
+// http://127.0.0.1:5555/index.html
+
+<script>
+	window.onmessage = function (e) {
+		const {
+			data: { name, age },
+			origin
+		} = e
+		e.source.postMessage(`${name}今年${age}岁啦！！！`, origin)
+	}
+</script>

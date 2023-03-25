@@ -1,0 +1,18 @@
+<script>
+	// index.html  http://127.0.0.1:5500/index.html
+
+	function myWebsocket(url, params) {
+		return new Promise((resolve, reject) => {
+			const socket = new WebSocket(url)
+			socket.onopen = () => {
+				socket.send(JSON.stringify(params))
+			}
+			socket.onmessage = e => {
+				resolve(e.data)
+			}
+		})
+	}
+	myWebsocket('ws://localhost:8000', { name: 'jack', age: 23 }).then(data => {
+		console.log(data) // 林三心今年23岁啦！！！
+	})
+</script>

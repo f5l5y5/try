@@ -1,0 +1,13 @@
+// http:127.0.0.1:5500/index.html
+
+<body>
+	<iframe src="http://127.0.0.1:5555/index.html" id="frame"></iframe>
+</body>
+<script>
+	document.getElementById('frame').onload = function () {
+		this.contentWindow.postMessage({ name: '林三心', age: 23 }, 'http://127.0.0.1:5555')
+		window.onmessage = function (e) {
+			console.log(e.data) // 林三心今年23岁啦！！！
+		}
+	}
+</script>
