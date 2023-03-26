@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>卡片翻牌抽奖</title>
+		<style>
+			.card {
+				width: 200px;
+				height: 200px;
+				margin: 20px;
+				border: 1px solid #ccc;
+				position: relative;
+			}
+			.card-back {
+				display: none;
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-color: #f00;
+				text-align: center;
+				line-height: 200px;
+				font-size: 24px;
+				color: #fff;
+				cursor: pointer;
+			}
+			.card.active .card-front {
+				display: none;
+			}
+			.card.active .card-back {
+				display: block;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="cards">
+			<div class="card" data-prize="一等奖">
+				<div class="card-front">正面</div>
+				<div class="card-back">恭喜你获得一等奖！</div>
+			</div>
+			<div class="card" data-prize="二等奖">
+				<div class="card-front">正面</div>
+				<div class="card-back">恭喜你获得二等奖！</div>
+			</div>
+			<div class="card" data-prize="三等奖">
+				<div class="card-front">正面</div>
+				<div class="card-back">恭喜你获得三等奖！</div>
+			</div>
+			<div class="card" data-prize="谢谢参与">
+				<div class="card-front">正面</div>
+				<div class="card-back">谢谢参与！</div>
+			</div>
+		</div>
+
+		<button id="start-btn" onclick="startLottery()">开始抽奖</button>
+		<p id="result"></p>
+
+		<script>
+			const cards = document.querySelectorAll('.card')
+			const resultElement = document.querySelector('#result')
+
+			// 将所有卡片的状态重置为初始状态
+			function resetCards() {
+				cards.forEach(card => {
+					card.classList.remove('active')
+				})
+			}
+
+			// 开始抽奖
+			function startLottery() {
+				resetCards()
+
+				// 随机选取一张卡片
+				const prizeIndex = Math.floor(Math.random() * cards.length)
+				const prizeCard = cards[prizeIndex]
+
+				// 翻转选中的卡片
+				prizeCard.classList.add('active')
+
+				// 显示中奖结果
+				const prizeName = prizeCard.getAttribute('data-prize')
+				resultElement.textContent = `恭喜你获得了 ${prizeName}！`
+			}
+		</script>
+	</body>
+</html>

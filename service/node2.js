@@ -31,6 +31,7 @@ router.post('/getList', ctx => {
 		data: 'jack'
 	}
 })
+
 router.get('/getList1', ctx => {
 	// console.log('打印***ctx.request.query', ctx.request.query)
 	// const { name, age, callback } = ctx.request.query

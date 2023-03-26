@@ -1,0 +1,32 @@
+.board {
+	display: grid;
+	grid-template-columns: repeat(9, 1fr);
+	gap: 2px;
+	margin-bottom: 20px;
+}
+
+.square {
+	width: 30px;
+	height: 30px;
+	background-color: #ccc;
+	text-align: center;
+	font-size: 20px;
+	line-height: 30px;
+}
+
+.square:hover {
+	background-color: #ddd;
+}
+
+.square.flagged {
+	background-color: #ff0;
+}
+
+.square.bomb {
+	background-color: #f00;
+}
+
+.reset-button {
+	font-size: 20px;
+	padding: 10px;
+}
