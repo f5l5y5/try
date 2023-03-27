@@ -12,7 +12,8 @@
 		"ant-design-vue": "^3.2.15",
 		"axios": "0.18.0",
 		"axios-cache-adapter": "^2.7.3",
-		"vue": "^3.2.47"
+		"vue": "^3.2.47",
+		"xlsx": "^0.18.5"
 	},
 	"devDependencies": {
 		"@vitejs/plugin-vue": "^4.1.0",

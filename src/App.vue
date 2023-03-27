@@ -2,6 +2,7 @@
 	<!-- <VirtualList /> -->
 	<!-- <Demo /> -->
 	<!-- <Dom /> -->
+	<HelloWorld />
 	<div>{{ rest }}</div>
 	<button @click="click">点击</button>
 </template>
@@ -10,6 +11,7 @@
 import Dom from './components/Dom.vue'
 import VirtualList from './components/VirtualList.vue'
 import Demo from './components/Demo.vue'
+import HelloWorld from './components/HelloWorld.vue'
 import axios from 'axios'
 import { ref } from 'vue'
 
