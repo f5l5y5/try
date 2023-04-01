@@ -46,7 +46,7 @@ router.get('/cache', async ctx => {
 	// ctx.set('Content-Type', 'text/html')
 	ctx.set('Access-Control-Expose-Headers', '*') // 暴露给客户端使用
 	ctx.set('ETag', hash)
-	ctx.set('Last-Modified', lastModified + Math.random())
+	ctx.set('Last-Modified', lastModified)
 
 	ctx.body = fileContent
 })
