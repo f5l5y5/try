@@ -1,0 +1,147 @@
+<script>
+	//  function t(){
+	// 		console.time('start')
+	// 	  new Error()
+	// 		await sa
+	// 		console.timeEnd('start')
+	// 	}
+	// 	// t()
+
+	// let func =	function() {
+	//   console.log('start')
+	//   await sa
+	//   console.log('end')
+	// }
+	// function t() {
+	// 	console.log('start')
+	// 	// throw 1
+	// 	kk
+	// 	console.log('end')
+	// }
+	// try {
+	// 	t()
+	// } catch (error) {
+	// 	console.log(error.message)
+	// }
+
+	class NetworkError extends Error {
+		constructor(code, message) {
+			super(message)
+			this.code = code
+			this.name = 'NetworkError'
+		}
+	}
+
+	// try {
+	// 	throw new NetworkError(2, 123)
+	// } catch (error) {
+	// 	if (error instanceof NetworkError) {
+	// 		console.error('请求超时', error.message, error.name, error, error.code)
+	// 	} else {
+	// 		console.error('请求失败', error)
+	// 	}
+	// }
+	// ;[1, 2, 3].forEach((item, i) => {
+	// 	if (i === 1) {
+	// 		throw new NetworkError(0, '中断循环')
+	// 	}
+	// 	console.log(item)
+	// })
+	// const a = null
+	// a.toString()
+
+	function func1() {
+		throw new NetworkError('NETWORK_ERROR', '网络错误❌')
+	}
+
+	function func2() {
+		try {
+			func1()
+		} catch (error) {
+			if (error.code === 'INPUT_ERROR') {
+				return console.log('func2 I can handle INPUT_ERROR')
+			}
+			// can't handle, pass it down
+			throw error
+		}
+	}
+
+	function func3() {
+		try {
+			func2()
+		} catch (error) {
+			if (error.code === 'NETWORK_ERROR') {
+				return console.log('func3 I can handle NETWORK_ERROR')
+			}
+			// can't handle, pass it down
+			throw error
+		}
+	}
+
+	func3()
+
+	class Handler {
+		constructor() {
+			this.next = null
+		}
+
+		setNext(handler) {
+			this.next = handler
+			return handler
+		}
+
+		handle(error, stack) {}
+	}
+
+	class TopHandler extends Handler {
+		handle(error, stack) {
+			console.error(`Unhandled exception: ${error}\nStack trace:\n${stack.join('\n')}`)
+		}
+	}
+
+	class ErrorHandler extends Handler {
+		constructor(func) {
+			super()
+			this.func = func
+		}
+
+		handle(error, stack) {
+			try {
+				this.func(error, stack)
+			} catch (e) {
+				if (this.next) {
+					this.next.handle(e, stack)
+				} else {
+					throw e
+				}
+			}
+		}
+	}
+
+	function addErrorHandler(func, errorHandler) {
+		const top = new TopHandler()
+		const error = new ErrorHandler(errorHandler)
+
+		top.setNext(error)
+
+		return function (...args) {
+			try {
+				return func.apply(this, args)
+			} catch (e) {
+				top.handle(e, e.stack.split('\n'))
+			}
+		}
+	}
+	// ================ 使用 ===================
+	function foo() {
+		throw new Error('foo error')
+	}
+
+	function bar(error, stack) {
+		console.error(`Caught exception: ${error}\nStack trace:\n${stack.join('\n')}`)
+	}
+
+	const safeFoo = addErrorHandler(foo, bar)
+
+	safeFoo() // 输出：Caught exception: Error: foo error...
+</script>
