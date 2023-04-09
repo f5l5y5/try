@@ -2,9 +2,10 @@
 	<!-- <VirtualList /> -->
 	<!-- <Demo /> -->
 	<!-- <Dom /> -->
-	<HelloWorld />
-	<div>{{ rest }}</div>
-	<button @click="click">点击</button>
+	<!-- <HelloWorld /> -->
+	<!-- <div>{{ rest }}</div> -->
+	<!-- <button @click="click">点击</button> -->
+	<Login />
 </template>
 
 <script setup>
@@ -14,6 +15,7 @@ import Demo from './components/Demo.vue'
 import HelloWorld from './components/HelloWorld.vue'
 import axios from 'axios'
 import { ref } from 'vue'
+import Login from './components/Login.vue'
 
 const rest = ref('')
 
