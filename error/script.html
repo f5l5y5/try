@@ -1,0 +1,25 @@
+<script>
+
+window.onerror = function(message, source, lineno, colno, error) {
+  // 可以在这里记录错误信息，发送错误报告等
+  console.error('Error: ', error)
+  console.error('Message: ', message)
+  console.error('Source: ', source)
+  console.error('Line number: ', lineno)
+  console.error('Column number: ', colno)
+};
+
+const dep  =(n)=>{
+	console.log(n);
+	dep(n++)
+}
+dep(1)
+
+for (const key in obj) {
+		const element = obj[key];
+		console.log(element);
+		
+}
+
+
+</script>

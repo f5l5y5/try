@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>iframe错误捕获</title>
+	</head>
+	<body>
+		<h1>iframe错误捕获</h1>
+		<iframe src="http://www.notexi33333st.com"></iframe><iframe src="https://www.baidu.com"></iframe>
+
+		<script>
+			window.addEventListener(
+				'error',
+				function (event) {
+					console.log('捕获到iframe错误：', event)
+				},
+				true
+			)
+
+			window.frames[0].onerror = function (message, source, lineno, colno, error) {
+				console.log('捕获到 iframe 异常：', { message, source, lineno, colno, error })
+				return true
+			}
+
+			window.onerror = function (message, source, lineno, colno, error) {
+				console.log('捕获到 iframe 异常：', { message, source, lineno, colno, error })
+				return true
+			}
+
+		</script>
+	</body>
+</html>
