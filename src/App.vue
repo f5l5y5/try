@@ -5,6 +5,7 @@
 	<!-- <HelloWorld /> -->
 	<!-- <div>{{ rest }}</div> -->
 	<!-- <button @click="click">点击</button> -->
+	<button @click="download">点击下载图片</button>
 	<Login />
 </template>
 
@@ -16,6 +17,23 @@ import HelloWorld from './components/HelloWorld.vue'
 import axios from 'axios'
 import { ref } from 'vue'
 import Login from './components/Login.vue'
+
+
+const download = async () => {
+	// window.open('http://localhost:3000/upload/download')
+	// location.href = 'http://localhost:3000/upload/download'
+	const res = await fetch('http://localhost:3000/upload/stream').then(res => res.arrayBuffer())
+
+	const a = document.createElement('a')
+  a.href = URL.createObjectURL(new Blob([res],{
+    // type:"image/png"
+  }))
+  a.download
+  a.click()
+
+	console.log('打印***res download', res)
+
+}
 
 const rest = ref('')
 
