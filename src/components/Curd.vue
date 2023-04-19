@@ -8,16 +8,18 @@
 		<el-table border :data="tableData" style="width: 100%; margin-top: 30px">
 			<el-table-column prop="name" label="名字" />
 			<el-table-column prop="desc" label="描述" />
+
 			<el-table-column prop="id" label="id" />
 			<el-table-column>
 				<template #default="scope">
 					<el-button @click="edit(scope.row)">编辑</el-button>
 					<el-button @click="deleteRow(scope.row)">删除</el-button>
+					<el-button @click=";(isShowTag = true), (row = scope.row)">添加tag</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
 		<el-pagination
-			@current-change="changeSize"
+			@current-change="change"
 			style="float: right; margin-top: 10px"
 			background
 			layout="prev, pager, next"
@@ -41,12 +43,33 @@
 			</span>
 		</template>
 	</el-dialog>
+	<el-dialog v-model="isShowTag" title="添加tag">
+		<el-select style="width: 100%" v-model="tags" multiple>
+			<el-option value="tag1">tag1</el-option>
+			<el-option value="tag2">tag2</el-option>
+			<el-option value="tag3">tag3</el-option>
+		</el-select>
+		<template #footer>
+			<el-button @click="addTa" type="primary">确定</el-button>
+		</template>
+	</el-dialog>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue'
-import { addUser, updateUser, delUser, getList } from '../apis/index'
+import { addUser, updateUser, delUser, getList, addTags } from '../apis'
+const isShowTag = ref(false)
+const tags = ref([])
 const total = ref(0)
+const row = ref({})
+const addTa = async () => {
+	const res = await addTags({
+		tags: tags.value,
+		userId: row.value.id
+	})
+	isShowTag.value = false
+	tags.value = []
+}
 //搜索框
 const search = reactive({
 	keyWord: '',
@@ -76,7 +99,7 @@ const init = async () => {
 	total.value = list?.total ?? 0
 }
 init()
-const changeSize = page => {
+const change = page => {
 	search.page = page
 	init()
 }
@@ -107,7 +130,7 @@ const close = () => {
 }
 </script>
 
-<style scoped>
+<style>
 * {
 	padding: 0;
 	margin: 0;
@@ -115,13 +138,14 @@ const close = () => {
 
 html,
 body {
+	width: 100%;
 	background: #ccc;
 }
 
 .wraps {
-	height: 100vh;
-	padding: 30px;
 	display: flex;
 	flex-direction: column;
+	height: 100vh;
+	padding: 30px;
 }
 </style>
