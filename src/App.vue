@@ -5,8 +5,9 @@
 	<!-- <HelloWorld /> -->
 	<!-- <div>{{ rest }}</div> -->
 	<!-- <button @click="click">点击</button> -->
-	<button @click="download">点击下载图片</button>
-	<Login />
+	<!-- <button @click="download">点击下载图片</button> -->
+	<!-- <Login /> -->
+	<Curd />
 </template>
 
 <script setup>
@@ -17,6 +18,7 @@ import HelloWorld from './components/HelloWorld.vue'
 import axios from 'axios'
 import { ref } from 'vue'
 import Login from './components/Login.vue'
+import Curd from './components/Curd.vue'
 
 
 const download = async () => {
