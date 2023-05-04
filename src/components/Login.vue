@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 
-const codeUrl = ref<string>('/api/user/code')
+const codeUrl = ref<string>('/v1/login/getDynamicCode')
 
 const resetCode = () => (codeUrl.value = codeUrl.value + '?' + Math.random())
 
@@ -36,7 +36,7 @@ const formLabelAlign = reactive({
 })
 
 const submit = async () => {
-	await fetch('/api/user/create', {
+	await fetch('v1/login', {
 		method: 'POST',
 		body: JSON.stringify(formLabelAlign),
 		headers: {

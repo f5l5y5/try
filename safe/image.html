@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<!-- <script src="https://cdn.jsdelivr.net/npm/exif-js"></script> -->
+		<script src="https://cdn.bootcdn.net/ajax/libs/exif-js/2.3.0/exif.js"></script>
+	</head>
+	<body>
+		<div>
+			<img width="300" height="300" id="img1" src="./images/noOrigin.jpg" alt="" />
+			<p>非原图</p>
+		</div>
+		<div>
+			<img width="300" height="300" id="img2" src="./images/origin.jpg" alt="" />
+			<p>原图</p>
+		</div>
+
+		<script>
+			let img1 = document.getElementById('img1')
+			let img2 = document.getElementById('img2')
+			EXIF.getData(img1, function () {
+				// 获取拍摄方向信息
+				// let orientation = EXIF.getTag(this, 'Orientation')
+				// // 获取曝光时间信息
+				// let exposureTime = EXIF.getTag(this, 'ExposureTime')
+				// // 获取ISO信息
+				// let iso = EXIF.getTag(this, 'ISOSpeedRatings')
+				// // 获取焦距信息
+				// let focalLength = EXIF.getTag(this, 'FocalLength')
+				// 所有信息...
+				let allInfo = EXIF.getAllTags(this)
+				console.log('打印***非原图', allInfo)
+			})
+			EXIF.getData(img2, function () {
+				// 获取拍摄方向信息
+				// let orientation = EXIF.getTag(this, 'Orientation')
+				// // 获取曝光时间信息
+				// let exposureTime = EXIF.getTag(this, 'ExposureTime')
+				// // 获取ISO信息
+				// let iso = EXIF.getTag(this, 'ISOSpeedRatings')
+				// // 获取焦距信息
+				// let focalLength = EXIF.getTag(this, 'FocalLength')
+				// 所有信息...
+				let allInfo = EXIF.getAllTags(this)
+				console.log('打印***原图', allInfo)
+			})
+		</script>
+	</body>
+</html>

@@ -6,8 +6,8 @@
 	<!-- <div>{{ rest }}</div> -->
 	<!-- <button @click="click">点击</button> -->
 	<!-- <button @click="download">点击下载图片</button> -->
-	<!-- <Login /> -->
-	<Curd />
+	<Login />
+	<!-- <Curd /> -->
 </template>
 
 <script setup>
