@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<body>
+		<script>
+			const uuid1 = () => {
+				const canvas = document.createElement('canvas')
+				const ctx = canvas.getContext('2d')
+				const txt = 'test'
+				ctx.fillText(txt, 10, 10)
+				console.log(canvas.toDataURL())
+				// return md5(canvas.toDataURL())
+			}
+			// uuid()
+
+			const uuid = () => {
+				// 创建一个Canvas元素
+				var canvas = document.createElement('canvas')
+				var ctx = canvas.getContext('2d')
+
+				// 在Canvas上绘制一些图形
+				ctx.fillStyle = '#f00'
+				ctx.fillRect(0, 0, 100, 100)
+				ctx.fillStyle = '#0f0'
+				ctx.fillRect(100, 0, 100, 100)
+				ctx.fillStyle = '#00f'
+				ctx.fillRect(0, 100, 100, 100)
+				ctx.fillStyle = '#ff0'
+				ctx.fillRect(100, 100, 100, 100)
+
+				// 将Canvas元素的像素数据转换为一个唯一的标识符
+				var canvasData = canvas.toDataURL()
+				console.log('打印***canvasData',canvasData)
+				var fingerprint = canvasData.replace(/^data:image\/(png|jpg);base64,/, '')
+				console.log('打印***fingerprint',fingerprint)
+				// 将唯一标识符发送到服务器进行跟踪
+				// sendFingerprintToServer(fingerprint)
+			}
+
+			uuid()
+		</script>
+	</body>
+</html>
