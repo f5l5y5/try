@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>cookie</title>
+</head>
+
+<body>
+	<script>
+
+
+
+
+// 创建一个名为my-cache的缓存
+const cache = caches.open('my-cache').then(function(cache) {
+
+  // 将request替换为'http://localhost:3000/cache'
+  var request = 'http://localhost:3000/cache'
+
+  // 尝试从缓存中获取请求的资源
+  cache.match(request).then(function(response) {
+
+    // 如果在缓存中找到了资源，则直接返回缓存的响应
+    if (response) {
+      return response;
+    }
+
+    // 请求资源
+    return fetch(request).then(function(networkResponse) {
+      // 将请求响应存入缓存中
+      cache.put(request, networkResponse.clone());
+      // 返回响应
+      return networkResponse;
+    });
+  });
+});
+ 
+
+
+(async()=>{
+const res = await cache
+console.log('打印***res',res)
+})()
+
+
+
+	
+
+
+	</script>
+</body>
+
+</html>

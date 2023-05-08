@@ -33,3 +33,4 @@ window.onload = () => {
 	// 进行挂载 不允许驼峰 类似于组件 原生写法
 	window.customElements.define('wu-jie',Wujie)
 }
+

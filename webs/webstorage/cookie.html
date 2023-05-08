@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>cookie</title>
+</head>
+
+<body>
+	<script>
+
+
+		class Cookie {
+			/** 读取 Cookie */
+			getItem(name) {
+				const regEx = new RegExp('(^|; )' + name + '=([^;]*)');
+				const result = document.cookie.match(regEx)
+				console.log('打印***result', result)
+				return result ? decodeURIComponent(result[2]) : null
+			}
+			/** 设置 Cookie */
+			setItem(name, value, days) {
+				let cookieStr = name + '=' + encodeURIComponent(value)
+				if (days) {
+					const expires = new Date()
+					expires.setTime(expires.getTime() + days)// *864e5 天数
+					cookieStr += ';expires=' + expires.toUTCString()
+				}
+				document.cookie = cookieStr
+			}
+			/** 删除 Cookie */
+			removeItem(name) {
+				const expires = new Date(0)
+				document.cookie = name + '=;expires=' + expires.toUTCString()
+			}
+			/** 删除所有 Cookie */
+			clear() {
+				const cookies = document.cookie.split(';');
+				for (var i = 0; i < cookies.length; i++) {
+					let cookie = cookies[i];
+					let eqPos = cookie.indexOf('=');
+					let name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+					document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+				}
+			}
+		}
+
+
+		const cookie = new Cookie()
+
+
+	</script>
+</body>
+
+</html>
