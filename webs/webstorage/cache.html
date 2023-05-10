@@ -16,20 +16,22 @@
 
 // 创建一个名为my-cache的缓存
 const cache = caches.open('my-cache').then(function(cache) {
+	console.log('打印***cache',cache)
 
   // 将request替换为'http://localhost:3000/cache'
   var request = 'http://localhost:3000/cache'
 
   // 尝试从缓存中获取请求的资源
   cache.match(request).then(function(response) {
-
+console.log('打印***response',response)
     // 如果在缓存中找到了资源，则直接返回缓存的响应
-    if (response) {
-      return response;
-    }
+    // if (response) {
+    //   return response;
+    // }
 
     // 请求资源
     return fetch(request).then(function(networkResponse) {
+			// console.log('打印***networkResponse',networkResponse.json())
       // 将请求响应存入缓存中
       cache.put(request, networkResponse.clone());
       // 返回响应
