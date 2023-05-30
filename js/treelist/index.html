@@ -1,0 +1,150 @@
+<script>
+	const list = [
+		{ id: 1, name: '部门1', pid: 0 },
+		{ id: 2, name: '部门2', pid: 1 },
+		{ id: 3, name: '部门3', pid: 1 },
+		{ id: 4, name: '部门4', pid: 3 },
+		{ id: 5, name: '部门5', pid: 4 },
+	];
+
+	const tree = [
+		{
+			"id": 1,
+			"name": "部门1",
+			"children": [
+				{
+					"id": 2,
+					"name": "部门2",
+				},
+				{
+					"id": 3,
+					"name": "部门3",
+					"children": [
+						{
+							"id": 4,
+							"name": "部门4",
+							"children": [
+								{
+									"id": 5,
+									"name": "部门5",
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+
+	// 1. 递归
+	const listToTree = (data, parentId = 0) => {
+		// 收集结果
+		const result = []
+		// 递归遍历
+		data.forEach(item => {
+			// 找到相同的pid进行下一层遍历
+			if (item.pid === parentId) {
+				const children = listToTree(data, item.id)
+				if (children.length) {
+					item.children = children
+				}
+				result.push(item)
+			}
+		});
+		return result
+	}
+
+	// 2. map 对象实现
+
+	function listToTree1(data) {
+		const map = new Map()
+		const result = []
+
+		data.forEach(item => {
+			map.set(item.id, Object.assign(item, { children: [] }))
+		})
+
+		console.log('打印***map', map)
+
+		map.forEach(item => {
+			if (item.pid === 0) {
+				result.push(item)
+			} else {
+				const parent = map.get(item.pid)
+				parent.children.push(item)
+			}
+		})
+
+		return result
+
+	}
+	// 一次遍历
+	function listToTree2(data) {
+		// 创建对象 map 和数组 result，分别用来存储所有节点和根节点
+		const map = {}
+		const result = []
+
+		data.forEach(item => {
+			//遍历数据，并将每个节点保存到 map 对象中
+			map[item.id] = item
+			if (item.pid === 0) {
+				result.push(item)
+			} else {
+				const parent = map[item.pid]
+				if (!parent.children) {
+					parent.children = []
+				}
+				parent.children.push(item)
+			}
+		})
+
+		return result
+
+	}
+
+	/** 深度优先 */
+	function flattenTree(tree) {
+		const result = []
+		function dfs(node, parentId) {
+			result.push({
+				id: node.id,
+				name: node.name,
+				pid: parentId || 0
+			})
+			if (node.children && node.children.length) {
+				node.children.forEach(child => dfs(child, node.id))
+			}
+		}
+		tree.forEach(node => dfs(node))
+		return result
+	}
+
+	/** 广度优先 */
+
+	function flattenTreeBFS(tree) {
+		const result = []
+		const queue = []
+
+		tree.forEach(node => queue.push(node))
+		while (queue.length) {
+			const node = queue.shift()
+			result.push({
+				id: node.id,
+				name: node.name,
+				pid: node.parentId || 0
+			})
+			if (node.children && node.children.length) {
+				node.children.forEach(child => queue.push({ ...child, parentId: node.id }))
+			}
+		}
+		return result
+	}
+
+
+	console.time('timer')
+	// console.log(listToTree(list, 0));
+	// console.log(flattenTree(tree));
+	console.log(flattenTreeBFS(tree));
+	// console.log(listToTree3(list));
+	console.timeEnd('timer')
+</script>
