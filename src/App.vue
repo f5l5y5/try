@@ -6,8 +6,9 @@
 	<!-- <div>{{ rest }}</div> -->
 	<!-- <button @click="click">点击</button> -->
 	<!-- <button @click="download">点击下载图片</button> -->
-	<Login />
+	<!-- <Login /> -->
 	<!-- <Curd /> -->
+	<Webwork />
 </template>
 
 <script setup>
@@ -19,6 +20,7 @@ import axios from 'axios'
 import { ref } from 'vue'
 import Login from './components/Login.vue'
 import Curd from './components/Curd.vue'
+import Webwork from './components/Webwork.vue'
 
 
 const download = async () => {
