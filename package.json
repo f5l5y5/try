@@ -10,19 +10,25 @@
     "pre": "prettier --write ./format/*.js"
   },
   "dependencies": {
+    "@sunrisecn/axios-abort": "1.1.0",
     "@vueuse/core": "^10.1.2",
     "ant-design-vue": "^3.2.15",
     "axios": "^1.3.5",
     "axios-cache-adapter": "^2.7.3",
     "element-plus": "^2.3.3",
+    "sass": "^1.63.6",
     "vue": "^3.2.47",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@babel/generator": "^7.22.5",
+    "@babel/parser": "^7.22.5",
+    "@babel/traverse": "7.12.5",
+    "@babel/types": "^7.22.5",
     "@vitejs/plugin-vue": "^4.1.0",
+    "mockjs": "^1.1.0",
     "prettier": "2.8.8",
     "vite": "^4.2.0",
-    "mockjs": "^1.1.0",
     "vite-plugin-mock": "^2.9.6"
   }
 }

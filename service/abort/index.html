@@ -14,7 +14,7 @@
 		const btn = document.getElementById('btn')
 		btn.onclick = function () {
 			console.log(1)
-			fetch('http://localhost:4000/other')
+			fetch('http://localhost:3000/getList')
 				.then(res => res.json())
 				.then(data => {
 					console.log(data)

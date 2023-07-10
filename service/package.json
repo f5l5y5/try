@@ -4,8 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@sunrisecn/axios-abort": "^1.2.2",
     "art-template": "^4.13.2",
-    "axios": "^1.3.4",
+    "axios": "^1.4.0",
     "crypto-js": "^4.1.1",
     "express": "^4.18.2",
     "koa": "^2.14.1",

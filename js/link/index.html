@@ -1,0 +1,332 @@
+<script>
+  // 定义链表节点类
+  class Node {
+    constructor(value) {
+      this.value = value;
+      this.next = null;
+    }
+  }
+
+  // 定义链表类
+  class LinkedList {
+    constructor() {
+      this.head = null;
+      this.tail = null;
+    }
+
+    // 在链表末尾添加节点
+    append(value) {
+      const newNode = new Node(value);
+
+      if (!this.head) {
+        this.head = newNode;
+        this.tail = newNode;
+      } else {
+        this.tail.next = newNode;
+        this.tail = newNode;
+      }
+    }
+
+    // 在链表特定位置插入节点
+    insertAt(position, value) {
+      if (position < 0 || position >= this.size()) {
+        return false; // 插入位置非法，返回失败
+      }
+
+      const newNode = new Node(value);
+
+      if (position === 0) {
+        // 在链表头部插入节点
+        newNode.next = this.head;
+        this.head = newNode;
+      } else {
+        let current = this.head;
+        let previous = null;
+        let index = 0;
+
+        while (index < position) {
+          previous = current;
+          current = current.next;
+          index++;
+        }
+
+        newNode.next = current;
+        previous.next = newNode;
+      }
+
+      return true; // 插入成功，返回成功
+    }
+
+    // 删除链表特定位置的节点
+    removeAt(position) {
+      if (position < 0 || position >= this.size()) {
+        return null; // 删除位置非法，返回null
+      }
+
+      let current = this.head;
+
+      if (position === 0) {
+        // 删除链表头部节点
+        this.head = current.next;
+        if (position === this.size() - 1) {
+          this.tail = null; // 若链表只有一个节点，则删除后tail也需重置为null
+        }
+        return current.value;
+      }
+
+      let previous = null;
+      let index = 0;
+
+      while (index < position) {
+        previous = current;
+        current = current.next;
+        index++;
+      }
+
+      previous.next = current.next;
+      if (position === this.size() - 1) {
+        this.tail = previous; // 若删除的是尾节点，则更新tail指针
+      }
+      return current.value; // 返回被删除的节点数据
+    }
+
+    // 修改链表特定位置的节点
+    updateAt(position, newData) {
+      if (position < 0 || position >= this.size()) {
+        return false; // 修改位置非法，返回失败
+      }
+
+      let current = this.head;
+      let index = 0;
+
+      while (index < position) {
+        current = current.next;
+        index++;
+      }
+
+      current.value = newData;
+      return true; // 修改成功，返回成功
+    }
+
+    // 查询链表特定位置的节点数据
+    getAt(position) {
+      if (position < 0 || position >= this.size()) {
+        return null; // 位置非法，返回null
+      }
+
+      let current = this.head;
+      let index = 0;
+
+      while (index < position) {
+        current = current.next;
+        index++;
+      }
+
+      return current.value; // 返回节点数据
+    }
+
+    // 获取链表长度
+    size() {
+      let count = 0;
+      let current = this.head;
+
+      while (current) {
+        count++;
+        current = current.next;
+      }
+
+      return count;
+    }
+
+    // 将链表转换为字符串
+    toString() {
+      let result = "";
+      let current = this.head;
+
+      while (current) {
+        result += `${current.value} `;
+        current = current.next;
+      }
+
+      return result.trim();
+    }
+  }
+
+  // 创建一个链表实例
+  const linkedList = new LinkedList();
+
+  // 向链表中添加节点
+  linkedList.append(1);
+  linkedList.append(2);
+  linkedList.append(3);
+
+  // 输出链表内容
+  console.log("链表内容：", linkedList.toString()); // 输出：链表内容：1 2 3
+
+  // 在特定位置插入节点
+  linkedList.insertAt(1, 4);
+
+  // 输出链表内容
+  console.log("插入链表内容：", linkedList.toString()); // 输出：链表内容：1 4 2 3
+
+  // 删除特定位置的节点
+  const removedData = linkedList.removeAt(2);
+
+  // 输出被删除的节点数据
+  console.log("被删除的节点数据：", removedData); // 输出：被删除的节点数据：2
+
+  // 输出链表内容
+  console.log("链表内容：", linkedList.toString()); // 输出：链表内容：1 4 3
+
+  // 修改特定位置的节点
+  const updateResult = linkedList.updateAt(1, 5);
+
+  // 输出修改结果
+  console.log("修改结果：", updateResult); // 输出：修改结果：true
+
+  // 输出链表内容
+  console.log("链表内容：", linkedList.toString()); // 输出：链表内容：1 5 3
+
+  // 查询特定位置的节点数据
+  const getData = linkedList.getAt(2);
+
+  // 输出查询结果
+  console.log("查询结果：", getData); // 输出：查询结果：3
+
+  // 输出链表的长度
+  console.log("链表长度：", linkedList.size()); // 输出：链表长度：3
+
+console.log('================');
+class Queue {
+  constructor() {
+    this.items = [];
+  }
+
+  // 入队：将元素添加到队列末尾
+  enqueue(element) {
+    this.items.push(element);
+  }
+
+  // 出队：移除并返回队列的第一个元素
+  dequeue() {
+    if (this.isEmpty()) {
+      return null;
+    }
+    return this.items.shift();
+  }
+
+  // 返回队列的第一个元素（不删除）
+  front() {
+    if (this.isEmpty()) {
+      return null;
+    }
+    return this.items[0];
+  }
+
+  // 检查队列是否为空
+  isEmpty() {
+    return this.items.length === 0;
+  }
+
+  // 清空队列
+  clear() {
+    this.items = [];
+  }
+
+  // 返回队列的大小（元素个数）
+  size() {
+    return this.items.length;
+  }
+
+  // 将队列转换为字符串形式
+  toString() {
+    return this.items.toString();
+  }
+}
+
+// 创建一个队列实例
+const queue = new Queue();
+
+// 入队
+queue.enqueue('apple');
+queue.enqueue('banana');
+queue.enqueue('cherry');
+
+// 输出队列内容
+console.log('队列内容：', queue.toString()); // 输出：队列内容：apple,banana,cherry
+
+// 出队
+const removedElement = queue.dequeue();
+
+// 输出被移除的元素
+console.log('被移除的元素：', removedElement); // 输出：被移除的元素：apple
+
+// 输出队列内容
+console.log('队列内容：', queue.toString()); // 输出：队列内容：banana,cherry
+
+// 修改队列中的元素（根据索引位置）
+queue.items[1] = 'blueberry';
+
+// 输出修改后的队列内容
+console.log('队列内容：', queue.toString()); // 输出：队列内容：banana,blueberry
+
+// 查询队列中的元素（根据索引位置）
+const element = queue.items[0];
+
+// 输出查询结果
+console.log('查询结果：', element); // 输出：查询结果：banana
+
+// 清空队列
+queue.clear();
+
+// 检查队列是否为空
+console.log('队列是否为空：', queue.isEmpty()); // 输出：队列是否为空：true
+
+
+// console.log('===========================');
+// function* greet(){
+// 	yield 1
+// 	yield 2
+// 	yield 3
+// }
+
+// const generator = greet()
+
+
+
+// // 注意如果已经使用for...of遍历后，会是直接done
+// console.log(generator.next().value); // 输出：1
+// console.log(generator.next().value); // 输出：2
+// console.log(generator.next().value); // 输出：3
+
+// for (const iterator of generator) {
+// 	console.log('打印***iterator',iterator)
+// }
+// function* greetingGenerator() {
+//   const name = yield 'Hello';
+//   yield `How are you, ${name}?`;
+// }
+
+// const generator = greetingGenerator();
+// console.log(generator.next().value); // 输出：Hello
+
+// console.log(generator.next('John').value); // 输出：How are you, John?
+
+function* counterGenerator() {
+  let count = 0;
+  while (true) {
+    yield count++;
+  }
+}
+
+const generator = counterGenerator();
+
+for (let value of generator) {
+  console.log(value);
+  if (value >= 1) {
+    break; // 提前终止循环
+  }
+}
+
+
+</script>

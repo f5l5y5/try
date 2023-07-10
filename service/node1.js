@@ -34,6 +34,14 @@ app.use((ctx, next) => {
 	next()
 })
 
+
+router.post("/ossUpload/uploadPriceImage", (ctx) => {
+	console.log('打印***ctx', ctx)
+	ctx.body = {
+		data:true
+	}
+});
+
 router.get('/static', ctx => {
 	console.log('打印***111', 111)
 })
@@ -58,6 +66,6 @@ router.get('/getList', async ctx => {
 // 配置路由（建议写在开启服务器的前面） 允许所有的请求方法
 app.use(router.routes()).use(router.allowedMethods())
 
-app.listen(3000, () => {
+app.listen(8080, () => {
 	console.log('http://localhost:3000')
 })
