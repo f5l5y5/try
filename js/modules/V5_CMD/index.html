@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>CMD</title>
+</head>
+
+<body>
+	<!-- <script src="https://cdn.bootcdn.net/ajax/libs/seajs/3.0.3/sea.js"></script>
+	<script>
+		seajs.use('./main.js')
+	</script> -->
+
+	<script>
+		// 定义一个模块加载函数 define
+		function define(factory) {
+			var module = { exports: {} };
+			factory(require, module.exports, module);
+			return module.exports;
+		}
+
+		// 定义一个模块缓存对象来保存已加载的模块
+		var moduleCache = {};
+
+		// 定义 require 函数用于加载模块
+		function require(moduleId) {
+			// 检查模块是否已经加载过，如果加载过就直接返回缓存的模块
+			if (moduleCache[moduleId]) {
+				return moduleCache[moduleId];
+			}
+
+			// 创建一个空的模块对象，并将其加入缓存中
+			var module = { exports: {} };
+			moduleCache[moduleId] = module;
+
+			// 加载模块并执行工厂函数
+			var factory = modules[moduleId];
+			factory(require, module.exports, module);
+
+			// 返回模块的导出对象
+			return module.exports;
+		}
+
+		// 定义模块的工厂函数
+		var modules = {};
+
+		// 定义 seajs.use 方法
+		function seajsUse(moduleId, callback) {
+			var module = require(moduleId);
+			callback(module);
+		}
+
+		// 定义 math.js 模块
+		modules['./math'] = function (require, exports) {
+			var add = function (a, b) {
+				return a + b;
+			};
+
+			exports.add = add;
+		};
+
+		// 定义 main.js 模块
+		modules['./main'] = function (require) {
+			var math = require('./math');
+
+			var result = math.add(2, 3);
+			console.log(result);
+		};
+
+		// 使用 seajsUse 方法加载 main.js 模块
+		seajsUse('./main', function (module) { });
+
+
+	</script>
+</body>
+
+</html>

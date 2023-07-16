@@ -4,7 +4,7 @@ module.exports = {
   mode: "development",
   entry: "./main.js", // 入口文件路径
   output: {
-    filename: "bundle.js", // 输出文件名
+    filename: "bundle1.js", // 输出文件名
     path: path.resolve(__dirname, "dist"), // 输出文件夹路径
   },
   // module: {

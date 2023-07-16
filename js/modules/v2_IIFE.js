@@ -5,14 +5,15 @@
  * 问题：依赖引入问题，必须要先顺序导入---》commonjs
  * */
 
-var MyApp = (function () {
-  var score = 100;
+var MyApp = (function ($) {
+	var score = 100;
+	$("body").css("background-color",'red');
   return {
     add: function (x, y) {
       return x + y + score;
     },
   };
-})();
+})($);
 
 var sum = MyApp.add(1, 2);
 console.log(sum);

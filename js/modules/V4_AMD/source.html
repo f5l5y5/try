@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+
+<body>
+	<script>
+		var modules = {}
+
+		function define(name, deps, factory) {
+			var pending = deps.length
+			var resolveDeps = new Array(pending)
+
+			deps.forEach(function (dep, index) {
+				if (modules[dep]) {
+					resolveDeps[index] = modules[dep]
+					pending--
+				} else {
+					loadScript(dep + '.js', function () {
+						resolveDeps[index] = modules[dep]
+						pending--
+						if (pending === 0) {
+							modules[name] = factory.apply(null, resolveDeps)
+						}
+					})
+				}
+			})
+
+			if (pending === 0) {
+				modules[name] = factory.apply(null, resolveDeps)
+			}
+		}
+
+
+		function require(deps, callback) {
+			var pending = deps.length
+			var resolveDeps = new Array(pending)
+
+			deps.forEach(function (dep, index) {
+				if (modules[dep]) {
+					resolveDeps[index] = modules[dep]
+					pending--
+				} else {
+					loadScript(dep + '.js', function () {
+						resolveDeps[index] = modules[dep]
+						pending--
+						if (pending === 0) {
+							modules[name] = callback.apply(null, resolveDeps)
+						}
+					})
+				}
+			})
+			if (pending === 0) {
+				callback.apply(null, resolveDeps)
+			}
+		}
+
+		function loadScript(url, callback) {
+			var script = document.createElement('script')
+			script.src = url
+			script.onload = callback || function () { }
+			document.head.appendChild(script)
+		}
+
+		require(['math'], function (math) {
+			console.log(math.add(1, 2));
+		})
+
+	</script>
+</body>
+
+</html>
