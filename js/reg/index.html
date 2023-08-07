@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+</body>
+</html>
+
+<script>
+  /**字符或位置 */
+  // const regex = /hello/;
+  // console.log(regex.test("hello"));
+
+  /** 横向 纵向 */
+  // console.log(
+  //   "abc abbc abbbc abbbbc abbbbbc abbbbbbc".match(
+  //     /ab{2,5}c/g
+  //   )
+  // );
+
+  // console.log("a0b a1b a2b a3b a4b".match(/a[123]b/g));
+
+  /** 范围表示 [abcdef] [a-f]   [a-z]=>[-az][az-][a\-z]  */
+  // console.log('1-6'.match(/1[-25]/g));
+  // console.log('116'.match(/1[^-]/g)); // 不匹配 ‘-’
+  // console.log(' \t\r\n\f/'.match(/./g)); //
+
+  /** 量词 {m} ? + * */
+
+  // console.log('abbbbccccdee/aabbbbccccde'.match(/a{1,2}?b{3,}?c{4}?d??e+?f*?/g)); //
+  // var regex = /\d{2,5}3?/g; // ["123","123","123","123"]   ?  ["123","1234","12345","12345"]
+  // var string = "123 1234 12345 123456";
+  // console.log( string.match(regex) );
+
+  /** 多选分支 | */
+
+  // console.log('good idea,nice try'.match(/good|nice/g)); //
+  // console.log(
+  //   "#fff #fadd #0ff00f".match(
+  //     /#([a-zA-Z0-9]{6}|[a-zA-Z0-9]{3})/g
+  //   )
+  // ); // 颜色
+
+
+	// console.log('时间',/^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/.test('6:00'));
+	// console.log('年月日',/^[0-9]{4}-(0?[0-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])$/.test('1992-3-02'));
+	// console.log('window路径',/^[a-zA-Z]:\\([^\\:*<>|"?\r\n/]+\\)*([^\\:*<>|"?\r\n/]+)?$/.test('F:\\study\\javascript\\regex\\regular expression.pdf'));
+	
+	/** 优化 */
+	// console.time(1)
+	// console.log('window路径', '<div id="container" class="main"></div>'.match(/id=".*?"/ ));
+	// console.timeEnd(1)
+	// console.time(2)
+	// console.log('window路径', '<div id="container" class="main"></div>'.match(/id="[^"]*"/ ));
+	// console.timeEnd(2)
+
+	/**  */
+	// console.log('hello'.replace(/^|$/g,'#'));
+
+	// console.log('I\nLove\nYou'.replace(/^|$/mg,'#'));
+	// console.log('[JS] Lesson_01.mp4'.replace(/\b/g,'#'));
+	// console.log('[JS] Lesson_01.mp4'.replace(/\B/g,'#'));
+	// console.log('hello'.replace(/(?=l)/g,'#'));he#l#lo
+	// console.log('hello'.replace(/(?!l)/g,'#'));
+	console.log('123456789 123123'.replace(/(?!\b)(?=(\d{3})+\b)/g,','));
+
+
+</script>

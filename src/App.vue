@@ -1,5 +1,7 @@
 <template>
-	<Scope />
+	<!-- <Scope /> -->
+<VirtualList />
+
 </template>
 
 <!-- <VirtualList /> -->
@@ -14,7 +16,7 @@
 <!-- <Webwork /> -->
 <script setup>
 // import Dom from './components/Dom.vue'
-// import VirtualList from './components/VirtualList.vue'
+import VirtualList from './components/VirtualList.vue'
 // import Demo from './components/Demo.vue'
 // import HelloWorld from './components/HelloWorld.vue'
 // import axios from 'axios'

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Document</title>
+		
+    <style media="print">
+      @page {
+        size: portrait;
+        margin: 100px;
+      }
+    </style>
+
+    <!-- <style>
+      html body {
+        width: 500px;
+        margin: 0 auto;
+      }
+      @media print {
+        @page {
+          size: A1; 
+          margin: 50px; 
+        }
+      }
+    </style> -->
+  </head>
+  <body>
+    <div>你好</div>
+    <div>这是一个内容</div>
+    <button id="btn">点击打印</button>
+  </body>
+</html>
+
+<script>
+  const btnNode = document.getElementById("btn");
+  btnNode.onclick = function (e) {
+    console.log("打印***e", e);
+    window.print();
+  };
+</script>

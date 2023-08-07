@@ -1,7 +1,13 @@
 const puppeteer = require("puppeteer");
+const { shuffle, random } = require("lodash");
 
 
-const allArticle = [
+const time = Number(process.argv[2]) ? Number(process.argv[2]) : 60
+
+const allArticle = shuffle([
+  "https://juejin.cn/post/7264396960558399549",
+  "https://juejin.cn/post/7263826380889784381",
+  "https://juejin.cn/post/7263485683360235580",
   "https://juejin.cn/post/7261994543569469495",
   "https://juejin.cn/post/7260859104952057911",
   "https://juejin.cn/post/7260383080383578171",
@@ -147,8 +153,12 @@ const allArticle = [
   "https://juejin.cn/post/7193731398815973437",
   "https://juejin.cn/post/7191398648142364731",
   "https://juejin.cn/post/7189063385500090426",
-];
+]);
+const randomNumber = random(0, allArticle.length - 1);
 
+const filterArticle = allArticle.filter(
+  (_, i) => i <= randomNumber
+);
 
 //延迟函数
 const sleep = (time) => {
@@ -159,23 +169,20 @@ const sleep = (time) => {
   });
 };
 
-; (async () => {
+(async () => {
   const browser = await puppeteer.launch({
     headless: false,
     defaultViewport: null,
     args: ["--start-maximized"],
   }); // 启动一个Chrome浏览器实例
-	const page = await browser.newPage(); // 创建一个新的标签页
-	
-	for (let i = 0; i < allArticle.length; i++) {
-		const url = allArticle[i];
-			await page.goto(url); // 导航到指定的网页
-      await sleep(3000);
-	}
+  const page = await browser.newPage(); // 创建一个新的标签页
+  const len = filterArticle.length;
+  for (let i = 0; i < len; i++) {
+    const url = filterArticle[i];
+    await page.goto(url); // 导航到指定的网页
+		await sleep(time * 1000);
+		console.clear()
+    console.log(`共${len + 1}篇，已完成${i + 1}篇`);
+  }
   await browser.close(); // 关闭浏览器实例
-})()
-
-
-
-
-
+})();
