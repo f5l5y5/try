@@ -1,10 +1,9 @@
 const puppeteer = require("puppeteer");
 const { shuffle, random } = require("lodash");
 
-
-const time = Number(process.argv[2]) ? Number(process.argv[2]) : 60
-
 const allArticle = shuffle([
+  "https://juejin.cn/post/7266745788536127503",
+  "https://juejin.cn/post/7265210393047220264",
   "https://juejin.cn/post/7264396960558399549",
   "https://juejin.cn/post/7263826380889784381",
   "https://juejin.cn/post/7263485683360235580",
@@ -174,15 +173,28 @@ const sleep = (time) => {
     headless: false,
     defaultViewport: null,
     args: ["--start-maximized"],
-  }); // 启动一个Chrome浏览器实例
+  });
+
+  // 启动一个Chrome浏览器实例
   const page = await browser.newPage(); // 创建一个新的标签页
   const len = filterArticle.length;
+  const maxNumber = Number(process.argv[2])
+    ? Number(process.argv[2])
+    : 60;
+  console.clear();
+
   for (let i = 0; i < len; i++) {
+    const time = random(1, maxNumber) * 1000;
     const url = filterArticle[i];
     await page.goto(url); // 导航到指定的网页
-		await sleep(time * 1000);
-		console.clear()
-    console.log(`共${len + 1}篇，已完成${i + 1}篇`);
+    await sleep(time);
+    console.log(
+      `共${len}篇，刷新间隔${time / 1000}秒，已完成${
+        i + 1
+      }篇`
+    );
   }
   await browser.close(); // 关闭浏览器实例
 })();
+
+Math.random();
