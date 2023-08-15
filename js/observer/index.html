@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Document</title>
+  </head>
+  <body></body>
+</html>
+
+<script>
+  /**
+   * 1.被观察者拥有所有观察者的数组
+   * 2.事件发布时遍历完整列表，通知每一个观察者
+   * 老师在把学生全部拉到群里，发送消息，每个学生都接收到
+   */
+
+  // 观察者
+  class Observer {
+    constructor(name) {
+      this.name = name;
+    }
+    receiveMsg(msg) {
+      console.log(`我是：${this.name},收到了消息${msg}`);
+    }
+  }
+
+  // 被观察者
+  class Subject {
+    constructor() {
+      this.observers = [];
+    }
+    addObserver(ob) {
+      this.observers.push(ob);
+      return this;
+    }
+
+    removeObserver(observer) {
+      let index = this.observers.indexOf(observer);
+      if (index > -1) {
+        this.observers.splice(index, 1);
+      }
+    }
+
+    notify(msg) {
+      this.observers.forEach((ele) => ele.receiveMsg(msg));
+    }
+  }
+
+  const student1 = new Observer("jack");
+  const student2 = new Observer("mary");
+  const student3 = new Observer("alice");
+
+  const teacher = new Subject();
+
+  teacher
+    .addObserver(student1)
+    .addObserver(student2)
+    .addObserver(student3);
+
+  teacher.notify(666);
+  /**
+   * 现在老师不直接拉群，现在新建了一个公众号，公众号提供订阅的方法，如果不订阅就收不到信息
+   * 1. 订阅者提前订阅对应事件
+   * 2. 事件发布时所有对应消息订阅回调全部执行
+   *
+   */
+
+  class Event {
+    // 私有变量 所有消息的消息池
+    handlers = {};
+    // 订阅函数
+    subscribe(msgName, handler) {
+      if (!this.handlers[msgName]) {
+        // 如果暂时没有
+        this.handlers[msgName] = [];
+      }
+      // 如果有订阅了
+      this.handlers[msgName].push(handler);
+    }
+    // 取消订阅
+    unsubscribe(msgName, handler) {
+      let handlerList = this.handlers[msgName];
+      if (handlerList) {
+        let index = handlerList.indexOf(handler);
+        if (index > -1) {
+          handlerList.splice(index, 1);
+        }
+      }
+    }
+
+    // 发布函数
+    publish(msgName, ...data) {
+      if (this.handlers[msgName]) {
+        this.handlers[msgName].forEach((handler) =>
+          handler.call(this, ...data)
+        );
+      }
+    }
+  }
+
+  let event = new Event();
+
+  event.subscribe("刘老师消息", (msg) => {
+    console.log(`我是jack,收到了消息${msg}`);
+  });
+  event.subscribe("刘老师消息", (msg) => {
+    console.log(`我是mary,收到了消息${msg}`);
+  });
+  event.subscribe("刘老师消息", (msg) => {
+    console.log(`我是ace,收到了消息${msg}`);
+  });
+
+  setTimeout(() => {
+    event.publish("刘老师消息", "888", "777");
+  }, 1000);
+</script>
