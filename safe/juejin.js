@@ -152,7 +152,8 @@ const allArticle = shuffle([
   "https://juejin.cn/post/7193731398815973437",
   "https://juejin.cn/post/7191398648142364731",
   "https://juejin.cn/post/7189063385500090426",
-]);
+])
+	// .filter((arr, i) => i === 0));
 const randomNumber = random(0, allArticle.length - 1);
 
 const filterArticle = allArticle.filter(
