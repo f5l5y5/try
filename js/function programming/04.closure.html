@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	
+	<script>
+		Math.pow(4,2)
+		Math.pow(5,2)
+		
+		// 求某个数的二次方，始终要指定第二个参数
+		function makePower(power){
+			return function(number){
+				return Math.pow(number,power)
+			}
+		}
+
+
+		let power2 = makePower(2)
+		let power3 = makePower(3)
+
+		console.log(power2(4));
+		console.log(power2(3));
+		console.log(power3(2));
+
+
+		
+		// 员工基本工资12000 绩效2000
+		// 员工基本工资15000 绩效3000
+		// 员工基本工资15000 绩效4000
+		// 如果将基本工资固定,只写绩效工资
+		function makeSalary(base){
+			return function(bonus){
+				return base + bonus
+			}
+		}
+
+		let salaryLevel1 = makeSalary(12000)
+		let salaryLevel2 = makeSalary(15000)
+
+		console.log(salaryLevel1(2000));
+		console.log(salaryLevel2(3000));
+		console.log(salaryLevel2(4000));
+
+
+	</script>
+</body>
+</html>
