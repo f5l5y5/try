@@ -1,8 +1,9 @@
 const puppeteer = require("puppeteer");
 const { shuffle, random } = require("lodash");
 
-const allArticle = shuffle([
-	"https://juejin.cn/post/7270591134811553844",
+const originArticleList = [
+  "https://juejin.cn/post/7271907645165682699",
+  "https://juejin.cn/post/7270591134811553844",
   "https://juejin.cn/post/7268607295016681509",
   "https://juejin.cn/post/7268530145202667535",
   "https://juejin.cn/post/7266745788536127503",
@@ -155,8 +156,10 @@ const allArticle = shuffle([
   "https://juejin.cn/post/7193731398815973437",
   "https://juejin.cn/post/7191398648142364731",
   "https://juejin.cn/post/7189063385500090426",
-]);
-	// .filter((arr, i) => i === 0));
+];
+const total = originArticleList.length;
+const allArticle = shuffle(originArticleList);
+// .filter((arr, i) => i === 0));
 const randomNumber = random(0, allArticle.length - 1);
 
 const filterArticle = allArticle.filter(
@@ -185,17 +188,16 @@ const sleep = (time) => {
   const maxNumber = Number(process.argv[2])
     ? Number(process.argv[2])
     : 60;
-  console.clear();
-
   for (let i = 0; i < len; i++) {
     const time = random(1, maxNumber) * 1000;
     const url = filterArticle[i];
     await page.goto(url); // 导航到指定的网页
     await sleep(time);
-    console.log(
-      `共${len}篇，刷新间隔${time / 1000}秒，已完成${
-        i + 1
-      }篇`
+    i && console.clear();    
+		console.log(
+      `总数${total} 本次刷新${len}篇，刷新间隔${
+        time / 1000
+      }秒，已完成${i + 1}篇`
     );
   }
   await browser.close(); // 关闭浏览器实例
