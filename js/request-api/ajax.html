@@ -1,0 +1,80 @@
+<button id="btn">获取数据</button>
+<h1 id="h1">
+    希望获取新加载的数据
+</h1>
+
+<div>
+    原有的数据........
+</div>
+<script>
+
+    // 注册事件
+    const btnNode = document.querySelector("#btn");
+
+    // 注册onclick事件 
+    btnNode.onclick = function () {
+        // 1. 创建ajax 对象 
+        // 高版本浏览器创建的对象 
+        let xhr;
+        if (window.XMLHttpRequest) {
+            xhr = new XMLHttpRequest();
+        } else {
+            // IE5  IE6 低版本浏览器 
+            xhr = new ActiveXObject("Microsoft.XMLHTTP")
+        }
+
+        // 2. 准备发送请求 
+        /*
+        参数
+          1.  请求方式  get/post/put/delete
+          2.  请求位置  url
+          3.  是否是异步请求 
+                 true  表示异步
+                 false 表示同步
+        */
+        xhr.open("GET", "./a.txt", true)
+
+        xhr.setRequestHeader("Content-Type", "application/json")
+
+        // 3. 发送请求 
+        xhr.send()
+
+        // 4.  监听ajax的整个过程
+        // onreadystatechange 监听ajax 发送的事件 
+        xhr.onload = function(){
+            console.log('打印***onload')
+            const data = xhr.responseText;
+                //获取h1 节点 
+                const h1Node = document.getElementById("h1")
+                h1Node.innerText = data;
+                console.log(data);
+        }
+        // 监听ajax 发送进度事件
+        xhr.onprogress = function(e){
+            console.log('打印***onprogress',e)
+        }
+        
+        // xhr.onreadystatechange = function () {
+        //     // readyState ajax 发送过程中的状态码 
+        //     /*
+        //           0: 请求未初始化
+        //           1: 服务器连接已建立
+        //           2: 请求已接收
+        //           3: 请求处理中
+        //           4: 请求已完成，且响应已就绪
+        //     */
+
+        //     // 当请求处理完成之后 我们就可以获取响应数据 
+        //     if (xhr.readyState === 4 && xhr.status === 200) {
+        //         // 获取到响应数据之后 必须要查看响应码 判断响应的数据是否合法
+        //         // 判断响应码 status
+        //         // 获取响应的结果数据
+        //         const data = xhr.responseText;
+        //         //获取h1 节点 
+        //         const h1Node = document.getElementById("h1")
+        //         h1Node.innerText = data;
+        //         console.log(data);
+        //     }
+        // }
+    }
+</script>
