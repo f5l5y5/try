@@ -2,6 +2,7 @@ const puppeteer = require("puppeteer");
 const { shuffle, random } = require("lodash");
 
 const originArticleList = [
+	"https://juejin.cn/post/7274856771410264075",
 	"https://juejin.cn/post/7272199653339234344",
   "https://juejin.cn/post/7271907645165682699",
   "https://juejin.cn/post/7270591134811553844",

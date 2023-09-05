@@ -1,0 +1,37 @@
+<button id="btn">获取数据</button>
+<h1 id="h1">
+	希望获取新加载的数据
+</h1>
+<div id="content">
+	原有的数据........
+</div>
+<script>
+
+	// 注册事件
+	const btnNode = document.querySelector("#btn");
+	const h1Node = document.getElementById("h1")
+
+	// 注册onclick事件 
+	btnNode.onclick = function () {
+		// 创建一个EventSource对象，连接到服务器端的SSE端点
+		const eventSource = new EventSource('http://localhost:3000/api/sse');
+
+		// 监听服务器端发送的消息
+		eventSource.onmessage = (event) => {
+			console.log(event.data);
+			const data = event.data
+			h1Node.innerText = data;
+			// 在这里处理服务器端发送的消息
+		};
+
+		// 监听连接关闭事件
+		eventSource.onclose = () => {
+			console.log('SSE connection closed');
+		};
+
+		// 监听错误事件
+		eventSource.onerror = (error) => {
+			console.error('SSE error:', error);
+		};
+	}
+</script>

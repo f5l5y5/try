@@ -1,0 +1,28 @@
+<button id="btn">获取数据</button>
+<h1 id="h1">
+	希望获取新加载的数据
+</h1>
+<div id="content">
+	原有的数据........
+</div>
+<script>
+
+	// 注册事件
+	const btnNode = document.querySelector("#btn");
+
+	// 注册onclick事件 
+	btnNode.onclick = function () {
+		fetch('http://localhost:3000/api/fetch', {
+			headers: {
+				token: '66666666666'
+			}
+		}).then(res => {
+			return res.text()
+		}).then(data => {
+			const h1Node = document.getElementById("h1")
+			h1Node.innerText = data;
+		})
+
+	}
+
+</script>

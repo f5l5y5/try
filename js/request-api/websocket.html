@@ -1,0 +1,38 @@
+<button id="btn">获取数据</button>
+<h1 id="h1">
+	希望获取新加载的数据
+</h1>
+<div id="content">
+	原有的数据........
+</div>
+<script>
+
+	// 注册事件
+	const btnNode = document.querySelector("#btn");
+	const h1Node = document.getElementById("h1")
+
+	// 注册onclick事件 
+	btnNode.onclick = function () {
+
+		const socket = new WebSocket('ws://localhost:3000');
+
+		socket.onopen = function () {
+			console.log('连接已建立');
+		};
+
+		socket.onmessage = function (event) {
+			const data = event.data;
+			console.log('接收到服务器发送的消息:', data);
+			h1Node.innerText = data;
+		};
+
+		socket.onclose = function () {
+			console.log('连接已关闭');
+		};
+		// 心跳
+		setInterval(() => {
+			socket.send('ping');
+		}, 3000);
+
+}
+</script>
