@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div style="border: 5px solid;width: 500px;height: 500px;"></div>
+    <button id="btn">点击取消防抖</button>
+</body>
+
+</html>
+
+<script>
+
+    function debounce(fn,delay){
+        let timer = null
+        return function(){
+            if(timer) clearTimeout(timer)
+            timer = setTimeout(fn,delay)
+        }
+    }
+    const containerNode = document.querySelector('div');
+    const btnNode = document.getElementById('btn')
+
+    // 最简单防抖
+    // function debounce(fn, delay) {
+    //     let timer = null;
+    //     return function () {
+    //         timer && clearTimeout(timer);
+    //         timer = setTimeout(fn, delay);
+    //     }
+    // }
+
+    // 解决this指向问题,使用arguments传递event对象
+    // function debounce(fn, delay) {
+    //     let timer = null
+    //     return function () {
+    //         timer && clearTimeout(timer)
+    //         timer = setTimeout(
+    //             // fn.bind(this, ...arguments) 
+    //             ()=> fn.apply(this, arguments)
+    //             , delay)
+    //     }
+    // }
+    // 使用剩余参数
+    // function debounce(fn, delay) {
+    //     let timer = null
+    //     return function (...args) {
+    //         timer && clearTimeout(timer)
+    //         timer = setTimeout(
+    //             // fn.bind(this, ...args) 
+    //             ()=> fn.apply(this, args)
+    //             , delay)
+    //     }
+    // }
+
+    // 第一次搜索立即执行，后面每次搜索延迟1s执行
+    // function debounce(fn, delay, immediate) {
+    //     let timer = null;
+    //     return function () {
+    //         timer && clearTimeout(timer);
+    //         immediate && !timer && fn.apply(this, arguments);
+    //         timer = setTimeout(() => fn.apply(this, arguments), delay);
+    //     }
+    // }
+
+    // 取消防抖功能
+    function debounce(fn, delay, immediate) {
+        let timer = null
+        function debounced() {
+            timer && clearTimeout(timer)
+            immediate && !timer && fn.call(this, ...arguments)
+            timer = setTimeout(() => {fn.call(this, ...arguments)}, delay)
+        }
+        debounce.cancel = function () {
+            console.log('打印***111',111)
+            clearTimeout(timer)
+            timer = null
+        }
+        return debounced
+    }
+
+    const callback = function (e) {
+        console.log('666');
+        console.log('坐标位置:', e.pageX, e.pageY);
+    };
+
+
+    containerNode.addEventListener('mousemove', debounce(callback, 2000, true));
+    btnNode.addEventListener('click', debounce.cancel)
+</script>

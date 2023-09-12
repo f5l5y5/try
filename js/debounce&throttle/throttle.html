@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+    <div style="border: 5px solid;width: 500px;height: 500px;"></div>
+    <button id="btn">点击取消节流</button>
+</body>
+
+</html>
+
+
+
+
+
+<script>
+    const containerNode = document.querySelector('div');
+    const btnNode = document.getElementById('btn')
+
+
+    // function throttle(fn, delay) {
+    //     let prev = 0
+    //     return function () {
+    //         const now = Date.now()
+    //         if (now - prev > delay) {
+    //             fn.apply(this, arguments)
+    //             prev = now
+    //         }
+    //     }
+    // }
+
+
+    // function throttle(fn, delay) {
+    //     let timer, context, args
+    //     return function () {
+    //         context = this
+    //         args = arguments
+    //         if (!timer) {
+    //             console.time('time count')
+    //             timer = setTimeout(() => {
+    //                 fn.apply(context, args)
+    //                 //fn.apply(this,arguments) 可以这样写因为箭头函数没有this，会默认指向外层的this，不建议这么写
+    //                 timer = null
+    //                 console.timeEnd('time count')
+
+    //             }, delay)
+    //         }
+    //     }
+    // }
+    // 解决每次执行时间延时问题
+    function throttle(fn, delay) {
+        let timer, context, args
+        let prev = 0
+        return function () {
+            context = this
+            args = arguments
+            const now = Date.now()
+            const remaining = delay - (now - prev)
+            if (remaining <= 0) {
+                if (timer) {
+                    clearTimeout(timer)
+                    timer = null
+                }
+                fn.apply(context, args)
+                prev = Date.now()
+            } else if (!timer) {
+                timer = setTimeout(() => {
+                    fn.apply(context, args)
+                    timer = null
+                    prev = Date.now()
+                }, delay)
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // 节流的实现几种方式
+    // 1.使用时间戳 第一次立即执行，且每次执行都重新计算时间戳
+    // function throttle(fn, delay) {
+    //     let prev = 0
+    //     return function () {
+    //         let now = Date.now()
+    //         if (now - prev > delay) {
+    //             fn.apply(this, arguments)
+    //             prev = now
+    //         }
+    //     }
+    // }
+    // 2.使用定时器 解决第一次立即执行的问题，但是最后一次不会执行
+    // function throttle(fn, delay) {
+    //     let timer = null
+    //     return function () {
+    //         if (!timer) {
+    //             timer = setTimeout(() => {
+    //                 fn.apply(this, arguments)
+    //                 timer = null
+    //             }, delay)
+    //         }
+    //     }
+    // }
+    // 3.使用时间戳+定时器 解决最后一次不会执行的问题，但是第一次会延迟delay
+    // function throttle(fn, delay) {
+    //     let timer = null
+    //     let prev = 0
+    //     return function () {
+    //         let now = Date.now()
+    //         let remaining = delay - (now - prev)
+    //         if (remaining <= 0) {
+    //             if (timer) {
+    //                 clearTimeout(timer)
+    //                 timer = null
+    //             }
+    //             fn.apply(this, arguments)
+    //             prev = Date.now()
+    //         } else if (!timer) {
+    //             timer = setTimeout(() => {
+    //                 fn.apply(this, arguments)
+    //                 timer = null
+    //                 prev = Date.now()
+    //             }, remaining)
+    //         }
+    //     }
+    // }
+    // 4.使用时间戳+定时器+leading和trailing
+    /**
+     * 
+     * options 
+     * leading: 指定调用在节流开始前
+     * trailing: 指定调用在节流结束后
+     */
+    // function throttle(fn, delay, options) {
+    //     let timer = null
+    //     let prev = 0
+    //     let { leading, trailing } = options
+    //     return function () {
+    //         let now = Date.now()
+    //         let remaining = delay - (now - prev)
+    //         if (remaining <= 0) {
+    //             if (timer) {
+    //                 clearTimeout(timer)
+    //                 timer = null
+    //             }
+    //             fn.apply(this, arguments)
+    //             prev = Date.now()
+    //         } else if (!timer && leading) {
+    //             timer = setTimeout(() => {
+    //                 fn.apply(this, arguments)
+    //                 timer = null
+    //                 prev = Date.now()
+    //             }, remaining)
+    //         }
+    //     }
+    // }
+
+    const callback = function (e) {
+        console.log('666');
+        console.log('坐标位置:', e.pageX, e.pageY);
+    };
+
+
+    containerNode.addEventListener('mousemove', throttle(callback, 2000));
+    // btnNode.addEventListener('click', debounce.cancel)
+</script>
