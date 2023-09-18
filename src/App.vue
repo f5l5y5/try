@@ -1,6 +1,7 @@
 <template>
 	<!-- <Scope /> -->
 <VirtualList />
+<Speech />
 
 </template>
 
@@ -15,8 +16,9 @@
 <!-- <Curd /> -->
 <!-- <Webwork /> -->
 <script setup>
+import Speech from './components/Speech.vue';
 // import Dom from './components/Dom.vue'
-import VirtualList from './components/VirtualList.vue'
+// import VirtualList from './components/VirtualList.vue'
 // import Demo from './components/Demo.vue'
 // import HelloWorld from './components/HelloWorld.vue'
 // import axios from 'axios'
@@ -24,7 +26,7 @@ import VirtualList from './components/VirtualList.vue'
 // import Login from './components/Login.vue'
 // import Curd from './components/Curd.vue'
 // import Webwork from './components/Webwork.vue'
-import Scope from './components/Scope.vue';
+// import Scope from './components/Scope.vue';
 // import './utils/ast'
 
 	
