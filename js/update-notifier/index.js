@@ -170,9 +170,86 @@
 // // 18. `import pupa from 'pupa';`: 这个导入语句从第三方模块`pupa`中导入了`pupa`函数。`pupa`函数用于将模板字符串中的占位符替换为对应的值。
 
 
-import pupa from 'pupa';
+// import pupa from 'pupa';
 
-const template = 'Hello, {name}!';
-const result = pupa(template, { name: 'John' });
+// const template = 'Hello, {name}!';
+// const result = pupa(template, { name: 'John' });
 
-console.log(result);
+// console.log(result);
+
+// import path from 'path'
+// import process from 'process'
+// import writeFileAtomic from 'write-file-atomic';
+
+// const filePath = path.join(process.cwd(),'/file.txt');
+// const data = 'Hello, World!';
+
+// writeFileAtomic(filePath, data, (err) => {
+//   if (err) {
+//     console.error(err);
+//     return;
+//   }
+
+//   console.log('文件写入成功');
+// });
+
+
+
+// import {getProperty, setProperty, hasProperty, deleteProperty} from 'dot-prop';
+
+// // Getter
+// getProperty({foo: {bar: 'unicorn'}}, 'foo.bar');
+// //=> 'unicorn'
+
+// getProperty({foo: {bar: 'a'}}, 'foo.notDefined.deep');
+// //=> undefined
+
+// getProperty({foo: {bar: 'a'}}, 'foo.notDefined.deep', 'default value');
+// //=> 'default value'
+
+// getProperty({foo: {'dot.dot': 'unicorn'}}, 'foo.dot\\.dot');
+// //=> 'unicorn'
+
+// getProperty({foo: [{bar: 'unicorn'}]}, 'foo[0].bar');
+// //=> 'unicorn'
+
+// // Setter
+// const object = {foo: {bar: 'a'}};
+// setProperty(object, 'foo.bar', 'b');
+// console.log(object);
+// //=> {foo: {bar: 'b'}}
+
+// const foo = setProperty({}, 'foo.bar', 'c');
+// console.log(foo);
+// //=> {foo: {bar: 'c'}}
+
+// setProperty(object, 'foo.baz', 'x');
+// console.log(object);
+// //=> {foo: {bar: 'b', baz: 'x'}}
+
+// setProperty(object, 'foo.biz[0]', 'a');
+// console.log(object);
+// //=> {foo: {bar: 'b', baz: 'x', biz: ['a']}}
+
+// // Has
+// hasProperty({foo: {bar: 'unicorn'}}, 'foo.bar');
+// //=> true
+
+// // Deleter
+// const object1 = {foo: {bar: 'a'}};
+// deleteProperty(object1, 'foo.bar');
+// console.log(object1);
+// //=> {foo: {}}
+
+// object1.foo.bar = {x: 'y', y: 'x'};
+// deleteProperty(object1, 'foo.bar.x');
+// console.log(object1);
+// //=> {foo: {bar: {y: 'x'}}}
+
+
+import uniqueString from 'unique-string';
+
+const uniqueId = uniqueString();
+
+console.log(uniqueId); // 输出一个唯一的字符串，如 "041e3af25e30c195170a99149094515c"
+
