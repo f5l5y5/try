@@ -11,7 +11,8 @@ const originArticleList = [
   "https://juejin.cn/post/7281825352530345995",
   "https://juejin.cn/post/7281651242022879286",
   "https://juejin.cn/post/7281651242022879286",
-  "https://juejin.cn/post/7281651242022830134",// Rust
+  "https://juejin.cn/post/7281651242022830134",// Rust、
+  "https://juejin.cn/post/7283060133646385188",
   "https://juejin.cn/post/7280831651084320803",
   "https://juejin.cn/post/7280436213887008809",
   "https://juejin.cn/post/7280000052210335807",
