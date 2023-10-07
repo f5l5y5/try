@@ -197,7 +197,7 @@ const originArticleList = [
 const total = originArticleList.length;
 const allArticle = shuffle(originArticleList);
 // .filter((arr, i) => i === 0));
-const randomNumber = random(100, allArticle.length - 1);
+const randomNumber = random(180, allArticle.length - 1);
 
 const filterArticle = allArticle.filter(
   (_, i) => i <= randomNumber
