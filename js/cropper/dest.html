@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>完整实现</title>
 </head>
-
 <body>
     <!-- 文件上传 -->
     <input type="file" id="inputFile" accept="image/*" />
@@ -20,7 +18,6 @@
         <canvas id="draw"></canvas>
     </div>
 </body>
-
 </html>
 
 <script>
@@ -128,11 +125,6 @@
         // 剪切图像，并在画布上定位被剪切的部分
         ctx.drawImage(imageNode, 0, 0, width, height, 0, 0, width, height);
     }
-
-
-
-
-
 
     function mouseupHandler(e) {
         // 1. 注销监听 mousedown 和 mousemove 事件
