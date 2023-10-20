@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>完整实现</title>
+</head>
+
+<body>
+    <!-- 文件上传 -->
+    <input type="file" id="inputFile" accept="image/*" />
+    <!-- 展示读取的图片的canvas -->
+    <div class="clipContainer">
+        <canvas id="clip"></canvas>
+    </div>
+    <!-- 截图后的图片的canvas -->
+    <div class="drawContainer">
+        <canvas id="draw"></canvas>
+    </div>
+</body>
+
+</html>
+
+<script>
+    const inputNode = document.querySelector("#inputFile");
+    const clipCanvas = document.querySelector("#clip");
+    const drawCanvas = document.querySelector("#draw");
+    const clipContainer = document.querySelector(
+        ".clipContainer"
+    );
+    const drawContainer = document.querySelector(
+        ".drawContainer"
+    );
+
+    const clipCanvasCtx = clipCanvas.getContext("2d");
+    const drawCanvasCtx = drawCanvas.getContext("2d");
+
+    const imageNode = document.createElement('img');
+    const drawImageNode = document.createElement('img');//用于最终展示图片
+    let resultFile = null;//最终生成的File对象图片文件
+
+
+    // 1. 选择图片 读取图片
+    inputNode.addEventListener(
+        "change",
+        function (e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                imageNode.src = e.target.result;
+                imageNode.onload = function () {
+                    // 获取真实的图片宽高  canvas绘制图片
+                    generateCanvas(clipContainer, clipCanvas, this.width, this.height);
+                    clipCanvasCtx.drawImage(imageNode, 0, 0, this.width, this.height);
+
+                };
+            };
+            file && reader.readAsDataURL(file);
+        },
+        false
+    );
+
+    // 2. canvas绘制图片
+    function generateCanvas(canvasContainer, canvas, width, height) {
+        // 2.1 外部容器的宽高
+        canvasContainer.style.width = width + 'px';
+        canvasContainer.style.height = height + 'px';
+        // 2.2 canvas的宽高
+        canvas.width = width;
+        canvas.height = height;
+    }
+
+    // 3. 绘制截图区域
+    //  需要分别监听 imageBox 容器（原图像）上的 mousedown、mousemove 和 mouseup 事件
+    /**
+  mousedown 事件：记录开始截图的位置，并开始监听 mousemove 和 mouseup 事件。
+  mousemove 事件：监听鼠标的偏移量，以计算裁剪区域的宽度和高度。
+  mouseup 事件：截图结束，注销监听 mousedown 和 mousemove 事件，并绘制裁剪区域。
+       */
+    // 记录点击开始结束位置
+    let startPosition = []
+    // 记录x,y 截图大小宽高
+    let screenShotData = []
+
+    clipCanvas.addEventListener('mousedown', function (e) {
+        // 3.1 记录开始截图的位置
+        startPosition = [e.offsetX, e.offsetY]
+        // 3.2 开始监听 mousemove 和 mouseup 事件
+        clipCanvas.addEventListener('mousemove', mousemoveHandler, false)
+        clipCanvas.addEventListener('mouseup', mouseupHandler, false)
+    })
+
+
+
+    function mousemoveHandler(e) {
+        // 1. 计算裁剪区域的宽度和高度
+        const { offsetX, offsetY } = e
+        const [startX, startY] = startPosition
+        // 偏移位置-起始位置 = 真实宽高
+        const [rectWidth, rectHeight] = [offsetX - startX, offsetY - startY]
+        // 2. 保存裁剪区域的相关信息
+        screenShotData = [startX, startY, rectWidth, rectHeight]
+        // 3. 重新绘制
+        fill(clipCanvasCtx, clipCanvas, screenShotData)
+    }
+
+    function fill(ctx, canvas, sizeData) {
+
+        const { width, height } = canvas
+        const [x, y, w, h] = sizeData
+        // 1. 再次绘制前，清理canvas1画布上的内容
+        ctx.clearRect(0, 0, width, height)
+
+        // 2. 画布上绘制蒙层
+        ctx.fillStyle = `rgba(0,0,0,0.6)`
+        ctx.fillRect(0, 0, width, height)
+
+        // 3. 绘制裁剪区域
+        // 在源图像外绘制新图像，只有源图像外的目标图像部分会被显示，源图像是透明的
+        ctx.globalCompositeOperation = 'destination-out'
+        ctx.fillStyle = '#2c2c2c'
+        ctx.fillRect(...sizeData)
+
+        // 设置在现有画布上绘制新的图形
+        ctx.globalCompositeOperation = 'destination-over'
+        // 剪切图像，并在画布上定位被剪切的部分
+        ctx.drawImage(imageNode, 0, 0, width, height, 0, 0, width, height);
+    }
+
+
+
+
+
+
+    function mouseupHandler(e) {
+        // 1. 注销监听 mousedown 和 mousemove 事件
+        clipCanvas.removeEventListener('mousemove', mousemoveHandler, false)
+        clipCanvas.removeEventListener('mouseup', mouseupHandler, false)
+
+        // 2. 开始绘制截图区域图片
+        const data = clipCanvasCtx.getImageData(...screenShotData)
+
+        // 3. 使用新画布
+        const [x, y, w, h] = screenShotData
+        generateCanvas(drawCanvas, drawContainer, w, h)
+
+        // 每次绘制前，都先进行清除操作
+        drawCanvasCtx.clearRect(...screenShotData);
+        // 将 clipCanvas 裁剪区域的数据放入 drawCanvas 中
+        drawCanvasCtx.putImageData(data, 0, 0);
+        drawCanvas.style.display = 'none'
+
+        // 4. 展示图片
+        const imageUrl = drawCanvas.toDataURL('image/png')
+        drawImageNode.src = imageUrl;
+        document.body.appendChild(drawImageNode)
+
+        // 5. 生成File对象
+        drawCanvas.toBlob(blob => {
+            resultFile = new File([blob], 'test.png', { type: 'image/png' })
+        }, 'image.png')
+    }
+
+</script>

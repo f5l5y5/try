@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>截图实现</title>
+</head>
+
+<body>
+
+    <input type="file" id="file" name="file" accept="image/*" />
+    <img src="" class="preview" alt="" srcset="">
+    <button>生成截图后的file对象</button>
+
+</body>
+</html>
+
+<script>
+
+    // 1. 如何实现本地图片的预览
+    const inputFile = document.querySelector('input[type="file"]')
+    const img = document.querySelector('.preview')
+    const btn = document.querySelector('button')
+
+    inputFile.onchange = e => {
+        const file = e.target.files[0]
+        console.log('打印***file', file)
+
+        const reader = new FileReader()
+        reader.onload = e => {
+            console.log('打印***e', e)
+            img.src = e.target.result
+            // 实现裁剪
+        }
+        const res = reader.readAsDataURL(file)
+        console.log('打印***res', res)
+
+    }
+
+
+
+
+
+    // 2. 如何实现图片的截取
+
+
+    btn.onclick = () => {
+        // 拿到裁剪后的file对象
+        // 裁剪的对象 原图大小 裁剪的x y坐标 裁剪的尺寸  缩放后的尺寸
+        const cutInfo = {
+            x: 10,
+            y: 10,
+            cutWidth: 200,
+            cutHeight: 200,
+            width: 100,
+            height: 100
+        }
+        // 使用canvas进行绘制
+        const canvas = document.createElement('canvas')
+        canvas.width = cutInfo.width
+        canvas.height = cutInfo.height
+        const ctx = canvas.getContext('2d')
+        // 图片 原图的坐标 画的坐标 0,0 画的尺寸
+        ctx.drawImage(img, cutInfo.x, cutInfo.y, cutInfo.width, cutInfo.height,0, 0,cutInfo.cutWidth, cutInfo.cutHeight)
+
+        canvas.toBlob(blob => {
+            console.log('打印***blob', blob)
+            const file = new File([blob], 'test.png', { type: 'image/png' })
+            console.log('打印***file====', file)
+        }, 'image/png')
+        document.body.appendChild(canvas)
+
+
+
+
+    }
+
+    // 3. 如何实现图片部分的上传
+
+
+</script>
