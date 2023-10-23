@@ -1,0 +1,41 @@
+<button id="begin">开始</button>
+<button id="interaction">添加交互任务</button>
+
+<script>
+    // 死循环指定的时间
+    function delay(duration) {
+        var start = Date.now();
+        while (Date.now() - start < duration) { }
+    }
+
+    function addDelay(){
+        console.log('添加延时队列');
+        setTimeout(function(){
+            console.log('延时队列执行');
+        }, 100);
+        delay(1000);
+    }
+
+    function addNetWork(){
+        console.log('添加网络队列');
+        fetch("./index.html").then(res=>{
+            console.log('网络队列执行');
+        });
+        delay(1000);
+    }
+
+    function addInteraction(){
+        console.log('添加交互队列');
+        interaction.addEventListener('click', function(){
+            console.log('交互队列执行');
+        });
+        delay(1000);
+    }
+
+    begin.addEventListener('click', function(){
+        addInteraction();
+        addNetWork();
+        addDelay();
+        console.log('执行===============>');
+    });
+</script>

@@ -1,0 +1,17 @@
+<h1>事件循环标题</h1>
+<button>修改</button>
+
+<script>
+    var h1 = document.querySelector('h1');
+    var btn = document.querySelector('button');
+    //死循环指定的时间
+    function delay(duration) {
+        var start = Date.now();
+        while (Date.now() - start < duration) { }
+    }
+    btn.onclick = function () {
+
+        h1.textContent = '修改事件循环标题'
+        delay(3000);
+    }
+</script>
