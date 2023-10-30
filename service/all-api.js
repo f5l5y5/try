@@ -38,6 +38,15 @@ appWebSocket.ws.use((ctx, next) => {
 })
 
 // xhr
+router.get('/api/siteWork/list', (ctx) => {
+	console.log('打印***1111')
+	ctx.body = {
+		code: 200,
+		data: 'I am xhr!'
+		
+	}
+})
+// xhr
 router.post('/api/xhr', (ctx) => {
 	ctx.body = 'I am xhr!'
 })

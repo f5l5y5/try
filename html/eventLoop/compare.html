@@ -12,13 +12,16 @@
         console.log('添加延时队列');
         setTimeout(function(){
             console.log('延时队列执行');
-        }, 100);
+        }, 0);
         delay(1000);
     }
 
     function addNetWork(){
         console.log('添加网络队列');
-        fetch("./index.html").then(res=>{
+        // fetch("./index.html").then(res=>{
+        //     console.log('网络队列执行');
+        // });
+        Promise.resolve().then(function(){
             console.log('网络队列执行');
         });
         delay(1000);
@@ -33,9 +36,10 @@
     }
 
     begin.addEventListener('click', function(){
-        addInteraction();
-        addNetWork();
         addDelay();
+        addNetWork();
+        addInteraction();
         console.log('执行===============>');
+        interaction.click();
     });
 </script>
