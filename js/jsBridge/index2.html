@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第二个界面</title>
+</head>
+<body>
+    <input type="text" id="ipt" />
+    <button id="frameBtn">iframe点击</button>
+
+    <script>
+        
+        frameBtn.onclick = function(){
+            window.top.postMessage('子====>父','http://127.0.0.1:5500');
+            
+        }
+        window.addEventListener('message', function (e) {
+            console.log('子接受数据',e.data);
+            ipt.value = e.data;
+        })
+    </script>
+</body>
+</html>
+
