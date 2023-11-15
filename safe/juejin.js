@@ -76,9 +76,11 @@ const sleep = (time) => {
   }
 
   const randomNumber = random(100, total);
-  const filterArticle = shuffle(allArticle).filter((_, i) => i <= randomNumber)
+  const filterArticle = shuffle(allArticle).filter(
+    (_, i) => i <= randomNumber
+  );
   const filterLen = filterArticle.length;
-  console.log(filterArticle,filterLen)
+  console.log(filterArticle, filterLen);
 
   const maxNumber = Number(process.argv[2])
     ? Number(process.argv[2])
@@ -88,7 +90,7 @@ const sleep = (time) => {
   for (let i = 0; i < filterLen; i++) {
     const time = random(1, maxNumber) * 1000;
     const url = filterArticle[i];
-    console.log(url,i);
+    console.log(url, i);
     console.log(
       `总数${total} 本次刷新${filterLen}篇，刷新间隔${
         time / 1000
@@ -100,5 +102,3 @@ const sleep = (time) => {
   }
   await browser.close(); // 关闭浏览器实例
 })();
-
-Math.random();
