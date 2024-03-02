@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<style>
+	body {
+		height: 100vh;
+		display: flex;
+		align-items: center;
+		background: #171717;
+	}
+
+	.img-container {
+		margin: 0 auto;
+		width: 300px;
+		height: 300px;
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+	}
+
+	.img-item {
+		position: relative;
+		box-shadow: inset 0 0 0 1px #fff;
+		transition: 0.5s;
+		background-size: 300px 300px;
+		background-image: url(https://img1.baidu.com/it/u=3758374993,766184369&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=282);
+	}
+
+	/* 控制图片的x坐标 */
+	.img-item:nth-child(3n+1) {
+		left: -20px;
+		background-position-x: 0;
+		background-color: blue;
+	}
+
+	.img-item:nth-child(3n+2) {
+		left: 0px;
+		background-position-x: -100px;
+		background-color: pink;
+	}
+
+	.img-item:nth-child(3n) {
+		left: 20px;
+		background-position-x: -200px;
+		background-color: red;
+	}
+
+	/* 控制图片的y坐标 */
+	.img-item {
+		top: 20px;
+		background-position-y: -200px;
+		background-color: blue;
+	}
+
+	.img-item:nth-child(-n+6) {
+		top: 0;
+		background-position-y: -100px;
+		background-color: pink;
+	}
+
+	.img-item:nth-child(-n+3) {
+		top: -20px;
+		background-position-y: 0;
+		background-color: red;
+	}
+
+	.img-container:hover .img-item {
+		left: 0;
+		top: 0;
+		box-shadow: inset 0 0 0 0 #fff;
+	}
+
+	*/
+</style>
+
+<body>
+	<div class="img-container">
+		<div class="img-item"></div>
+		<div class="img-item"></div>
+		<div class="img-item"></div>
+		<div class="img-item"></div>
+		<div class="img-item"></div>
+		<div class="img-item"></div>
+		<div class="img-item"></div>
+		<div class="img-item"></div>
+		<div class="img-item"></div>
+	</div>
+</body>
+
+</html>

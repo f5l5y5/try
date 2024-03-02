@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+
+<body>
+	<div id="main-container">
+		<ul class="document-toc-list">
+			<li class="document-toc-item "><a class="document-toc-link" href="#尝试一下">尝试一下</a></li>
+			<li class="document-toc-item "><a class="document-toc-link" href="#属性">属性</a></li>
+			<li class="document-toc-item "><a class="document-toc-link" href="#事件">事件</a></li>
+			<li class="document-toc-item "><a class="document-toc-link" href="#使用说明">使用说明</a></li>
+			<li class="document-toc-item "><a class="document-toc-link" href="#例子">例子</a></li>
+			<li class="document-toc-item "><a class="document-toc-link" href="#服务器支持">服务器支持</a></li>
+			<li class="document-toc-item "><a class="document-toc-link" href="#规范">规范</a></li>
+			<li class="document-toc-item "><a class="document-toc-link" href="#浏览器兼容性">浏览器兼容性</a></li>
+			<li class="document-toc-item "><a class="document-toc-link" href="#参见">参见</a></li>
+		</ul>
+		<section aria-labelledby="尝试一下">
+			<h2 id="尝试一下"><a href="#尝试一下">尝试一下</a></h2>
+			<div class="section-content"><iframe class="interactive is-tabbed-standard-height" height="200"
+					src="https://interactive-examples.mdn.mozilla.net/pages/tabbed/video.html"
+					title="MDN Web Docs Interactive Example" loading="lazy" data-readystate="complete"></iframe>
+				<p>上面的例子展示了 <code>&lt;video&gt;</code> 元素的简单用法。和 <a
+						href="/zh-CN/docs/Web/HTML/Element/img"><code>&lt;img&gt;</code></a> 元素的使用类似，在 <code>src</code>
+					属性里加入一个我们需要展示的视频地址，同时也可以用其他属性来指定视频的宽度和高度、是否自动或者循环播放、是否展示浏览器默认的视频控件等。</p>
+				<p>在不支持 video 元素的浏览器中，<code>&lt;video&gt;&lt;/video&gt;</code> 标签中间的内容会显示，作为降级处理。</p>
+			</div>
+		</section>
+		<section aria-labelledby="属性">
+			<h2 id="属性"><a href="#属性">属性</a></h2>
+			<div class="section-content">
+				<p>类似于所有其他 HTML 元素，video 元素也支持 <a href="/zh-CN/docs/Web/HTML/Global_attributes">全局属性</a>。</p>
+				<dl>
+					<dt id="autoplay"><a href="#autoplay"><code>autoplay</code></a></dt>
+					<dd>
+						<p>布尔属性；声明该属性后，视频会尽快自动开始播放，不会停下来等待数据全部加载完成。</p>
+						<div class="notecard note" id="sect1">
+							<p><strong>备注：</strong>
+								自动播放音频（或有声视频）可能会破坏用户体验，所以应该尽可能避免。如果你一定要提供自动播放功能，你应该加入开关（让用户主动打开自动播放）。然而，如果需要创建一些媒体元素，其播放源由用户在稍后设置，自动播放就会很有用。想了解如何正确使用自动播放，可参见我们的
+								<a href="/zh-CN/docs/Web/Media/Autoplay_guide">自动播放指南</a>。如果使用 <code>autoplay="false"</code>
+								来关闭视频的自动播放功能，会不起作用；只要 <code>&lt;video&gt;</code> 标签中有 autoplay
+								属性，视频就会自动播放。要移除自动播放，需要完全删除该属性。在某些浏览器（例如
+								Chrome 70.0）中，如果没有设置 <code>muted</code> 属性，autoplay 将不会生效。
+							</p>
+						</div>
+					</dd>
+					<dt id="controls"><a href="#controls"><code>controls</code></a></dt>
+					<dd>
+						<p>加上这个属性，浏览器会在视频底部提供一个控制面板，允许用户控制视频的播放，包括音量，跨帧，暂停/恢复播放。</p>
+					</dd>
+					<dt id="controlslist"><a href="#controlslist"><code>controlslist</code></a></dt>
+					<dd>
+						<p>当浏览器显示视频底部的播放控制面板（例如，指定了 <code>controls</code> 属性）时，<a
+								href="https://wicg.github.io/controls-list/explainer.html" class="external"
+								target="_blank"><code>controlslist</code></a> 属性会帮助浏览器选择在控制面板上显示哪些控件。</p>
+						<p>允许的值有 <code>nodownload</code>、<code>nofullscreen</code> 和 <code>noremoteplayback</code>。</p>
+						<p>如果要禁用画中画模式（和控件），请使用 <a href="#disablepictureinpicture">disablePictureInPicture</a> 属性。</p>
+					</dd>
+					<dt id="crossorigin"><a href="#crossorigin"><code>crossorigin</code></a></dt>
+					<dd>
+						<p>该枚举属性指明是否使用 CORS（跨域资源共享）来获取相关视频。<a href="/zh-CN/docs/Web/HTML/CORS_enabled_image">允许 CORS 的资源</a> 可在
+							<a href="/zh-CN/docs/Web/HTML/Element/canvas"><code>&lt;canvas&gt;</code></a>
+							元素中被重用，而不会被<em>污染</em>。允许的值如下：
+						</p>
+						<dl>
+							<dt id="anonymous"><a href="#anonymous">anonymous</a></dt>
+							<dd>
+								<p>在发送跨域请求时不携带凭证（credential）信息。也就是说，浏览器在发送 <code>Origin:</code> HTTP 请求首部时将不会携带 cookie、X.509
+									安全令牌、也不会执行任何 HTTP 基本身份验证。如果服务器没有给予源站点信任（也就是说没有设置 <code>Access-Control-Allow-Origin:</code> HTTP
+									响应首部），图像会被 <em>污染</em>，并且它的使用会受到限制。</p>
+							</dd>
+							<dt id="use-credentials"><a href="#use-credentials">use-credentials</a></dt>
+							<dd>
+								<p>在发送跨域请求时携带凭证（credential）信息。也就是说，浏览器在发送 <code>Origin:</code> HTTP 请求首部时将会携带 cookie、安全令牌、并且执行 HTTP
+									基本身份验证。如果服务器没有给予源站点信任（通过设置 <code>Access-Control-Allow-Credentials:</code> HTTP 响应首部），图像会被
+									<em>污染</em>，并且它的使用会受到限制。不加这个属性时，获取资源不会使用 CORS 请求（即不会发送 <code>Origin:</code> HTTP 请求首部），保证其在 <a
+										href="/zh-CN/docs/Web/HTML/Element/canvas"><code>&lt;canvas&gt;</code></a>
+									元素中使用时不会被污染。如果指定非法值，会被当作指定了枚举关键字 <strong>anonymous</strong> 一样使用。查看 <a
+										href="/en-US/docs/Web/HTML/Attributes/crossorigin" class="only-in-en-us"
+										title="Currently only available in English (US)">CORS 设置属性
+										<small>(en-US)<small></small></small></a> 获取更多信息。
+								</p>
+							</dd>
+						</dl>
+					</dd>
+					<dt id="disablepictureinpicture"><a href="#disablepictureinpicture"><code>disablepictureinpicture</code></a>
+						<abbr class="icon icon-experimental" title="实验性。预期行为可能会在未来发生变更。">
+							<span class="visually-hidden">实验性</span>
+						</abbr>
+					</dt>
+					<dd>
+						<p>防止浏览器显示画中画上下文菜单或在某些情况下自动请求画中画模式。该属性可以禁用 <code>video</code> 元素的画中画特性，右键菜单中的“画中画”选项会被禁用</p>
+					</dd>
+					<dt id="disableremoteplayback"><a href="#disableremoteplayback"><code>disableRemotePlayback</code></a>
+						<abbr class="icon icon-experimental" title="实验性。预期行为可能会在未来发生变更。">
+							<span class="visually-hidden">实验性</span>
+						</abbr>
+					</dt>
+					<dd>
+						<p>布尔属性，用于在使用有线（HDMI、DVI 等）和无线技术（Miracast、Chromecast、DLNA、AirPlay 等）连接设备时，禁用远程播放功能。在 Safari 中，你可以使用 <a
+								href="https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/AirPlayGuide/OptingInorOutofAirPlay/OptingInorOutofAirPlay.html"
+								class="external" target="_blank"><code>x-webkit-airplay="deny"</code></a> 作为兜底方案。</p>
+					</dd>
+					<dt id="height"><a href="#height"><code>height</code></a></dt>
+					<dd>
+						<p>视频显示区域的高度，单位是 <a href="https://drafts.csswg.org/css-values/#px" class="external" target="_blank">CSS
+								像素</a>（仅限绝对值；<a href="https://html.spec.whatwg.org/multipage/embedded-content.html#dimension-attributes"
+								class="external" target="_blank">不支持百分比</a>）。</p>
+					</dd>
+					<dt id="loop"><a href="#loop"><code>loop</code></a></dt>
+					<dd>
+						<p>布尔属性；指定后，会在视频播放结束的时候，自动返回视频开始的地方，继续播放。</p>
+					</dd>
+					<dt id="muted"><a href="#muted"><code>muted</code></a></dt>
+					<dd>
+						<p>布尔属性，指明在视频中音频的默认设置。设置后，音频会初始化为静音。默认值是 false, 意味着视频播放的时候音频也会播放。</p>
+					</dd>
+					<dt id="playsinline"><a href="#playsinline"><code>playsinline</code></a></dt>
+					<dd>
+						<p>布尔属性，指明视频将内联（inline）播放，即在元素的播放区域内。请注意，没有此属性并不意味着视频始终是全屏播放的。</p>
+					</dd>
+					<dt id="poster"><a href="#poster"><code>poster</code></a></dt>
+					<dd>
+						<p>海报帧图片 URL，用于在视频处于下载中的状态时显示。如果未指定该属性，则在视频第一帧可用之前不会显示任何内容，然后将视频的第一帧会作为海报（poster）帧来显示。</p>
+					</dd>
+					<dt id="preload"><a href="#preload"><code>preload</code></a></dt>
+					<dd>
+						<p>该枚举属性旨在提示浏览器，作者认为在播放视频之前，加载哪些内容会达到最佳的用户体验。可能是下列值之一：</p>
+						<ul>
+							<li><code>none</code>: 表示不应该预加载视频。</li>
+							<li><code>metadata</code>: 表示仅预先获取视频的元数据（例如长度）。</li>
+							<li><code>auto</code>: 表示可以下载整个视频文件，即使用户不希望使用它。</li>
+							<li><em>空字符串</em>: 和值为 <code>auto</code> 一致。每个浏览器的默认值都不相同，即使规范建议设置为 <code>metadata</code>。</li>
+						</ul>
+						<div class="notecard note" id="sect2">
+							<p><strong>备注：</strong> <code>autoplay</code> 属性的优先级比 <code>preload</code> 高。如果制定了
+								<code>autopaly</code>属性，浏览器显然需要开始下载视频以便回放。规范没有强制浏览器去遵循该属性的值，这仅仅只是个提示。
+							</p>
+						</div>
+					</dd>
+					<dt id="src"><a href="#src"><code>src</code></a></dt>
+					<dd>
+						<p>要嵌到页面的视频的 URL。可选；你也可以使用 video 块内的 <a
+								href="/zh-CN/docs/Web/HTML/Element/source"><code>&lt;source&gt;</code></a> 元素来指定需要嵌到页面的视频。</p>
+					</dd>
+					<dt id="width"><a href="#width"><code>width</code></a></dt>
+					<dd>
+						<p>视频显示区域的宽度，单位是 <a href="https://drafts.csswg.org/css-values/#px" class="external" target="_blank">CSS
+								像素</a>（仅限绝对值；<a href="https://html.spec.whatwg.org/multipage/embedded-content.html#dimension-attributes"
+								class="external" target="_blank">不支持百分比</a>）。</p>
+					</dd>
+				</dl>
+			</div>
+		</section>
+	</div>
+
+</body>
+
+</html>
+
+<script>
+
+	document.addEventListener('DOMContentLoaded', (event) => {
+
+
+		// 您的脚本  
+		var container = document.getElementById("main-container");
+
+		console.log('打印***contentNode', container.scrollHeight)
+		container.scrollTop = 300
+		// container.scrollBy(0, 500)
+		// container.scrollTo(0, 500);
+	});
+
+
+	// // 获取可视范围的高度
+	// var windowHeight = window.innerHeight;
+
+	// // 获取滚动条的位置
+	// var scrollPosition = window.scrollY;
+
+	// // 获取所有可能的元素
+	// var elements = document.querySelectorAll('*');
+
+	// // 遍历元素
+	// for (var i = 0; i < elements.length; i++) {
+	// 	var element = elements[i];
+
+	// 	// 检查元素位置
+	// 	var elementOffset = element.offsetTop;
+	// 	var elementHeight = element.offsetHeight;
+
+	// 	// 判断元素是否在可视范围内
+	// 	if (elementOffset >= scrollPosition && elementOffset <= (scrollPosition + windowHeight)) {
+	// 		// 第一个可视元素
+	// 		console.log('第一个可视元素：', element);
+	// 		break;
+	// 	}
+	// }
+
+
+
+
+
+	// const element = document.getElementById('尝试一下');
+	// const rect = element.getBoundingClientRect();
+	// const elementTop = rect.top;
+	// const elementBottom = rect.bottom;
+
+	// const scrollY = window.scrollY;
+
+	// const viewportHeight = window.innerHeight;
+	// const isInViewport = (elementTop <= (viewportHeight + scrollY) && elementBottom >= scrollY);
+
+	// if (isInViewport) {
+	// 	console.log('元素在可视区域内');
+	// } else {
+	// 	console.log('元素不在可视区域内');
+	// }
+
+	function isInViewport(element) {
+		var rect = element.getBoundingClientRect();
+		return (
+			rect.bottom > 0 &&
+			rect.top < window.innerHeight &&
+			rect.right > 0 &&
+			rect.left < window.innerWidth
+		);
+	}
+
+	// 使用示例：
+	const element = document.getElementById('尝试一下');
+
+	var isVisible = isInViewport(element);
+	console.log(isVisible);
+
+
+</script>

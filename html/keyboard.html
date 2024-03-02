@@ -1,0 +1,16 @@
+<script>
+	// 创建一个按键组合的事件对象
+	var event = new KeyboardEvent('keydown', {
+		key: 'o',
+		// code: 'KeyO',
+		// ctrlKey: true,
+		// metaKey: true
+	});
+
+	// 模拟按下Win+Ctrl+O组合键
+	document.dispatchEvent(event);
+	new Promise((resolve, reject) => {
+		console.log(1);
+		resolve();
+	})
+</script>
