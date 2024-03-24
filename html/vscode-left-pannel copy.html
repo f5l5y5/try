@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>VS Code Left Panel</title>
+	<style>
+		.tree-node {
+			cursor: pointer;
+			position: relative;
+			/* 为伪元素设置定位上下文 */
+		}
+
+		.tree-node::before {
+			content: '▶';
+			/* 使用Unicode字符表示箭头 */
+			display: inline-block;
+			margin-right: 5px;
+			/* 为箭头和文字之间添加间距 */
+			transition: transform 0.2s ease-in-out;
+			/* 平滑变换箭头方向 */
+		}
+
+		.tree-node.expanded::before {
+			transform: rotate(90deg);
+			/* 旋转箭头以表示展开状态 */
+		}
+
+		.ml-20 {
+			margin-left: 20px;
+		}
+	</style>
+</head>
+
+<body>
+	<div>
+		<div class="tree-node" data-is-folder="true">
+			Folder 1
+			<div class="ml-20">
+				<div data-is-file="true">File 1.1</div>
+				<div class="tree-node" data-is-folder="true">
+					Folder 1.1
+					<div class="ml-20">
+						<div data-is-file="true">File 1.1.1</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const treeNodes = document.querySelectorAll('.tree-node');
+
+			treeNodes.forEach(function (treeNode) {
+				treeNode.addEventListener('click', function (e) {
+					// 如果点击的是文件夹，则进行展开或折叠  
+					if (treeNode.dataset.isFolder === 'true') {
+						e.stopPropagation(); // 阻止事件冒泡，防止父级文件夹也被点击  
+
+						// 切换展开/折叠状态  
+						treeNode.classList.toggle('expanded');
+					}
+				});
+			});
+		});
+	</script>
+</body>
+
+</html>

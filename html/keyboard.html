@@ -1,16 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		.container {
+			width: 500px;
+			height: 300px;
+			border: 1px solid green;
+		}
+
+		.left {
+			width: 200px;
+			height: 100px;
+			border: 1px solid;
+		}
+
+		.right {
+			width: 300px;
+			height: 100px;
+			border: 1px solid;
+
+		}
+
+		.divider {
+			float: right;
+			width: 300px;
+			height: 5px;
+			margin: 10px 0;
+			background-color: red;
+		}
+
+		.flex {
+			display: flex;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<div class="flex">
+			<div class="left">left</div>
+			<div class="right">right</div>
+		</div>
+		<div class="divider"></div>
+
+	</div>
+</body>
+
+</html>
+
+
 <script>
 	// 创建一个按键组合的事件对象
-	var event = new KeyboardEvent('keydown', {
-		key: 'o',
-		// code: 'KeyO',
-		// ctrlKey: true,
-		// metaKey: true
-	});
+	// var event = new KeyboardEvent('keydown', {
+	// 	key: 'o',
+	// 	// code: 'KeyO',
+	// 	// ctrlKey: true,
+	// 	// metaKey: true
+	// });
 
-	// 模拟按下Win+Ctrl+O组合键
-	document.dispatchEvent(event);
-	new Promise((resolve, reject) => {
-		console.log(1);
-		resolve();
-	})
+	// // 模拟按下Win+Ctrl+O组合键
+	// document.dispatchEvent(event);
+	// new Promise((resolve, reject) => {
+	// 	console.log(1);
+	// 	resolve();
+	// })
 </script>
