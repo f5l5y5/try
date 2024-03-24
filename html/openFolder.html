@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
+	<title>vscode</title>
 </head>
 
 <style>
@@ -15,38 +15,42 @@
 
 	.left {
 		width: 30%;
+		height: 100%;
+		overflow: auto;
 		padding: 16px;
 		border: 1px solid #999;
 	}
 
 	.right {
 		width: 70%;
+		height: 100%;
+		overflow: auto;
 		padding: 16px;
 		border: 1px solid #999;
 		border-left: 0;
 	}
-</style>
 
-<style>
+
 	.tree-node {
 		cursor: pointer;
-		position: relative;
 		/* 为伪元素设置定位上下文 */
+		position: relative;
 	}
 
 	.tree-node::before {
-		content: '▶';
-		/* 使用Unicode字符表示箭头 */
+		/* 使用Unicode字符表示箭头  向下箭头*/
+		content: '▾';
+		/* content: '▶'; */
 		display: inline-block;
-		margin-right: 5px;
 		/* 为箭头和文字之间添加间距 */
-		transition: transform 0.2s ease-in-out;
+		margin-right: 5px;
 		/* 平滑变换箭头方向 */
+		transition: transform 0.2s ease-in-out;
 	}
 
 	.tree-node.expanded::before {
-		transform: rotate(90deg);
 		/* 旋转箭头以表示展开状态 */
+		transform: rotate(-90deg);
 	}
 
 	.ml-20 {
@@ -73,107 +77,110 @@
 		</div>
 	</div>
 
-	<div class="ml-20"></div>
-
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
 	<!-- and it's easy to individually load additional languages -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
 
-	<script></script>
 	<script>
-
-
-
 
 
 		const folderNode = document.getElementById('folder')
 		const contentNode = document.getElementById('content')
-
-
 		const btnNode = document.querySelector('button')
+
+
 		btnNode.onclick = async () => {
 			//使用showDirectoryPicker()方法打开文件夹选择器，并获取文件夹句柄（handle）
 			const handle = await showDirectoryPicker()
-			console.log('打印***handle', handle)
 			await processHandle(handle)
-			console.log('打印***handle======', handle)
-			// 展示到页面
+			// 将文件夹内容添加到页面中
 			let container = processHtml(handle)
-			let content = ''
-
-
-			function processHtml(handle) {
-				const isFolder = handle.kind === 'directory'
-				const div = document.createElement('div')
-				div.textContent = handle.name
-				div.classList.add('ml-20')
-				if (isFolder) {
-					div.classList.add('tree-node')
-					div.dataset.isFolder = true
-					// 添加折叠效果
-					div.addEventListener('click', function (e) {
-						// 如果点击的是文件夹，则进行展开或折叠  
-						e.stopPropagation(); // 阻止事件冒泡，防止父级文件夹也被点击  
-
-						// 切换展开/折叠状态  
-						div.classList.toggle('expanded');
-
-					});
-					// 递归处理文件夹目录
-					if (handle.children.length) {
-						for (let i = 0; i < handle.children.length; i++) {
-							const element = handle.children[i];
-							const eleHtml = processHtml(element)
-							div.appendChild(eleHtml)
-						}
-					}
-				} else {
-					div.dataset.isFile = true
-					div.addEventListener('click', async function (e) {
-						content = await readFile(handle)
-
-
-						contentNode.innerText = content
-						hljs.highlightAll();
-
-
-						e.stopPropagation(); // 阻止事件冒泡，防止父级文件夹也被点击  
-
-					})
-				}
-				return div
-			}
-
-
-
 			folderNode.appendChild(container)
 		}
-
+		/**
+		 * 读取文件内容
+		 * @param {*} handle 
+		 * @returns 
+		 */
 		async function readFile(handle) {
 			return new Promise(async (resolve, reject) => {
 				const file = await handle.getFile()
 				const fileReader = new FileReader()
 				fileReader.readAsText(file)
 				fileReader.onload = e => {
-					console.log(e.target.result);
 					resolve(e.target.result)
 				}
 			})
 		}
 
 
+		/**
+		 * 递归处理句柄
+		 * @param {*} handle 
+		 * @returns 
+		 */
+		function processHtml(handle) {
+			const isFolder = handle.kind === 'directory'
+			const div = document.createElement('div')
+			div.textContent = handle.name
+			div.classList.add('ml-20')
+			if (isFolder) {
+				div.classList.add('tree-node')
+				div.dataset.isFolder = true
+				// 添加折叠效果
+				div.addEventListener('click', function (e) {
+					// 如果点击的是文件夹，则进行展开或折叠  
+					e.stopPropagation(); // 阻止事件冒泡，防止父级文件夹也被点击  
+					// 切换展开/折叠状态  
+					div.classList.toggle('expanded');
+					// 将子元素隐藏
+					// 获取所有的直接子元素  
+					const childElements = div.children;
+					// 遍历所有的直接子元素并将它们隐藏  
+					for (let i = 0; i < childElements.length; i++) {
+						let isHidden = childElements[i].style.display === 'none';
+						childElements[i].style.display = isHidden ? 'block' : 'none';
+					}
+				});
+				// 递归处理文件夹目录
+				if (handle.children.length) {
+					for (let i = 0; i < handle.children.length; i++) {
+						const element = handle.children[i];
+						const eleHtml = processHtml(element)
+						div.appendChild(eleHtml)
+					}
+				}
+			} else {
 
+				div.dataset.isFolder = false
+				// 添加背景色
+				div.style.backgroundColor = '#f0f0f0'
+				div.addEventListener('click', async function (e) {
+					e.stopImmediatePropagation(); // 阻止事件冒泡，防止父级文件夹也被点击  
+				const	content = await readFile(handle)
+					contentNode.innerText = content
+					hljs.highlightAll();
+				})
+			}
+			return div
+		}
+
+		/** 
+		 * 递归处理文件夹目录
+		 * @param {*} handle 
+		 * @returns 
+		 */
 		async function processHandle(handle) {
 			if (handle.kind === 'file') {
 				return;
 			}
 			handle.children = []
-			const iter = await handle.entries()// 获取文件夹中的所有内容
+			// 获取文件夹中的所有内容
+			const iter = await handle.entries()
 			// 返回异步迭代器
 			for await (const entry of iter) {
-				console.log('打印***entry', entry)
 				await processHandle(entry[1])
 				handle.children.push(entry[1])
 			}
