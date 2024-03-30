@@ -40,10 +40,9 @@ let sum = 1;
   }
 
   const allArticle = [
-    // "https://juejin.cn/post/7336656747284004900",
-    // "https://juejin.cn/post/7337170233604603967",
-    // "https://juejin.cn/post/7338742634168139788",
-    "https://juejin.cn/post/7340152660224720908",
+    "https://juejin.cn/post/7351728888982503460",
+    "https://juejin.cn/post/7349437605857837067",
+    "https://juejin.cn/post/7349360925185785867",
   ];
   reader(allArticle);
   const timer = setInterval(async () => {
