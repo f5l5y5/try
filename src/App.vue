@@ -1,7 +1,8 @@
 <template>
 	<!-- <Scope /> -->
-<VirtualList />
+<!-- <VirtualList /> -->
 <Speech />
+<img :src="base" alt="" srcset="">
 
 </template>
 
@@ -17,6 +18,12 @@
 <!-- <Webwork /> -->
 <script setup>
 import Speech from './components/Speech.vue';
+import base from './img.data?raw';
+
+console.log('打印***base',base)
+
+// import { ref } from 'vue'
+// const base = ref(base)
 // import Dom from './components/Dom.vue'
 // import VirtualList from './components/VirtualList.vue'
 // import Demo from './components/Demo.vue'
