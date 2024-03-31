@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		.container {
+			position: relative;
+		}
+
+		video {
+			width: 400px;
+			height: 300px;
+		}
+
+		.modal {
+			width: 408px;
+			height: 300px;
+			position: absolute;
+			left: 0;
+			top: 0;
+			background: rgba(0, 0, 0, 0.3);
+			justify-content: center;
+			align-items: center;
+			z-index: 9;
+		}
+
+		.btn {
+			background-color: #4CAF50;
+			border: none;
+			color: white;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+		}
+	</style>
+</head>
+
+<body>
+
+	<!-- <input type="file" id="ipt" /> -->
+
+	<div class="container">
+		<video src="./test.mp4" controls></video>
+		<div class="modal">
+			<!-- 开始播放/ -->
+			<button class="btn">打开声音</button>
+		</div>
+	</div>
+
+	<script>
+		const vdo = document.querySelector('video')
+		const modal = document.querySelector('.modal')
+		const btn = document.querySelector('.btn')
+
+		// 第一种方案：
+		async function play() {
+			try {
+				await vdo.play()
+				modal.style.display = 'none';
+				btn.removeEventListener('click', play)
+
+			} catch (error) {
+				console.log(error);
+				// 失败显示蒙层
+				modal.style.display = 'flex'
+				btn.addEventListener('click', play)
+			}
+		}
+
+
+		// 第二种方案
+
+		async function play() {
+			vdo.muted = true;
+			vdo.play()
+			const ctx = new AudioContext()
+			const canAutoPlay = ctx.state === 'running'
+			ctx.close()
+			if (canAutoPlay) {
+				vdo.muted = false
+				modal.style.display = 'none';
+				btn.removeEventListener('click', play)
+			} else {
+				// 无声音显示声音
+				modal.style.display = 'flex'
+				btn.addEventListener('click', play)
+			}
+		}
+		play()
+	</script>
+
+
+
+	<!-- <script>
+		const inputNode = document.getElementById('ipt')
+		inputNode.onchange = async (e) => {
+			console.log('打印***e.target', e)
+			const file = e.target.files[0]
+			const res = await captureFrame(file)
+			console.log('打印***res', res)
+			const img = document.createElement('img')
+			img.src = res.url
+			img.width = 200
+			img.height = 200
+			document.body.appendChild(img)
+		}
+
+		function drawVideo(videoNode) {
+			return new Promise((resolve, reject) => {
+				const cvs = document.createElement('canvas');
+				const ctx = cvs.getContext('2d')
+				cvs.width = videoNode.videoWidth
+				cvs.height = videoNode.videoHeight
+				ctx.drawImage(videoNode, 0, 0, cvs.width, cvs.height)
+				cvs.toBlob(blob => {
+					resolve({
+						blob,
+						url: URL.createObjectURL(blob)
+					})
+				})
+			})
+		}
+
+
+		// canvas 
+		// 视频 使用video -> 画入canvas -> 提取图片
+		function captureFrame(videoFile, time = 0) {
+			return new Promise(resolve => {
+				const videoNode = document.createElement('video')
+				videoNode.currentTime = time
+				videoNode.muted = true // 静音 是都可以播放的
+				videoNode.autoplay = true
+				// 是什么，能够读取本地的数据的url，开头是blob
+				videoNode.src = URL.createObjectURL(videoFile)
+				// 需要时间准备好时间进行播放即可
+				videoNode.oncanplay = async () => {
+					const res = await drawVideo(videoNode)
+					resolve(res)
+				}
+			})
+
+		}
+
+
+	</script> -->
+</body>
+
+</html>
