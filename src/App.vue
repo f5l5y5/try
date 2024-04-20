@@ -1,9 +1,29 @@
 <template>
-	<!-- <Scope /> -->
-<!-- <VirtualList /> -->
-<Speech />
-<img :src="base" alt="" srcset="">
-
+    <!-- <Scope /> -->
+    <!-- <VirtualList /> -->
+    <!-- <Speech />
+<img :src="base" alt="" srcset=""> -->
+    <SlotDemo :dynamicName="dynamicName">
+        <!-- <template v-slot:default>
+            默认插槽(v-slot:default)
+        </template> -->
+        <!-- <template #default>
+            默认插槽(v-slot:default)
+        </template> -->
+        默认插槽
+        <!-- <template v-slot:default="{ title }">
+            {{ title }}
+        </template> -->
+        <!-- <template #header>
+            具名插槽
+        </template>
+        <template #content="obj">
+            作用域插槽{{ obj }}
+        </template>
+        <template v-slot:[dynamicName]="{a,b}">
+            动态插槽{{ a }}-{{ b }}
+        </template> -->
+    </SlotDemo>
 </template>
 
 <!-- <VirtualList /> -->
@@ -17,11 +37,9 @@
 <!-- <Curd /> -->
 <!-- <Webwork /> -->
 <script setup>
-import Speech from './components/Speech.vue';
-import base from './img.data?raw';
-
-console.log('打印***base',base)
-
+import { ref } from 'vue'
+// import Speech from './components/Speech.vue';
+// import base from './img.data?raw';
 // import { ref } from 'vue'
 // const base = ref(base)
 // import Dom from './components/Dom.vue'
@@ -35,10 +53,9 @@ console.log('打印***base',base)
 // import Webwork from './components/Webwork.vue'
 // import Scope from './components/Scope.vue';
 // import './utils/ast'
+import SlotDemo from './components/SlotDemo.vue'
 
-	
-
-
+const dynamicName = ref('footer')
 
 
 
