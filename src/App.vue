@@ -10,7 +10,7 @@
         <!-- <template #default>
             默认插槽(v-slot:default)
         </template> -->
-        默认插槽
+        <!-- 默认插槽 -->
         <!-- <template v-slot:default="{ title }">
             {{ title }}
         </template> -->

@@ -1,0 +1,1 @@
+console.log('打印***nodes', document.querySelectorAll('p'))

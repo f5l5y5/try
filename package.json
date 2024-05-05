@@ -22,6 +22,7 @@
     "element-plus": "^2.3.3",
     "eslint7": "npm:eslint@7",
     "eslint8": "npm:eslint",
+    "pixiu-number-toolkit": "^1.3.0",
     "qrcodejs2": "^0.0.2",
     "sass": "^1.63.6",
     "vue": "^3.2.47",
