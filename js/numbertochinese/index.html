@@ -1,6 +1,24 @@
 <script>
 
     function numToWords(num) {
+
+        const map = {
+            零: '睿',
+            一: '壹',
+            二: '贰',
+            三: '叁',
+            四: '肆',
+            五: '伍',
+            六: '陆',
+            七: '柒',
+            八: '捌',
+            九: '玖',
+            十: '拾',
+            百: '佰',
+            千: '仟',
+            万: '萬',
+            亿: '亿',
+        }
         // 四位进行分割
         const numStr = num.toString().replace(/(?=(\d{4})+$)/g, ',')
             .split(',')
@@ -28,7 +46,7 @@
             result = '十'
         }
 
-        return result
+        return result.split('').map(s => map[s]).join('')
 
         function _handleZero(str) {
             return str.replace(/零{2,}/g, '零').replace(/零+$/, '')
