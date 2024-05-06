@@ -38,6 +38,14 @@
 <!-- <Webwork /> -->
 <script setup>
 import { ref } from 'vue'
+import { numberToWords } from "pixiu-number-toolkit";
+
+const number = 120012;
+const resultEn = numberToWords(number, "en");
+console.log(resultEn); // Outputs: "one thousand two hundred thirty four"
+
+const resultZh = numberToWords(number, "zh");
+console.log(resultZh); // Outputs: "一千二百三十四" 一百二十三万四千零一十二
 // import Speech from './components/Speech.vue';
 // import base from './img.data?raw';
 // import { ref } from 'vue'
