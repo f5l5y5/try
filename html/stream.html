@@ -7,13 +7,13 @@
     <title>Document</title>
 </head>
 <body>
-    <a href="http://localhost:3000/download" download="file.pdf">下载文件</a>
+    <a href="http://localhost:5500/download" download>下载文件服务器</a>
 
-    <button id="downloadButton">下载文件</button>
+    <button id="downloadButton">下载文件客户端</button>
 
     <script>
         document.getElementById('downloadButton').addEventListener('click', async () => {
-            const url = 'http://localhost:3000/download'; // 替换为你的文件下载URL
+            const url = 'http://localhost:5500/download'; // 替换为你的文件下载URL
             try {
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Network response was not ok');
@@ -22,7 +22,7 @@
                 const urlBlob = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = urlBlob;
-                a.download = 'largefile.pdf';
+                a.download = 'largeFile.pdf';
                 document.body.appendChild(a);
                 a.click();
                 a.remove();
