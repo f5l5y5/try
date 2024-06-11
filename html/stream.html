@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <a href="http://localhost:3000/download" download="file.pdf">下载文件</a>
+
+    <button id="downloadButton">下载文件</button>
+
+    <script>
+        document.getElementById('downloadButton').addEventListener('click', async () => {
+            const url = 'http://localhost:3000/download'; // 替换为你的文件下载URL
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const blob = await response.blob();
+                const urlBlob = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = urlBlob;
+                a.download = 'largefile.pdf';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(urlBlob);
+            } catch (error) {
+                console.error('Download failed:', error);
+            }
+        });
+    </script>
+</body>
+</html>

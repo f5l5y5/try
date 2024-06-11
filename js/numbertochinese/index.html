@@ -3,7 +3,7 @@
     function numToWords(num) {
 
         const map = {
-            零: '睿',
+            零: '零',
             一: '壹',
             二: '贰',
             三: '叁',
@@ -19,14 +19,13 @@
             万: '萬',
             亿: '亿',
         }
+        const bigUnits = ["", "万", "亿"];
+        const chars = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
+        const units = ["", "十", "百", "千"];
         // 四位进行分割
         const numStr = num.toString().replace(/(?=(\d{4})+$)/g, ',')
             .split(',')
             .filter(Boolean)
-
-        const bigUnits = ["", "万", "亿"];
-        const chars = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
-        const units = ["", "十", "百", "千"];
 
         let result = ''
         for (let i = 0; i < numStr.length; i++) {
@@ -70,9 +69,7 @@
             }
             return _handleZero(result)
         }
-        console.log('打印***numStr', num.toString(), numStr)
     }
-    console.log('打印***numToWords(10)', numToWords(10))
 
-
+    console.log('打印***numToWords(1234)', numToWords(11234))
 </script>
