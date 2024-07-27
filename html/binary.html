@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="file" name="file" id="file">
+    <div id="drag"></div>
+    <script>
+        const inputNode = document.getElementById('file')
+        inputNode.addEventListener('change', (e) => {
+            const file = e.target.files[0]
+            console.log('打印***file', file)
+
+            if (file) {
+                const reader = new FileReader();
+
+                // Read as Data URL
+                // reader.readAsDataURL(file);
+                // reader.onload = function (e) {
+                //     console.log('打印***e,reader', e, reader)
+                //     const dataURL = reader.result;
+                //     const base64String = dataURL.split(',')[1];
+                //     const binaryString = atob(base64String);
+                //     const arrayBuffer = new ArrayBuffer(binaryString.length);
+                //     const uint8Array = new Uint8Array(arrayBuffer);
+                //     for (let i = 0; i < binaryString.length; i++) {
+                //         uint8Array[i] = binaryString.charCodeAt(i);
+                //     }
+                //     const blob = new Blob([arrayBuffer], { type: file.type });
+                //     const newFile = new File([blob], file.name, { type: file.type });
+                //     console.log('Data URL to Blob:', blob);
+                //     console.log('Data URL to File:', newFile);
+                // };
+
+                // Read as ArrayBuffer
+                reader.readAsArrayBuffer(file);
+                reader.onload = function () {
+                    const arrayBuffer = reader.result;
+                    const blob = new Blob([arrayBuffer], { type: file.type });
+                    const newFile = new File([blob], file.name, { type: file.type });
+                    console.log('ArrayBuffer to Blob:', blob);
+                    console.log('ArrayBuffer to File:', newFile);
+                };
+
+                // Read as Binary String
+                // reader.readAsBinaryString(file);
+                // reader.onload = function () {
+                //     const binaryString = reader.result;
+                //     const arrayBuffer = new ArrayBuffer(binaryString.length);
+                //     const uint8Array = new Uint8Array(arrayBuffer);
+                //     for (let i = 0; i < binaryString.length; i++) {
+                //         uint8Array[i] = binaryString.charCodeAt(i);
+                //     }
+                //     const blob = new Blob([arrayBuffer], { type: file.type });
+                //     const newFile = new File([blob], file.name, { type: file.type });
+                //     console.log('Binary String to Blob:', blob);
+                //     console.log('Binary String to File:', newFile);
+                // };
+
+                // Read as Text 
+                // reader.readAsText(file);
+                // reader.onload = function () {
+                //     const text = reader.result;
+                //     const blob = new Blob([text], { type: file.type });
+                //     const newFile = new File([blob], file.name, { type: file.type });
+                //     console.log('Text to Blob:', blob);
+                //     console.log('Text to File:', newFile);
+                // };
+            }
+
+
+
+
+
+
+            // 两个相互转换
+            // fileToBlob(file)
+            // const url = URL.createObjectURL(file)
+            // console.log('打印***url-原来', url)
+
+
+
+        })
+
+        const dragNode = document.getElementById('drag')
+
+
+
+
+        function fileToBlob(file) {
+            let reader = new FileReader();
+            let rs = reader.readAsArrayBuffer(file);
+            let blob = null;
+            reader.onload = (e) => {
+                if (typeof e.target.result === 'object') {
+                    blob = new Blob([e.target.result], { type: 'image/jpeg' })
+                    console.log('打印***blob', URL.createObjectURL(blob))
+
+                    const file1 = new File([blob], '1.png', { type: "image/jpeg" })
+                    console.log('打印***file', URL.createObjectURL(file1))
+
+                }
+            }
+        }
+
+
+
+    </script>
+</body>
+
+</html>
