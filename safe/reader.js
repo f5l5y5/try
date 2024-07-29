@@ -29,12 +29,11 @@ let browser, page
 		}
 
 		const allArticle = [
-			// "https://juejin.cn/post/7351728888982503460",
-			"https://juejin.cn/post/7349437605857837067",
-			// "https://juejin.cn/post/7349360925185785867",
-			// "https://juejin.cn/post/7351691676917170187",
-			// "https://juejin.cn/post/7352079398072746047",
-			"https://juejin.cn/post/7352146376632582178"
+			"https://juejin.cn/post/7395866692798201871"
+			// "https://juejin.cn/post/7387613689563676684",
+			// "https://juejin.cn/post/7386497602194096169",
+			// "https://juejin.cn/post/7385778376276033577",
+			// "https://juejin.cn/post/7382484880288399397",
 		];
 
 
@@ -58,5 +57,5 @@ let browser, page
 			clearInterval(timer)
 			browser.close(); // 关闭浏览器实例
 		};
-	}, 80 * 1000);
+	}, 1000 * 60);
 })();
