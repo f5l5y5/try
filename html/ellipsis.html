@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .flex {
+            margin-top: 200px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .left {
+            width: 100px;
+            flex-shrink: 0;
+            border-right: 1px solid red;
+        }
+
+        .right {
+            flex-grow: 1;
+            /* min-width: 0; */
+            /* overflow: hidden; */
+
+        }
+
+        .ellipsis {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="flex">
+        <div class="left">左边</div>
+        <div class="right">
+            <!-- 右边 这是一段非常长的文字，我看看这个到底时怎么显示这是一段非常长的文字，我看看这个到底时怎么显示 -->
+            <div class="ellipsis">右边 这是一段非常长的文字，我看看这个到底时怎么显示这是一段非常长的文字，我看看这个到底时怎么显示</div>
+        </div>
+    </div>
+
+</body>
+<script>
+
+
+
+
+
+
+
+
+
+
+
+
+    function getMember(num) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if (num === 1) {
+                    resolve(num)
+                }
+                if (num === 0) {
+                    // reject() 
+                }
+            }, 2000)
+        })
+    }
+
+    async function loginByUnionId(num) {
+        return await getMember(num)
+    }
+
+    function getList() {
+        return new Promise((resolve, reject) => {
+            loginByUnionId(1).then(res => {
+                resolve(res)
+                console.log('打印***res', res)
+            }).catch(err => {
+                console.log('打印***err', err)
+                // reject(err)
+            })
+        })
+    }
+
+    // function getList(num){
+    //     return new Promise((resolve, reject) => {
+    //         setTimeout(()=>{
+    //             if(num){
+    //                 resolve('complete')
+    //             }
+    //         },1000)
+    //     })
+    // }
+
+    async function init() {
+        try {
+            console.log('打印***start')
+            await getMember(3)
+            console.log('打印***end')
+        } catch (err) {
+            console.log('打印***err try', err)
+        } finally {
+            console.log('打印***finally')
+        }
+    }
+    // init()
+
+    
+
+
+    ; (() => {
+        const observerStore = new ResizeObserverStore()
+        console.log('打印***observerStore', observerStore.ob)
+
+        //         try {
+        //         }
+        // } catch (err) {
+        //         alert("引擎无法理解这段代码，它是无效的");
+        //     } finally {
+        //         console.log('打印***finally')
+        //     }
+
+        // try {
+        //     setTimeout(function () {
+        //         try {
+        //             noSuchVariable; // 脚本将在这里停止运行
+        //         } catch (error) {
+        //             console.log(error)
+        //         }
+        //     }, 1000);
+        // } catch (err) {
+        //     alert("不工作");
+        // } finally {
+        //     console.log('打印***finally')
+        // }
+
+
+
+
+
+    })()
+
+
+
+</script>
+
+</html>

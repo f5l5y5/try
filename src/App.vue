@@ -3,18 +3,18 @@
     <!-- <VirtualList /> -->
     <!-- <Speech />
 <img :src="base" alt="" srcset=""> -->
-    <SlotDemo :dynamicName="dynamicName">
-        <!-- <template v-slot:default>
+    <!-- <SlotDemo :dynamicName="dynamicName"> -->
+    <!-- <template v-slot:default>
             默认插槽(v-slot:default)
         </template> -->
-        <!-- <template #default>
+    <!-- <template #default>
             默认插槽(v-slot:default)
         </template> -->
-        <!-- 默认插槽 -->
-        <!-- <template v-slot:default="{ title }">
+    <!-- 默认插槽 -->
+    <!-- <template v-slot:default="{ title }">
             {{ title }}
         </template> -->
-        <!-- <template #header>
+    <!-- <template #header>
             具名插槽
         </template>
         <template #content="obj">
@@ -23,7 +23,16 @@
         <template v-slot:[dynamicName]="{a,b}">
             动态插槽{{ a }}-{{ b }}
         </template> -->
-    </SlotDemo>
+    <!-- </SlotDemo> -->
+     <div style="width: 100%; height: 100vw;">
+         <XScroll>
+             <div style="display: flex;">
+                 <div v-for="item in imgList">
+                     <img :src="item" alt="" srcset=""/>
+                 </div>
+             </div>
+         </XScroll>
+     </div>
 </template>
 
 <!-- <VirtualList /> -->
@@ -37,8 +46,17 @@
 <!-- <Curd /> -->
 <!-- <Webwork /> -->
 <script setup>
+import XScroll from './components/XScroll.vue';
 import { ref } from 'vue'
 import { numberToWords } from "pixiu-number-toolkit";
+
+
+const imgList = ref([
+"https://img2.baidu.com/it/u=1544882228,2394903552&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1727802000&t=cafe1457abb360a6e9f5c69ebe8cd714",
+"https://img2.baidu.com/it/u=446981511,947966320&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1727802000&t=0ce136397a90ae2a165b5e52bc7e4fa2",
+"https://img0.baidu.com/it/u=3422287847,344441285&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1727802000&t=0f108f51a77533d1a78cf7e250e7bd76",
+])
+
 
 const number = 120012;
 const resultEn = numberToWords(number, "en");
