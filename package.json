@@ -12,6 +12,7 @@
     "postlint": "node ./lifecycle.js"
   },
   "dependencies": {
+    "@resvg/resvg-js": "2.2.0",
     "@sunrisecn/axios-abort": "1.1.0",
     "@vueuse/core": "^10.1.2",
     "abort": "npm:@sunrisecn/axios-abort@1.0.0",
@@ -25,6 +26,8 @@
     "pixiu-number-toolkit": "^1.3.0",
     "qrcodejs2": "^0.0.2",
     "sass": "^1.63.6",
+    "satori": "0.0.44",
+    "satori-html": "0.3.2",
     "vue": "^3.2.47",
     "vue3-print-nb": "^0.1.4",
     "xlsx": "^0.18.5"
