@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="app">{{ message }}</div>
+    <script type="importmap">
+        {
+        "imports": {
+        "vue": "https://cdn.jsdelivr.net/npm/@vue/runtime-dom@3.5.13/dist/runtime-dom.esm-browser.js",
+        "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
+        "vue/server-renderer": "https://cdn.jsdelivr.net/npm/@vue/server-renderer@3.5.13/dist/server-renderer.esm-browser.js",
+        "pro_iview_v3": "https://cdn.jsdelivr.net/npm/pro_iview_v3@latest/lib/main/pro_iview.js",
+        "view-ui-plus": "https://cdn.jsdelivr.net/npm/view-ui-plus",
+        "element-plus": "https://fastly.jsdelivr.net/npm/element-plus@2.6.1/dist/index.full.min.mjs",
+        "element-plus/": "https://fastly.jsdelivr.net/npm/element-plus@2.6.1/",
+        "@element-plus/icons-vue": "https://fastly.jsdelivr.net/npm/@element-plus/icons-vue@2/dist/index.min.js"
+      }
+    }
+    </script>
+
+    <script type="module">
+        import { createApp, ref } from 'vue'
+
+        createApp({
+            setup() {
+                const message = ref('Hello Vue!')
+                return {
+                    message
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+
+</html>

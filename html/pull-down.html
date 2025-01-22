@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+            padding: 0;
+            margin: 0;
+            overflow-x: hidden;
+            overscroll-behavior: none;
+        }
+
+        body.overflowHidden {
+            overflow: hidden;
+        }
+
+        #box {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-color: #eee;
+        }
+
+       
+
+        #loader.loading {
+            width: 25px;
+            height: 25px;
+            border: 3px solid #ddd;
+            border-radius: 50%;
+            border-bottom: 3px solid #717171;
+            transform: rotate(0deg);
+        }
+
+        #loader.loading {
+            animation: loading 1s linear infinite;
+        }
+
+        @keyframes loading {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        h1 {
+            text-align: center;
+        }
+        .more-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .more {
+            text-align: center;
+        }
+        .hidden{
+            display: none;
+        }
+        .show {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="box">
+        <div class="loader-box">
+            <div id="loader"></div>
+        </div>
+        <div>
+                <div>1</div>
+                <div>2</div>
+                <div>3</div>
+                <div>4</div>
+                <div>5</div>
+                <div>6</div>
+                <div>7</div>
+                <div>8</div>
+                <div>9</div>
+                <div>10</div>
+                <div>11</div>
+                <div>12</div>
+                <div>13</div>
+                <div>14</div>
+                <div>15</div>
+                <div>16</div>
+                <div>17</div>
+                <div>18</div>
+                <div>19</div>
+                <div>20</div>
+        </div>
+        <div class="more-box">
+            <div id="loader"></div>
+            <span class="more">正在加载中...</span>
+        </div>
+    </div>
+    <script>
+        const box = document.getElementById('box')
+        const body = document.body
+        const loader = document.getElementById('loader')
+        const DISTANCE_Y_MIN_LIMIT = 80
+        const DISTANCE_Y_MAX_LIMIT = 150
+        const DEG_LIMIT = 40
+
+        let startY = 0, startX = 0, endY = 0, endX = 0, distanceY = 0, distanceX = 0, loadLock = false
+
+        function start(e) {
+            if (loadLock) {
+                return
+            }
+            startY = e.touches[0].clientY;
+            startX = e.touches[0].clientX;
+        }
+
+        function move(e) {
+            endY = e.touches[0].clientY;
+            endX = e.touches[0].clientX;
+            if (loadLock) {
+                return
+            }
+            if (endY - startY < 0) {
+                return
+            }
+            loader.innerHTML = '下拉刷新 ↓'
+
+            distanceY = endY - startY
+            distanceX = endX - startX
+            const deg = Math.atan(Math.abs(distanceX) / distanceY) * (180 / Math.PI)
+            console.log('打印***deg',deg)
+            if (deg > DEG_LIMIT) {
+                [startY, startX] = [endY, endX]
+                box.style = `
+            transform: translateY(0px);
+            transition: all 0.3s linear;
+          `
+                return
+            }
+            let percent = (100 - distanceY * 0.5) / 100
+            percent = Math.max(0.5, percent)
+            distanceY = distanceY * percent
+            if( distanceY > DISTANCE_Y_MIN_LIMIT){
+
+                loader.innerHTML = '释放刷新 ↑'
+            }
+
+            // 超过最大距离 只移动最大具体
+            if (distanceY > DISTANCE_Y_MAX_LIMIT) {
+                distanceY = DISTANCE_Y_MAX_LIMIT
+            }
+            box.style = `
+          transform: translateY(${distanceY}px);
+          `;
+        //   transition: all 0.3s linear;
+        }
+
+        function end() {
+            if (loadLock) {
+                return
+            }
+            if (endY - startY < 0) {
+                return
+            }
+            // 当没有下拉最小具体 不触发刷新
+
+            if (distanceY < DISTANCE_Y_MIN_LIMIT) {
+                box.style = `
+            transform: translateY(0px);
+            transition: all 0.3s linear;
+          `
+                body.className = ''
+                return
+            }
+            loadLock = true
+            // 停留在视口顶部
+
+            box.style = `
+          transform: translateY(80px);
+          transition: all 0.3s linear;
+        `
+            // loader.className = 'loading'
+            body.className = 'overflowHidden'
+            loader.innerHTML = '加载中...'
+
+
+            setTimeout(() => {
+                loadLock = false
+                box.style = `
+            transform: translateY(0px);
+            transition: all 0.3s linear;
+          `
+                loader.className = ''
+                body.className = ''
+            loader.innerHTML = ''
+
+            }, 1000)
+        }
+
+        function addTouchEvent() {
+            box.addEventListener('touchstart', start, { passive: false })
+            box.addEventListener('touchmove', move, { passive: false })
+            box.addEventListener('touchend', end, { passive: false })
+        }
+
+        addTouchEvent()
+
+    </script>
+</body>
+
+</html>

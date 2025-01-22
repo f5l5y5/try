@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .lyrics {
+            line-height: 1.5rem;
+            height: calc(3 * 1.5rem);
+            /* 限制显示3行 */
+            overflow: hidden;
+            position: relative;
+        }
+
+        .lyrics::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            height: 1.5rem;
+            width: 85%;
+            background: linear-gradient(to right, transparent, white);
+        }
+
+
+
+        .text-container {
+  width: 300px; /* 容器宽度 */
+  height: calc(3 * 1.5rem); /* 限制显示3行 */
+  overflow: hidden;
+  position: relative;
+  line-height: 1.5rem; /* 行高 */
+  mask-image: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1)); /* 渐隐效果 */
+  -webkit-mask-image: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1)); /* 兼容Safari */
+}
+
+
+
+    </style>
+</head>
+
+<body>
+    <div class="text-container">
+        这是一个非常长的文本内容示例，目的是展示如何通过渐隐效果处理文本溢出的情况。你可以根据需要调整这个文本长度来查看效果。
+        这是一个非常长的文本内容示例，目的是展示如何通过渐隐效果处理文本溢出的情况。你可以根据需要调整这个文本长度来查看效果。
+        这是一个非常长的文本内容示例，目的是展示如何通过渐隐效果处理文本溢出的情况。你可以根据需要调整这个文本长度来查看效果。
+    </div>
+
+
+    <div class="lyrics">
+        夜空中最亮的星，能否听清，那仰望的人，心底的孤独和叹息夜空中最亮的星，能否听清，那仰望的人，心底的孤独和叹息
+        夜空中最亮的星，能否听清，那仰望的人，心底的孤独和叹息
+    </div>
+
+
+</body>
+
+</html>

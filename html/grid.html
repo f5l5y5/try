@@ -53,10 +53,32 @@
 		border: 1px solid lightcyan;
 		border-radius: 10px;
 	}
+
+	*[loading='true']>div:not([loading='true']) {
+		background-image: linear-gradient(90deg, #f0f2f5 25%, #e6e8eb 37%, #f0f2f5 63%) !important;
+		background-size: 400% 100% !important;
+		animation: skeleton-loading 1.4s infinite ease !important;
+		border: none !important;
+		min-height: 30px;
+	}
+
+	*[loading='true']>div:not([loading='true'])>* {
+		display: none !important;
+	}
+
+	@keyframes skeleton-loading {
+		0% {
+			background-position: 100% 50%;
+		}
+
+		100% {
+			background-position: 0 50%;
+		}
+	}
 </style>
 
 <body>
-	<div class="container">
+	<div class="container" loading="true">
 		<div class="top">状态栏</div>
 		<div class="title">
 			<div class="left">左侧</div>

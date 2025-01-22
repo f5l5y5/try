@@ -29,18 +29,16 @@ let browser, page
 		}
 
 		const allArticle = [
-			"https://juejin.cn/post/7395866692798201871"
-			// "https://juejin.cn/post/7387613689563676684",
-			// "https://juejin.cn/post/7386497602194096169",
-			// "https://juejin.cn/post/7385778376276033577",
-			// "https://juejin.cn/post/7382484880288399397",
+		"https://juejin.cn/post/7457758555173896227",
+		// "https://juejin.cn/post/7439009350050807835",
+		// "https://juejin.cn/post/7437392704231948298"	
 		];
 
 
 
 		// 遍历刷新
 		for (let i = 0; i < allArticle.length; i++) {
-			const time = 10000;
+			const time = 30000;
 			const url = allArticle[i];
 			console.log(`已完成${i + 1}篇`);
 			await page.goto(url); // 导航到指定的网页
@@ -53,7 +51,7 @@ let browser, page
 	const timer = setInterval(async () => {
 		await reader();
 		console.log(`完成${sum++}轮刷新`);
-		if (sum > 80) {
+		if (sum > 100) {
 			clearInterval(timer)
 			browser.close(); // 关闭浏览器实例
 		};

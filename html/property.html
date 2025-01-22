@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @property --vw {
+            syntax: "<length>";
+            inherits: true;
+            initial-value: 100vw;
+        }
+
+        @property --vh {
+            syntax: "<length>";
+            inherits: true;
+            initial-value: 100vh;
+        }
+
+        @property --my-color {
+            syntax: '<color>';
+            inherits: false;
+            initial-value: red;
+        }
+
+        :root {
+            /* --w: tan(atan2(var(--vw), 1px));
+            --h: tan(atan2(var(--vh), 1px)); */
+            --w: 1;
+            --h: 2;
+        }
+
+        body::before {
+            --my-color: blue;
+            content: counter(w) "X" counter(h);
+            counter-reset: w tan(20deg) h var(--h);
+            font-size: 150px;
+            font-weight: 900;
+            position: fixed;
+            inset: 0;
+            width: fit-content;
+            height: fit-content;
+            margin: auto;
+            color: var(--my-color);
+        }
+    </style>
+</head>
+
+<body>
+    
+</body>
+</html>

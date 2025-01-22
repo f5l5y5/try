@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    img {
+      /* width: 150px;
+      height: 150px; */
+      width: 50vw;
+      height: 50vw;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 图片的尺寸 = css尺寸 * 设备像素比 dpr -->
+  <!-- srcset 根据不同屏幕显示 -->
+  <!-- <img src="https://picsum.photos/id/88/150" srcset="
+  https://picsum.photos/id/88/300 2x,
+  https://picsum.photos/id/88/450 3x,
+  https://picsum.photos/id/88/600 4x" alt="" /> -->
+
+  <!-- 如果宽度不固定，换一种写法  sizes如果是像素-->
+   <!-- 设置说明：
+   dpr:1
+  dpr:2
+   
+   -->
+  <!-- <img src="https://picsum.photos/id/88/150" srcset="
+  https://picsum.photos/id/88/150 150w,
+  https://picsum.photos/id/88/300 300w,
+  https://picsum.photos/id/88/600 600w,
+  https://picsum.photos/id/88/900 900w,
+  https://picsum.photos/id/88/1200 1200w" sizes="
+  (max-width: 300px) 150px,
+  (max-width: 600px) 300px,
+  (max-width: 900px) 450px,
+  (max-width: 1200px) 600px,
+  1200px" alt="" /> -->
+  <!-- sizes单位是vw 自动去匹配换算 -->
+  <img src="https://picsum.photos/id/88/150" srcset="
+  https://picsum.photos/id/88/300 300w,
+  https://picsum.photos/id/88/600 600w,
+  https://picsum.photos/id/88/900 900w,
+  https://picsum.photos/id/88/1200 1200w" sizes="50vw" alt="" />
+</body>
+
+</html>
