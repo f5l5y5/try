@@ -9,17 +9,24 @@
 
 <body>
 
+    <button id="btn">取消快捷键</button>
 </body>
 
 </html>
 
 
 <script>
+    const btn = document.getElementById('btn')
+    btn.addEventListener('click', () => {
+        cancelShortcut('*')
+    })
+
+
     const shortcuts = []
+    const modifierKeys = ['ctrlKey', 'metaKey', 'shiftKey', 'altKey']
     function findMatchingShortcut(event) {
         return shortcuts.filter(shortcut => {
-            const preciseMatching = shortcut.ctrlKey === event.ctrlKey &&
-                shortcut.metaKey === event.metaKey &&
+            const preciseMatching = modifierKeys.every(key => shortcut[key] === event[key]) &&
                 shortcut.key === convertMacKey(event.key).toLowerCase()
 
             const anyMatching = shortcut.key === '*'
@@ -29,17 +36,18 @@
     }
 
     const KEYBOARD = {
-        CTRL: "Ctrl",
+        CTRL: "Ctrl", // 定义时简写
         CONTROL: "Control",
-        META: "Meta",
-        COMMAND: "Command",
-        ESC: "Esc",
-        ESCAPE: "Escape",
-        ALT: "Alt",
         SHIFT: "Shift",
+        META: "Meta",
+        COMMAND: "Command", // 定义时简写
+        ALT: "Alt",
+        ESCAPE: "Escape",
+        ESC: "Esc", // 定义时简写
         ENTER: "Enter",
         BACKSPACE: "Backspace",
         DELETE: "Delete",
+        DEL: "Del", // 定义时简写
     };
     /** 按键映射转换 */
     function convertMacKey(key) {
@@ -47,18 +55,19 @@
             {
                 [KEYBOARD.CONTROL]: KEYBOARD.CTRL,
                 [KEYBOARD.META]: KEYBOARD.COMMAND,
+                [KEYBOARD.DELETE]: KEYBOARD.DEL,
+                [KEYBOARD.ESCAPE]: KEYBOARD.ESC,
             }[key] || key
         );
     }
 
     window.addEventListener("keydown", (e) => {
         // console.log('打印***e', e)
-        // e.preventDefault()
-        // e.stopPropagation()
         const matchingShortcuts = findMatchingShortcut(e);
         console.log('打印***matchingShortcuts', matchingShortcuts)
         matchingShortcuts.forEach((shortcut) => {
             shortcut.prevent && e.preventDefault()
+            shortcut.stop && e.stopPropagation()
             shortcut.command(e)
         })
     })
@@ -70,13 +79,14 @@
             key: keys[keys.length - 1],
             ctrlKey: keys.includes("ctrl"),
             metaKey: keys.includes("command"),
+            shiftKey: keys.includes("shift"),
             altKey: keys.includes("alt"),
         }
     }
 
 
-    function registerShortcut({ key, command, prevent=true }) {
-        const shortcut = { ...parseKey(key), command, prevent }
+    function registerShortcut({ key, command, prevent = true, stop = true }) {
+        const shortcut = { ...parseKey(key), command, prevent, stop }
         shortcuts.push(shortcut)
         return shortcut
     }
@@ -92,7 +102,7 @@
     registerShortcut({
         key: "ctrl+S",
         command: (e) => {
-            console.log('打印***ctrl+a======', e)
+            console.log('打印***ctrl+S======', e)
         }
     })
 
@@ -104,12 +114,64 @@
             }
         },
         {
+            key: "command+S",
+            command: (e) => {
+                console.log('打印***======command+s', e)
+            }
+        },
+        {
             key: "del",
             command: (e) => {
                 console.log('打印***del======', e)
             }
         },
+        {
+            key: "esc",
+            command: (e) => {
+                console.log('打印***esc======', e)
+            }
+        },
+        {
+            key: " ",
+            command: (e) => {
+                console.log('打印***空格======', e)
+            }
+        },
     ])
+
+    console.log('打印***shortcuts', shortcuts)
+
+
+    function cancelShortcut(key, command) {
+        // 如果是通配符 *，删除所有快捷键
+        if (key === '*') {
+            shortcuts.length = 0;
+            console.log('打印***shortcuts', shortcuts);
+            return;
+        }
+    
+        const normalShortcut = parseKey(key);
+        const matchingShortcuts = findMatchingShortcut(normalShortcut);
+    
+        for (let i = shortcuts.length - 1; i >= 0; i--) {
+            if (matchingShortcuts.includes(shortcuts[i]) && 
+                (!command || shortcuts[i].command === command)) {
+                shortcuts.splice(i, 1);
+            }
+        }
+        
+        console.log('打印***shortcuts', shortcuts);
+    }
+
+    function batchCancelShortcut(array) {
+        if (Array.isArray(array)) {
+            array.forEach(shortcut => {
+                cancelShortcut(shortcut.key, shortcut.command)
+            })
+        }
+    }
+
+
 
 
 
