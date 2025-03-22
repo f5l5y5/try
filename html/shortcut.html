@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+
+</html>
+
+
+<script>
+    const shortcuts = []
+    function findMatchingShortcut(event) {
+        return shortcuts.filter(shortcut => {
+            const preciseMatching = shortcut.ctrlKey === event.ctrlKey &&
+                shortcut.metaKey === event.metaKey &&
+                shortcut.key === convertMacKey(event.key).toLowerCase()
+
+            const anyMatching = shortcut.key === '*'
+
+            return preciseMatching || anyMatching
+        })
+    }
+
+    const KEYBOARD = {
+        CTRL: "Ctrl",
+        CONTROL: "Control",
+        META: "Meta",
+        COMMAND: "Command",
+        ESC: "Esc",
+        ESCAPE: "Escape",
+        ALT: "Alt",
+        SHIFT: "Shift",
+        ENTER: "Enter",
+        BACKSPACE: "Backspace",
+        DELETE: "Delete",
+    };
+    /** 按键映射转换 */
+    function convertMacKey(key) {
+        return (
+            {
+                [KEYBOARD.CONTROL]: KEYBOARD.CTRL,
+                [KEYBOARD.META]: KEYBOARD.COMMAND,
+            }[key] || key
+        );
+    }
+
+    window.addEventListener("keydown", (e) => {
+        // console.log('打印***e', e)
+        // e.preventDefault()
+        // e.stopPropagation()
+        const matchingShortcuts = findMatchingShortcut(e);
+        console.log('打印***matchingShortcuts', matchingShortcuts)
+        matchingShortcuts.forEach((shortcut) => {
+            shortcut.prevent && e.preventDefault()
+            shortcut.command(e)
+        })
+    })
+
+    /** 使用ctrl+x形式 */
+    function parseKey(keyString) {
+        const keys = keyString.toLowerCase().split("+");
+        return {
+            key: keys[keys.length - 1],
+            ctrlKey: keys.includes("ctrl"),
+            metaKey: keys.includes("command"),
+            altKey: keys.includes("alt"),
+        }
+    }
+
+
+    function registerShortcut({ key, command, prevent=true }) {
+        const shortcut = { ...parseKey(key), command, prevent }
+        shortcuts.push(shortcut)
+        return shortcut
+    }
+
+    function batchRegisterShortcut(array) {
+        if (Array.isArray(array)) {
+            array.forEach(shortcut => {
+                registerShortcut(shortcut)
+            })
+        }
+    }
+
+    registerShortcut({
+        key: "ctrl+S",
+        command: (e) => {
+            console.log('打印***ctrl+a======', e)
+        }
+    })
+
+    batchRegisterShortcut([
+        {
+            key: "ctrl+shift+S",
+            command: (e) => {
+                console.log('打印***======ctrl+shift+s', e)
+            }
+        },
+        {
+            key: "del",
+            command: (e) => {
+                console.log('打印***del======', e)
+            }
+        },
+    ])
+
+
+
+</script>
