@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        :root {
+            --black: #373737;
+            --sect-1: #ff9900;
+            --sect-2: #2196f3;
+            --sect-3: #e63232;
+            --sect-4: #4caf50;
+            --sect-5: #8946ff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            transition: all 0.5s ease 0s;
+        }
+
+        header {
+            width: 100%;
+        }
+
+        a {
+            width: 100%;
+            z-index: 1;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 16px 10px;
+            position: relative;
+            font-size: 1.6rem;
+            border: 2px solid #000;
+            border-top-width: 0;
+            border-bottom-width: 4px;
+        }
+
+        a:first-child {
+            border-left-width: 0;
+        }
+
+        a:last-child {
+            border-right-width: 0;
+        }
+
+        h2,
+        p {
+            margin: 0;
+            width: 100%;
+            text-align: center;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            background: linear-gradient(0deg, #fff0 0px, var(--black) 1px 100%);
+            display: flex;
+            text-align: center;
+            transition: all 0.5s ease 0s;
+        }
+
+        nav::after {
+            content: "";
+            position: absolute;
+            width: calc(20vw - 5px);
+            height: 100%;
+            background: linear-gradient(90deg,
+                    var(--sect-1) 0px calc(20vw - 5px),
+                    var(--sect-2) 0px calc(40vw - 6px),
+                    var(--sect-3) 0px calc(60vw - 7px),
+                    var(--sect-4) 0px calc(80vw - 8px),
+                    var(--sect-5) 0px calc(100vw));
+            bottom: 0;
+            left: 0;
+            animation: progress linear;
+            animation-timeline: scroll(root);
+            z-index: -1;
+        }
+
+        @keyframes progress {
+            100% {
+                width: 100%;
+            }
+        }
+
+        section {
+            --bg: var(--sect-1);
+            height: 100vh;
+            background: var(--bg);
+            color: #ffffff;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            font-size: 4rem;
+            padding-top: 30px;
+            align-content: center;
+        }
+
+        #html {
+            --bg: var(--sect-1);
+        }
+
+        #css {
+            --bg: var(--sect-2);
+        }
+
+        #js {
+            --bg: var(--sect-3);
+        }
+
+        #vue {
+            --bg: var(--sect-4);
+        }
+
+        #react {
+            --bg: var(--sect-5);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="#html">html</a>
+            <a href="#css">css</a>
+            <a href="#js">js</a>
+            <a href="#vue">vue</a>
+            <a href="#react">react</a>
+        </nav>
+    </header>
+    <section id="html">
+        <h2>HTML</h2>
+        <p>超文本标记语言</p>
+    </section>
+    <section id="css">
+        <h2>CSS</h2>
+        <p>层叠样式表</p>
+    </section>
+    <section id="js">
+        <h2>JS</h2>
+        <p>客户端脚本语言</p>
+    </section>
+    <section id="vue">
+        <h2>VUE</h2>
+        <p>渐进式JavaScript框架</p>
+    </section>
+    <section id="react">
+        <h2>REACT</h2>
+        <p>用于构建web和原生交互界面的库</p>
+    </section>
+</body>
+
+</html>
