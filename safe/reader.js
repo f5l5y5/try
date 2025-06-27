@@ -30,6 +30,7 @@ let browser, page
 
 		const allArticle = [
 		"https://juejin.cn/post/7501588469699428378",
+		"https://juejin.cn/post/7493579575848271887",
 		// "https://juejin.cn/post/7439009350050807835",
 		// "https://juejin.cn/post/7437392704231948298"	
 		];
