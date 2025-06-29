@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html {
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            background: #222;
+
+            /* 设置景深，并且开启3D效果 */
+            perspective: 1px;
+            transform-style: preserve-3d;
+            overflow-x: hidden;
+            overflow-y: scroll;
+        }
+
+        .section1::before {
+            content: "";
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            background: url("https://img1.baidu.com/it/u=2172818577,3783888802&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=1422") top center;
+            background-size: cover;
+
+            /* 将图片图层换到-1图层，并放大图片 */
+            transform: translateZ(-1px) scale(2.2);
+        }
+
+        .section1,
+        .section2 {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+
+            /* 保留字类的3D属性 */
+            transform-style: preserve-3d;
+
+        }
+
+        .section2 {
+            background: rgb(68, 35, 19);
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="section1">
+    </div>
+
+    <div class="section2">
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>修复粘贴功能的验证码输入框</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        
+        .otp-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        h2 {
+            color: #333;
+            font-weight: normal;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        .otp-field {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .otp-field input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            background-color: #f9f9f9;
+            color: #999;
+        }
+        
+        .otp-field input.active {
+            background-color: white;
+            color: #333;
+        }
+        
+        .otp-field input:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+            outline: none;
+            transform: scale(1.05);
+        }
+        
+        .otp-field input.error {
+            border-color: #f44336;
+            animation: shake 0.5s;
+        }
+        
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .error-message {
+            background-color: #ffebee;
+            color: #f44336;
+        }
+        
+        .success-message {
+            background-color: #e8f5e9;
+            color: #4CAF50;
+        }
+        
+        .resend-btn {
+            margin-top: 20px;
+            padding: 8px 16px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .resend-btn:hover {
+            background-color: #0b7dda;
+        }
+        
+        .resend-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="otp-container">
+        <h2>请输入6位验证码</h2>
+        <div class="otp-field">
+            <input type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" readonly />
+            <input type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" readonly />
+            <input type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" readonly />
+            <input type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" readonly />
+            <input type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" readonly />
+            <input type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" readonly />
+        </div>
+        <div class="message error-message"></div>
+        <div class="message success-message"></div>
+        <button class="resend-btn">发送验证码</button>
+    </div>
+
+    <script>
+        const inputs = document.querySelectorAll('.otp-field input');
+        const errorMessage = document.querySelector('.error-message');
+        const successMessage = document.querySelector('.success-message');
+        const resendBtn = document.querySelector('.resend-btn');
+        let otpCode = '';
+        let countdown = 60;
+        let countdownInterval;
+        let isActive = false;
+
+        // 初始化输入框事件
+        function initInputs() {
+            // 在document上监听粘贴事件
+            document.addEventListener('paste', function(e) {
+                if (!isActive) return;
+                
+                // 检查是否粘贴到验证码输入框中
+                const activeElement = document.activeElement;
+                if (!Array.from(inputs).includes(activeElement)) return;
+                
+                e.preventDefault();
+                const pasteData = e.clipboardData.getData('text/plain').trim();
+                
+                // 验证粘贴内容是否为6位数字
+                if (/^\d{6}$/.test(pasteData)) {
+                    // 将粘贴内容分割并填充到各个输入框
+                    pasteData.split('').forEach((char, i) => {
+                        if (inputs[i]) {
+                            inputs[i].value = char;
+                        }
+                    });
+                    
+                    // 自动聚焦最后一个输入框
+                    inputs[5].focus();
+                    
+                    // 检查是否完成输入
+                    checkCompletion();
+                } else {
+                    // 粘贴内容不符合要求，显示错误
+                    showError("请粘贴6位数字验证码");
+                    shakeInputs();
+                }
+            });
+
+            inputs.forEach((input, index) => {
+                // 输入事件处理
+                input.addEventListener('input', function() {
+                    if (!isActive) return;
+                    
+                    const value = this.value;
+                    
+                    // 只允许数字输入
+                    if (!/^\d*$/.test(value)) {
+                        this.value = '';
+                        return;
+                    }
+                    
+                    if (value.length === 1) {
+                        // 自动跳转下一个输入框
+                        const nextIndex = index + 1;
+                        if (nextIndex < inputs.length) {
+                            inputs[nextIndex].focus();
+                        }
+                        
+                        // 检查是否所有输入框都已填写
+                        checkCompletion();
+                    }
+                });
+                
+                // 键盘事件处理
+                input.addEventListener('keydown', function(e) {
+                    if (!isActive) return;
+                    
+                    if (e.key === 'Backspace') {
+                        const value = this.value;
+                        if (value.length === 0) {
+                            // 退格键处理空输入框
+                            const prevIndex = index - 1;
+                            if (prevIndex >= 0) {
+                                inputs[prevIndex].focus();
+                                inputs[prevIndex].select();
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        // 激活输入框
+        function activateInputs() {
+            isActive = true;
+            inputs.forEach(input => {
+                input.readOnly = false;
+                input.classList.add('active');
+            });
+            inputs[0].focus();
+        }
+
+        // 禁用输入框
+        function deactivateInputs() {
+            isActive = false;
+            inputs.forEach(input => {
+                input.readOnly = true;
+                input.classList.remove('active');
+                input.value = '';
+            });
+        }
+
+        // 检查是否所有输入框都已填写
+        function checkCompletion() {
+            otpCode = Array.from(inputs).map(input => input.value).join('');
+            
+            if (otpCode.length === 6) {
+                // 所有输入框都已填写，触发自动提交
+                setTimeout(() => {
+                    verifyOtp(otpCode);
+                }, 300);
+            }
+        }
+
+        // 验证验证码
+        function verifyOtp(code) {
+            // 这里应该是实际的验证逻辑，这里用模拟验证
+            const isValid = code === '123456'; // 固定验证码123456
+            
+            if (isValid) {
+                // 验证成功
+                showSuccess("验证成功！正在跳转...");
+                
+                // 模拟跳转
+                setTimeout(() => {
+                    alert("验证成功！在实际应用中这里会进行页面跳转或执行其他操作。");
+                    resetForm();
+                    deactivateInputs();
+                }, 1500);
+            } else {
+                // 验证失败
+                showError("验证码错误，请重新输入");
+                shakeInputs();
+            }
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            errorMessage.classList.add('fade-in');
+            successMessage.style.display = 'none';
+        }
+
+        // 显示成功信息
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            successMessage.classList.add('fade-in');
+            errorMessage.style.display = 'none';
+        }
+
+        // 重置表单
+        function resetForm() {
+            inputs.forEach(input => {
+                input.classList.remove('error');
+            });
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+        }
+
+        // 输入框抖动效果
+        function shakeInputs() {
+            inputs.forEach(input => {
+                input.classList.add('error');
+            });
+            
+            setTimeout(() => {
+                inputs.forEach(input => {
+                    input.classList.remove('error');
+                });
+            }, 500);
+        }
+
+        // 初始化重新发送按钮倒计时
+        function initResendButton() {
+            updateResendButton();
+            countdownInterval = setInterval(() => {
+                countdown--;
+                updateResendButton();
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    resendBtn.textContent = "重新发送验证码";
+                    resendBtn.disabled = false;
+                }
+            }, 1000);
+        }
+
+        // 更新重新发送按钮状态
+        function updateResendButton() {
+            if (countdown > 0) {
+                resendBtn.textContent = `${countdown}秒后重新发送`;
+                resendBtn.disabled = true;
+            }
+        }
+
+        // 重新发送验证码
+        resendBtn.addEventListener('click', function() {
+            // 模拟发送验证码
+            alert("验证码已发送到您的手机/邮箱");
+            
+            // 重置倒计时
+            countdown = 60;
+            initResendButton();
+            
+            // 激活输入框
+            activateInputs();
+        });
+
+        // 初始化
+        initInputs();
+        deactivateInputs(); // 初始状态下禁用输入框
+    </script>
+</body>
+</html>
