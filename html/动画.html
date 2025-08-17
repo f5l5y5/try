@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS动画演示合集</title>
+    <style>
+        body {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .demo-container {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .demo-title {
+            color: #333;
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .animation-box {
+            width: 100px;
+            height: 100px;
+            margin: 20px auto;
+            background-color: #3498db;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        /* 位移动画 */
+        .translate-box {
+            animation: slideIn 2s infinite alternate;
+        }
+        
+        @keyframes slideIn {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(100px); }
+        }
+        
+        /* 缩放动画 */
+        .scale-box {
+            animation: scale 2s infinite alternate;
+        }
+        
+        @keyframes scale {
+            0% { transform: scale(0.5); }
+            100% { transform: scale(1.5); }
+        }
+        
+        /* 尺寸变化 */
+        .resize-box {
+            animation: expand 2s infinite alternate;
+        }
+        
+        @keyframes expand {
+            0% { width: 50px; height: 50px; }
+            100% { width: 150px; height: 150px; }
+        }
+        
+        /* 背景变化 */
+        .background-box {
+            animation: colorChange 2s infinite alternate;
+        }
+        
+        @keyframes colorChange {
+            0% { background-color: #3498db; }
+            100% { background-color: #e74c3c; }
+        }
+        
+        /* 旋转动画 */
+        .rotate-box {
+            animation: spin 2s infinite linear;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 淡入淡出 */
+        .fade-box {
+            animation: fadeInOut 3s infinite;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 位移动画 -->
+    <div class="demo-container">
+        <h2 class="demo-title">位移动画 (translate)</h2>
+        <div class="animation-box translate-box">移动</div>
+        <p>使用 transform: translateX/Y 实现元素位置移动</p>
+    </div>
+    
+    <!-- 缩放动画 -->
+    <div class="demo-container">
+        <h2 class="demo-title">缩放动画 (scale)</h2>
+        <div class="animation-box scale-box">缩放</div>
+        <p>使用 transform: scale() 实现元素大小缩放</p>
+    </div>
+    
+    <!-- 尺寸变化 -->
+    <div class="demo-container">
+        <h2 class="demo-title">尺寸变化 (resize)</h2>
+        <div class="animation-box resize-box">尺寸</div>
+        <p>使用 width/height 属性实现元素尺寸变化</p>
+    </div>
+    
+    <!-- 背景变化 -->
+    <div class="demo-container">
+        <h2 class="demo-title">背景变化 (background)</h2>
+        <div class="animation-box background-box">背景</div>
+        <p>使用 background-color 实现背景颜色渐变</p>
+    </div>
+    
+    <!-- 旋转动画 -->
+    <div class="demo-container">
+        <h2 class="demo-title">旋转动画 (rotate)</h2>
+        <div class="animation-box rotate-box">旋转</div>
+        <p>使用 transform: rotate() 实现元素旋转效果</p>
+    </div>
+    
+    <!-- 淡入淡出 -->
+    <div class="demo-container">
+        <h2 class="demo-title">淡入淡出 (fade)</h2>
+        <div class="animation-box fade-box">淡入淡出</div>
+        <p>使用 opacity 实现元素的淡入淡出效果</p>
+    </div>
+</body>
+</html>

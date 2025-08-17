@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS过渡动画合集</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a2e;
+            color: #fff;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #4cc9f0;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        
+        .demo-box {
+            background-color: #16213e;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .demo-box:hover {
+            transform: translateY(-5px);
+        }
+        
+        .demo-title {
+            color: #4cc9f0;
+            margin-top: 0;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #4cc9f0;
+            padding-bottom: 10px;
+        }
+        
+        .code-block {
+            background-color: #0f3460;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            color: #e94560;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        
+        .element {
+            width: 80px;
+            height: 80px;
+            background-color: #e94560;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            margin: 15px auto;
+            border-radius: 8px;
+        }
+        
+        .description {
+            color: #a8dadc;
+            line-height: 1.6;
+        }
+        
+        /* 悬停过渡样式 */
+        .hover-element {
+            transition: all 0.3s ease;
+        }
+        
+        .hover-element:hover {
+            transform: scale(1.2);
+            background-color: #f72585;
+        }
+        
+        /* 缩放过渡样式 */
+        .scale-element {
+            transition: transform 0.5s ease-in-out;
+        }
+        
+        .scale-element.active {
+            transform: scale(1.5);
+        }
+        
+        /* 颜色过渡样式 */
+        .color-element {
+            transition: background-color 0.4s ease;
+        }
+        
+        .color-element.active {
+            background-color: #3a86ff;
+        }
+        
+        /* 尺寸过渡样式 */
+        .size-element {
+            transition: width 0.6s ease, height 0.6s ease;
+            width: 50px;
+            height: 50px;
+        }
+        
+        .size-element.expanded {
+            width: 100px;
+            height: 100px;
+        }
+        
+        /* 透明度过渡样式 */
+        .opacity-element {
+            transition: opacity 0.5s ease;
+            opacity: 0.5;
+        }
+        
+        .opacity-element.visible {
+            opacity: 1;
+        }
+        
+        /* 变形过渡样式 */
+        .transform-element {
+            transition: transform 0.7s ease;
+        }
+        
+        .transform-element.moved {
+            transform: translateX(40px) rotate(45deg);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #4cc9f0;
+            color: #16213e;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn:hover {
+            background-color: #3a86ff;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS 过渡动画</h1>
+    
+    <div class="container">
+        <!-- 悬停过渡 -->
+        <div class="demo-box">
+            <h2 class="demo-title">悬停过渡</h2>
+            <div class="code-block">
+.element {
+  transition: all 0.3s ease;
+}
+.element:hover {
+  transform: scale(1.2);
+}
+            </div>
+            <div class="element hover-element">悬停我</div>
+            <p class="description">鼠标悬停触发过渡<br>常用于按钮、链接交互</p>
+        </div>
+        
+        <!-- 缩放过渡 -->
+        <div class="demo-box">
+            <h2 class="demo-title">缩放过渡</h2>
+            <div class="code-block">
+.element {
+  transition: transform 0.5s ease-in-out;
+  transform: scale(1);
+}
+.element.active {
+  transform: scale(1.5);
+}
+            </div>
+            <div class="element scale-element" id="scaleDemo">缩放</div>
+            <button class="btn" onclick="document.getElementById('scaleDemo').classList.toggle('active')">切换状态</button>
+            <p class="description">平滑缩放变化<br>transform: scale()</p>
+        </div>
+        
+        <!-- 颜色过渡 -->
+        <div class="demo-box">
+            <h2 class="demo-title">颜色过渡</h2>
+            <div class="code-block">
+.element {
+  transition: background-color 0.4s ease;
+  background-color: #3498db;
+}
+.element.active {
+  background-color: #e74c3c;
+}
+            </div>
+            <div class="element color-element" id="colorDemo">颜色</div>
+            <button class="btn" onclick="document.getElementById('colorDemo').classList.toggle('active')">切换颜色</button>
+            <p class="description">背景颜色平滑变化<br>background-color, color</p>
+        </div>
+        
+        <!-- 尺寸过渡 -->
+        <div class="demo-box">
+            <h2 class="demo-title">尺寸过渡</h2>
+            <div class="code-block">
+.element {
+  transition: width 0.6s ease, height 0.6s ease;
+  width: 50px;
+  height: 50px;
+}
+.element.expanded {
+  width: 100px;
+  height: 100px;
+}
+            </div>
+            <div class="element size-element" id="sizeDemo">尺寸</div>
+            <button class="btn" onclick="document.getElementById('sizeDemo').classList.toggle('expanded')">切换尺寸</button>
+            <p class="description">宽高尺寸过渡<br>width, height 属性</p>
+        </div>
+        
+        <!-- 透明度过渡 -->
+        <div class="demo-box">
+            <h2 class="demo-title">透明度过渡</h2>
+            <div class="code-block">
+.element {
+  transition: opacity 0.5s ease;
+  opacity: 0.5;
+}
+.element.visible {
+  opacity: 1;
+}
+            </div>
+            <div class="element opacity-element" id="opacityDemo">透明度</div>
+            <button class="btn" onclick="document.getElementById('opacityDemo').classList.toggle('visible')">切换透明度</button>
+            <p class="description">透明度平滑变化<br>opacity 属性</p>
+        </div>
+        
+        <!-- 变形过渡 -->
+        <div class="demo-box">
+            <h2 class="demo-title">变形过渡</h2>
+            <div class="code-block">
+.element {
+  transition: transform 0.7s ease;
+  transform: translateX(0) rotate(0deg);
+}
+.element.moved {
+  transform: translateX(40px) rotate(45deg);
+}
+            </div>
+            <div class="element transform-element" id="transformDemo">变形</div>
+            <button class="btn" onclick="document.getElementById('transformDemo').classList.toggle('moved')">切换状态</button>
+            <p class="description">位移和旋转组合<br>transform 复合属性</p>
+        </div>
+    </div>
+</body>
+</html>

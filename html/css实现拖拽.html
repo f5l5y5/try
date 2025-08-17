@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+       .main {
+        position: absolute;
+        display: inline-block;
+       }
+       .resize {
+        cursor: pointer;
+        content: '';
+        width: 200px;
+        height: 200px;
+        border: 50%;
+        resize: both;
+        overflow: hidden;
+        position: relative;
+        /* background-color: lightblue; */
+        z-index: 1;
+       }
+       .resize::-webkit-resizer {
+        background-color: transparent;
+       }
+       .content {
+        box-sizing: border-box;
+        width: 400px;
+        height: 500px;
+        background-color: yellow;
+        padding: 30px;
+        font-size: 24px;
+        position: absolute;
+        right: -380px;
+        bottom: -480px;
+        &::before {
+            content: "";
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: red;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+       }
+    </style>
+</head>
+
+<body>
+
+    <div class="main">
+        <div class="resize"></div>
+        <div class="content" contenteditable="true">hello guys, drag me</div>
+    </div>
+
+</body>
+
+</html>
