@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flex布局案例 - 固定数量平均分布</title>
+  <style>
+    /* 基础样式 */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    /* Flex 布局核心代码 */
+    .flex-container {
+      display: flex;
+      flex-wrap: wrap; /* 允许换行 */
+      justify-content: flex-start; /* 靠左对齐 */
+      gap: 15px; /* 元素间距 */
+    }
+    .flex-item {
+      /* 每行显示4个：25%宽度减去间距 */
+      flex: 0 0 calc(50% - 15px);
+      height: 100px;
+      background: linear-gradient(135deg, #4CAF50, #2E7D32);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+    .flex-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+      background: linear-gradient(135deg, #3F9142, #1B5E20);
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      .flex-item {
+        flex: 0 0 calc(50% - 15px); /* 平板：每行2个 */
+      }
+    }
+    @media (max-width: 480px) {
+      .flex-item {
+        flex: 0 0 100%; /* 手机：每行1个 */
+      }
+    }
+
+    /* 底部说明 */
+    .note {
+      margin-top: 30px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-left: 4px solid #4CAF50;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Flex布局：每行4个元素平均分布</h2>
+    
+    <div class="flex-container">
+      <div class="flex-item">1</div>
+      <div class="flex-item">2</div>
+      <div class="flex-item">3</div>
+      <div class="flex-item">4</div>
+      <div class="flex-item">5</div>
+      <div class="flex-item">6</div>
+      <div class="flex-item">7</div>
+      <div class="flex-item">8</div>
+      <div class="flex-item">9</div>
+      <div class="flex-item">10</div>
+      <div class="flex-item">11</div>
+    </div>
+
+    <div class="note">
+      <strong>实现要点：</strong><br>
+      1. 使用 <code>flex-wrap: wrap</code> 允许换行<br>
+      2. <code>flex: 0 0 calc(25% - 15px)</code> 控制每行4个等宽元素<br>
+      3. <code>justify-content: flex-start</code> 保证换行后左对齐<br>
+      4. 媒体查询实现响应式布局（桌面4个/平板2个/手机1个）
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>侧边栏弹出效果</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .main-content {
+            padding: 20px;
+        }
+
+        .toggle-btn {
+            padding: 10px 15px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-btn:hover {
+            background: #2980b9;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100%;
+            background: #2c3e50;
+            color: white;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .sidebar-header h2 {
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            border-bottom: 1px solid #34495e;
+        }
+
+        .sidebar-menu li a {
+            display: block;
+            padding: 15px 20px;
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .sidebar-menu li a:hover {
+            background: #34495e;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar.active ~ .main-content {
+            margin-left: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>侧边栏标题</h2>
+            <button class="close-btn">×</button>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#">菜单项1</a></li>
+            <li><a href="#">菜单项2</a></li>
+            <li><a href="#">菜单项3</a></li>
+            <li><a href="#">菜单项4</a></li>
+            <li><a href="#">菜单项5</a></li>
+        </ul>
+    </div>
+    
+    <div class="overlay"></div>
+    
+    <div class="main-content">
+        <button id="toggle-sidebar" class="toggle-btn">☰ 打开侧边栏</button>
+        <h1>页面主要内容</h1>
+        <p>点击按钮打开/关闭侧边栏</p>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('toggle-sidebar');
+            const sidebar = document.querySelector('.sidebar');
+            const closeBtn = document.querySelector('.close-btn');
+            const overlay = document.querySelector('.overlay');
+            
+            function toggleSidebar() {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+                
+                if (sidebar.classList.contains('active')) {
+                    toggleBtn.textContent = '✖ 关闭侧边栏';
+                } else {
+                    toggleBtn.textContent = '☰ 打开侧边栏';
+                }
+            }
+            
+            toggleBtn.addEventListener('click', toggleSidebar);
+            closeBtn.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                    toggleSidebar();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

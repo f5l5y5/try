@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSE解析测试工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .input-section,
+        .output-section {
+            flex: 1;
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .output {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            height: 300px;
+            overflow-y: auto;
+        }
+
+        .block {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-left: 3px solid #4CAF50;
+            background-color: white;
+        }
+
+        .block-daily {
+            border-color: #FF9800;
+        }
+
+        .block-tips {
+            border-color: #9C27B0;
+        }
+
+        .block-type {
+            font-weight: bold;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .block-content {
+            white-space: pre-wrap;
+            font-size: 0.9em;
+        }
+
+        .controls {
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        #autoParseCheckbox {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="overflow-x: auto;border-radius: 20px;">
+        <table cellspacing="0" cellpadding="0"
+            style="width: 100%; background: #FFFFFF; table-layout: fixed; border-collapse: collapse; border-spacing: 0; margin: 0; padding: 0; border: 1px solid red;">
+            <tr>
+                <td>11</td>
+                <td>11</td>
+                <td>11</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>2</td>
+                <td>2</td>
+            </tr>
+        </table>
+    </div>
+    <h1>SSE解析测试工具</h1>
+    <div class="container">
+        <div class="input-section">
+            <label for="inputText">输入内容 (自动解析):</label>
+            <textarea id="inputText" placeholder="输入内容将自动解析..."></textarea>
+            <div class="controls">
+                <label>
+                    <input type="checkbox" id="autoParseCheckbox" checked> 自动解析
+                </label>
+                <button id="clearBtn">清空</button>
+            </div>
+        </div>
+        <div class="output-section">
+            <label>解析结果:</label>
+            <div id="output" class="output"></div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟数据存储
+        const goodsData = {};
+        function getGoodsData() { return goodsData; }
+        function updateGoodsData(data) { Object.assign(goodsData, data); }
+        function getGoodsItem(code) { return goodsData[code] || { info: '' }; }
+
+        // 模拟解析函数
+        function parseMarked(text) {
+            text = text.replace(/^([^#|\-\n].*)$/gm, '<p style="word-break: break-word; max-width: 100%;">$1</p>');
+            if (!text) return ''
+
+            text = text.replace(
+                /^[\s]*#\s+(.*?)\s*$/gm,  // 移除 \u4e00-\u9fa5 限制
+                '\n<h1 style="font-size:18px;font-weight:600;margin:4px 0;word-break: break-word;max-width: 100%;">$1</h1>'
+            )
+
+            text = text.replace(
+                /^[\s]*##\s+(.*?)\s*$/gm,
+                '<h2 style="font-size:17px;font-weight:600;margin:4px 0;word-break: break-word;max-width: 100%;">$1</h2>'
+            );
+
+            text = text.replace(
+                /^[\s]*###\s+(.*?)\s*$/gm,
+                '\n<h3 style="font-size:16px;font-weight:600;margin:4px 0;word-break: break-word;max-width: 100%;">$1</h3>'
+            )
+
+            text = text.replace(
+                /^[\s]*####\s+(.*?)\s*$/gm,
+                '\n<h4 style="font-size:15px;font-weight:600;margin:4px 0;word-break: break-word;max-width: 100%;">$1</h4>'
+            )
+            text = text.replace(
+                /^[\s]*#####\s+(.*?)\s*$/gm,
+                '\n<h5 style="font-size:14px;font-weight:600;margin:4px 0;word-break: break-word;max-width: 100%;">$1</h5>'
+            )
+            text = text.replace(
+                /^[\s]*######\s+(.*?)\s*$/gm,
+                '\n<h6 style="font-size:13px;font-weight:600;margin:4px 0;word-break: break-word;max-width: 100%;">$1</h6>'
+            )
+
+
+            // 处理Markdown表格
+            let tableContent = '';
+            let isInTable = false;
+
+            // 先将文本按行分割
+            const lines = text.split('\n');
+            const processedLines = [];
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                if (line.trim().startsWith('|') && line.trim().endsWith('|')) {
+                    // 这是表格行
+                    if (!isInTable) {
+                        isInTable = true;
+                        tableContent = '';
+                    }
+
+                    // 处理表格行
+                    const content = line.trim();
+                    const cells = content.split('|')
+                        .map(cell => cell.trim())
+                        .filter(cell => cell !== '');
+
+                    // 检查是否是分隔行（包含 -）
+                    if (cells.every(cell => /^[-:|]+$/.test(cell))) {
+                        continue; // 跳过分隔行
+                    }
+
+                    // 计算每列的宽度百分比
+                    const columnWidth = 100 / cells.length;
+
+                    // 创建表格行
+                    const cellsHtml = cells.map(cell =>
+                        `<td style="padding: 10px 4px; margin: 0; border: 1px solid #F3F3F3; font-size: 12px; width: ${columnWidth}%; text-align: center; word-break: break-all;">${cell}</td>`
+                    ).join('');
+
+                    tableContent += `<tr>${cellsHtml}</tr>`;
+                } else {
+                    // 不是表格行
+                    if (isInTable) {
+                        // 表格结束，添加完整表格
+                        processedLines.push(`<div style="overflow-x: auto;"><table cellspacing="0" cellpadding="0" style="width: 100%; background: #FFFFFF; table-layout: fixed; border-collapse: collapse; border-spacing: 0; margin: 0; padding: 0; border: 1px solid #F3F3F3;">${tableContent}</table></div>`);
+                        isInTable = false;
+                    }
+                    processedLines.push(line);
+                }
+            }
+
+            // 如果最后还有未处理的表格
+            if (isInTable) {
+                processedLines.push(`<div style="overflow-x: auto;"><table cellspacing="0" cellpadding="0" style="width: 100%; background: #FFFFFF; table-layout: fixed; border-collapse: collapse; border-spacing: 0; margin: 0; padding: 0; border: 1px solid #F3F3F3;">${tableContent}</table></div>`);
+            }
+
+            // 将处理后的行重新组合
+            text = processedLines.join('\n');
+
+            // 处理Markdown分隔线，兼容中文前后可能存在的字符，在开头添加换行
+            text = text.replace(
+                /^[\s\u4e00-\u9fa5]*-{3,}[\s\u4e00-\u9fa5]*$/gm,
+                '\n<hr style="border:none;border-top:1px solid #eee;margin:8px 0;">'
+            )
+
+            // 修改加粗文本处理，确保前后有换行
+            text = text.replace(
+                /([^\n])(\*\*.*?\*\*)([^\n])/g,
+                '$1$2$3'
+            );
+
+            // 然后处理加粗文本的样式
+            text = text.replace(
+                /\*\*(.*?)\*\*/g,
+                '<strong style="display:inline-block;margin:4px 0;font-weight:600;">$1</strong>'
+            )
+
+            // 处理Markdown标题，兼容中文前后可能存在的字符，在开头添加换行
+
+            // 处理列表项，紧凑布局，兼容中文前后可能存在的字符和多行内容
+            text = text.replace(
+                /^\s*-\s*([^\n]*(?:\n(?!\s*-\s*)[^\n]*)*)/gm,
+                '\n<div style="margin:2px 0;padding-left:8px;word-break: break-word;max-width: 100%;">• $1</div>'
+            )
+
+            // 优化换行处理，增加空行间距
+            text = text.replace(/\n{2,}/g, '<div style="margin:8px 0;"></div>')
+            text = text.replace(/\n/g, '<div style="margin:4px 0;"></div>')
+
+            return text
+        }
+
+        function parseMarkedAssistant(text) {
+
+            text = text.replace(/^([^#|\-\n].*)$/gm, '<p style="word-break: break-word; font-size: 14px; max-width: 100%;">$1</p>');
+            if (!text) return ''
+
+            text = text.replace(
+                /^[\s]*#\s+(.*?)\s*$/gm,  // 移除 \u4e00-\u9fa5 限制
+                '\n<h1 style="font-size:20px;font-weight:600;margin:20px 0;word-break: break-word;max-width: 100%;">$1</h1>'
+            )
+            text = text.replace(
+                /^[\s]*##\s+(.*?)\s*$/gm,
+                '<h2 style="font-size:16px;font-weight:600;margin:20px 0;word-break: break-word;max-width: 100%;">$1</h2>'
+            );
+
+            text = text.replace(
+                /^[\s]*###\s+(.*?)\s*$/gm,
+                '\n<h3 style="font-size:16px;font-weight:600;margin:4px 0;word-break: break-word;max-width: 100%;">$1</h3>'
+            )
+
+            text = text.replace(
+                /^[\s]*####\s+(.*?)\s*$/gm,
+                '\n<h4 style="font-size:15px;font-weight:600;margin:4px 0;word-break: break-word;max-width: 100%;">$1</h4>'
+            )
+            text = text.replace(
+                /^[\s]*#####\s+(.*?)\s*$/gm,
+                '\n<h5 style="font-size:14px;font-weight:600;margin:4px 0;word-break: break-word;max-width: 100%;">$1</h5>'
+            )
+            text = text.replace(
+                /^[\s]*######\s+(.*?)\s*$/gm,
+                '\n<h6 style="font-size:13px;font-weight:600;margin:4px 0;word-break: break-word;max-width: 100%;">$1</h6>'
+            )
+
+
+            // 处理Markdown表格
+            let tableContent = '';
+            let isInTable = false;
+
+            // 先将文本按行分割
+            const lines = text.split('\n');
+            const processedLines = [];
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                if (line.trim().startsWith('|') && line.trim().endsWith('|')) {
+                    // 这是表格行
+                    if (!isInTable) {
+                        isInTable = true;
+                        tableContent = '';
+                    }
+
+                    // 处理表格行
+                    const content = line.trim();
+                    const cells = content.split('|')
+                        .map(cell => cell.trim())
+                        .filter(cell => cell !== '');
+
+                    // 检查是否是分隔行（包含 -）
+                    if (cells.every(cell => /^[-:|]+$/.test(cell))) {
+                        continue; // 跳过分隔行
+                    }
+
+                    // 计算每列的宽度百分比
+                    const columnWidth = 100 / cells.length;
+
+                    // 创建表格行
+                    const cellsHtml = cells.map(cell =>
+                        `<td style="padding: 10px 4px; margin: 0; border: 1px solid #F3F3F3; font-size: 12px; width: ${columnWidth}%; text-align: center; word-break: break-all;">${cell}</td>`
+                    ).join('');
+
+                    tableContent += `<tr>${cellsHtml}</tr>`;
+                } else {
+                    // 不是表格行
+                    if (isInTable) {
+                        // 表格结束，添加完整表格
+                        processedLines.push(`<div style="overflow-x: auto;"><table cellspacing="0" cellpadding="0" style="width: 100%; background: #FFFFFF; table-layout: fixed; border-collapse: collapse; border-spacing: 0; margin: 0; padding: 0; border: 1px solid #F3F3F3;">${tableContent}</table></div>`);
+                        isInTable = false;
+                    }
+                    processedLines.push(line);
+                }
+            }
+
+            // 如果最后还有未处理的表格
+            if (isInTable) {
+                processedLines.push(`<div style="overflow-x: auto;"><table cellspacing="0" cellpadding="0" style="width: 100%; background: #FFFFFF; table-layout: fixed; border-collapse: collapse; border-spacing: 0; margin: 0; padding: 0; border: 1px solid #F3F3F3;">${tableContent}</table></div>`);
+            }
+
+            // 将处理后的行重新组合
+            text = processedLines.join('\n');
+
+            // 处理Markdown分隔线，兼容中文前后可能存在的字符，在开头添加换行
+            text = text.replace(
+                /^[\s\u4e00-\u9fa5]*-{3,}[\s\u4e00-\u9fa5]*$/gm,
+                '\n<hr style="border:none;border-top:1px solid #eee;margin:8px 0;">'
+            )
+
+            // 修改加粗文本处理，确保前后有换行
+            text = text.replace(
+                /([^\n])(\*\*.*?\*\*)([^\n])/g,
+                '$1$2$3'
+            );
+
+            // 然后处理加粗文本的样式
+            text = text.replace(
+                /\*\*(.*?)\*\*/g,
+                '<strong style="display:inline-block;margin:4px 0;font-weight:600;">$1</strong>'
+            )
+
+            // 处理Markdown标题，兼容中文前后可能存在的字符，在开头添加换行
+
+            // 处理列表项，紧凑布局，兼容中文前后可能存在的字符和多行内容
+            // text = text.replace(
+            //   /^\s*-\s*([^\n]*(?:\n(?!\s*-\s*)[^\n]*)*)/gm,
+            //   '\n<div style="margin:2px 0;padding-left:8px;word-break: break-word;max-width: 100%;">• $1</div>'
+            // )
+
+            // 优化换行处理，增加空行间距
+            // text = text.replace(/\n{2,}/g, '<div style="margin:8px 0;"></div>')
+            // text = text.replace(/\n/g, '<div style="margin:4px 0;"></div>')
+
+            return text
+        }
+        // 处理blocks数组中相邻相同类型的非文本块的合并逻辑
+        function mergeBlocks(blocks) {
+            if (!blocks || !Array.isArray(blocks)) return []
+
+            const mergedBlocks = []
+            let i = 0
+
+            while (i < blocks.length) {
+                // 过滤掉非text类型且info为空的块
+                if (blocks[i].type !== 'text' && !blocks[i].info && blocks[i].type !== 'car' && blocks[i].type !== 'daily' && blocks[i].type !== 'tips') {
+                    i++
+                    continue
+                }
+
+                if (i + 1 < blocks.length &&
+                    blocks[i].type !== 'text' &&
+                    blocks[i].type === blocks[i + 1].type) {
+                    // 收集所有连续的相同类型块（排除info为空的块）
+                    const sameTypeBlocks = [blocks[i]]
+                    while (i + 1 < blocks.length &&
+                        blocks[i].type === blocks[i + 1].type &&
+                        blocks[i + 1].info) {
+                        sameTypeBlocks.push(blocks[i + 1])
+                        i++
+                    }
+                    // 只有当存在多个相同类型的块时才创建mult类型块
+                    if (sameTypeBlocks.length > 1) {
+                        mergedBlocks.push({
+                            type: 'mult',
+                            content: sameTypeBlocks
+                        })
+                    } else if (sameTypeBlocks.length === 1) {
+                        // 如果只有一个块，直接添加到结果中
+                        mergedBlocks.push(sameTypeBlocks[0])
+                    }
+                } else {
+                    mergedBlocks.push(blocks[i])
+                }
+                i++
+            }
+            // console.log('打印***mergedBlocks',mergedBlocks)
+
+            return mergedBlocks
+        }
+
+
+        // 解析函数实现
+        const TAG_REGEX = {
+            'travel': /<product>(.*?)<\/product>/g,
+            'line': /<line>(.*?)<\/line>/g,
+            'room': /<hotel>(.*?)<\/hotel>/g,
+            'car': /<car>(.*?)<\/car>/g,
+            'shop': /<food>(.*?)<\/food>/g,
+            'daily': /<daily start>(.*?)<daily end>/g,
+            'tips': /<tips start>(.*?)<tips end>/g,
+        };
+
+        // 主解析函数
+        function parseContent(text, active) {
+            if (!text || typeof text !== 'string') return [];
+
+            const blocks = [];
+            let remainingText = text;
+
+            // 1. 优先处理特殊标签（tips和daily）
+            const specialTags = ['tips', 'daily'];
+            let lastIndex = 0;
+
+            while (lastIndex < remainingText.length) {
+                let earliestTag = null;
+                let earliestIndex = remainingText.length;
+                let hasProcessed = false;
+
+                // 找出最先出现的特殊标签
+                for (const tag of specialTags) {
+                    const startIndex = remainingText.indexOf(`<${tag} start>`, lastIndex);
+                    if (startIndex !== -1 && startIndex < earliestIndex) {
+                        earliestIndex = startIndex;
+                        earliestTag = tag;
+                    }
+                }
+
+                // 处理标签前的普通文本
+                if (earliestIndex > lastIndex) {
+                    const beforeText = remainingText.slice(lastIndex, earliestIndex).trim();
+                    if (beforeText) {
+                        blocks.push({
+                            type: 'text',
+                            content: active === 'travel' ? parseMarkedAssistant(beforeText) : parseMarked(beforeText)
+                        });
+                    }
+                    hasProcessed = true
+                }
+
+                // 如果没有找到特殊标签，处理剩余文本
+                if (!earliestTag && !hasProcessed) {
+                    const finalText = remainingText.slice(lastIndex).trim();
+                    if (finalText) {
+                        blocks.push({
+                            type: 'text',
+                            content: active === 'travel' ? parseMarkedAssistant(finalText) : parseMarked(finalText)
+                        });
+                    }
+                    break;
+                }
+
+                // 处理特殊标签内容
+                const startTag = `<${earliestTag} start>`;
+                const endTag = `<${earliestTag} end>`;
+                const contentStart = earliestIndex + startTag.length;
+                let contentEnd = remainingText.indexOf(endTag, contentStart);
+
+                if (contentEnd === -1) {
+                    contentEnd = remainingText.length;
+                }
+
+                const content = remainingText.slice(contentStart, contentEnd).trim();
+                if (content) {
+                    blocks.push({
+                        type: earliestTag,
+                        content: content
+                    });
+                }
+
+                lastIndex = contentEnd === remainingText.length ? contentEnd : contentEnd + endTag.length;
+            }
+
+            // 2. 处理其他标签（product, line等）
+            const processedBlocks = [];
+            for (const block of blocks) {
+                if (block.type !== 'text') {
+                    processedBlocks.push(block);
+                    continue;
+                }
+
+                let textContent = block.content;
+                let textLastIndex = 0;
+                let foundTags = false;
+
+                for (const [type, regex] of Object.entries(TAG_REGEX)) {
+                    if (specialTags.includes(type)) continue;
+
+                    regex.lastIndex = 0;
+                    let match;
+
+                    while ((match = regex.exec(textContent)) !== null) {
+                        foundTags = true;
+
+                        // 处理标签前的文本
+                        if (match.index > textLastIndex) {
+                            const beforeText = textContent.slice(textLastIndex, match.index).trim();
+                            if (beforeText) {
+                                processedBlocks.push({
+                                    type: 'text',
+                                    content: beforeText
+                                });
+                            }
+                        }
+
+                        // 处理标签内容
+                        const content = match[1];
+                        if (!getGoodsData()[content]) {
+                            updateGoodsData({
+                                [content]: {
+                                    code: content,
+                                    type: type,
+                                    info: ''
+                                }
+                            });
+                        }
+
+                        processedBlocks.push({
+                            type: type,
+                            content: content,
+                            info: getGoodsItem(content).info
+                        });
+
+                        textLastIndex = regex.lastIndex;
+                    }
+                }
+
+                // 处理剩余的普通文本
+                if (textLastIndex < textContent.length) {
+                    const remaining = textContent.slice(textLastIndex).trim();
+                    if (remaining) {
+                        processedBlocks.push({
+                            type: 'text',
+                            content: remaining
+                        });
+                    }
+                } else if (!foundTags) {
+                    processedBlocks.push(block);
+                }
+            }
+            console.log('打印***processedBlocks', processedBlocks)
+            return mergeBlocks(processedBlocks);
+        }
+
+
+
+        // function parseContent(text, active) {
+        //     if (!text) return [];
+
+        //     const blocks = [];
+        //     const tagTypes = [
+        //         { type: 'travel', regex: /<product>(.*?)<\/product>/g, collectGoods: true },
+        //         { type: 'line', regex: /<line>(.*?)<\/line>/g, collectGoods: true },
+        //         { type: 'room', regex: /<hotel>(.*?)<\/hotel>/g, collectGoods: true },
+        //         { type: 'car', regex: /<car>(.*?)<\/car>/g, collectGoods: true },
+        //         { type: 'shop', regex: /<food>(.*?)<\/food>/g, collectGoods: true },
+        //         { type: 'daily', regex: /<daily start>([\s\S]*?)<daily end>/g, collectGoods: false },
+        //         { type: 'tips', regex: /<tips start>([\s\S]*?)<tips end>/g, collectGoods: false },
+        //     ];
+
+        //     // 1. 首先处理特殊标签（daily和tips）
+        //     const specialBlocks = [];
+        //     for (const tagType of tagTypes.filter(t => !t.collectGoods)) {
+        //         let match;
+        //         const regex = new RegExp(tagType.regex.source, 'g');
+        //         while ((match = regex.exec(text)) !== null) {
+        //             specialBlocks.push({
+        //                 type: tagType.type,
+        //                 content: match[1].trim(),
+        //                 startIndex: match.index,
+        //                 endIndex: match.index + match[0].length
+        //             });
+        //         }
+        //     }
+
+        //     // 2. 如果有特殊标签，优先处理
+        //     if (specialBlocks.length > 0) {
+        //         specialBlocks.sort((a, b) => a.startIndex - b.startIndex);
+
+        //         let lastEnd = 0;
+        //         const processedBlocks = [];
+
+        //         for (const block of specialBlocks) {
+        //             // 处理特殊标签前的内容
+        //             if (block.startIndex > lastEnd) {
+        //                 const beforeText = text.slice(lastEnd, block.startIndex).trim();
+        //                 if (beforeText) {
+        //                     processedBlocks.push({
+        //                         type: 'text',
+        //                         content: active === 'travel' ? parseMarkedAssistant(beforeText) : parseMarked(beforeText)
+        //                     });
+        //                 }
+        //             }
+
+        //             // 添加特殊标签内容
+        //             processedBlocks.push({
+        //                 type: block.type,
+        //                 content: block.content
+        //             });
+
+        //             lastEnd = block.endIndex;
+        //         }
+
+        //         // 处理特殊标签后的剩余内容
+        //         if (lastEnd < text.length) {
+        //             const afterText = text.slice(lastEnd).trim();
+        //             if (afterText) {
+        //                 processedBlocks.push({
+        //                     type: 'text',
+        //                     content: active === 'travel' ? parseMarkedAssistant(afterText) : parseMarked(afterText)
+        //                 });
+        //             }
+        //         }
+
+        //         return mergeBlocks(processedBlocks);
+        //     }
+
+        //     // 3. 如果没有特殊标签，处理普通标签
+        //     let lastIndex = 0;
+        //     for (const tagType of tagTypes.filter(t => t.collectGoods)) {
+        //         let match;
+        //         const regex = new RegExp(tagType.regex.source, 'g');
+        //         while ((match = regex.exec(text)) !== null) {
+        //             // 处理标签前的内容
+        //             const beforeText = text.slice(lastIndex, match.index).trim();
+        //             if (beforeText) {
+        //                 blocks.push({
+        //                     type: 'text',
+        //                     content: active === 'travel' ? parseMarkedAssistant(beforeText) : parseMarked(beforeText)
+        //                 });
+        //             }
+
+        //             // 处理标签内容
+        //             const content = match[1];
+        //             if (!getGoodsData()[content]) {
+        //                 updateGoodsData({
+        //                     [content]: {
+        //                         code: content,
+        //                         type: tagType.type,
+        //                         info: ''
+        //                     }
+        //                 });
+        //             }
+
+        //             blocks.push({
+        //                 type: tagType.type,
+        //                 content: content,
+        //                 info: getGoodsItem(content).info
+        //             });
+
+        //             lastIndex = regex.lastIndex;
+        //         }
+        //     }
+
+        //     // 4. 处理所有标签后的剩余内容
+        //     const finalText = text.slice(lastIndex).trim();
+        //     if (finalText) {
+        //         blocks.push({
+        //             type: 'text',
+        //             content: active === 'travel' ? parseMarkedAssistant(finalText) : parseMarked(finalText)
+        //         });
+        //     }
+
+        //     console.log('打印***blocks', blocks)
+        //     // 使用工具函数合并相邻相同类型的非文本块
+        //     const mergedBlocks = mergeBlocks(blocks)
+        //     console.log('打印***mergedBlocks', mergedBlocks)
+        //     return mergedBlocks
+        // }
+
+
+        // 显示解析结果
+        function displayResults(blocks) {
+            const outputDiv = document.getElementById('output');
+
+            if (blocks.length === 0) {
+                outputDiv.innerHTML = '<div class="block">没有解析到任何内容</div>';
+                return;
+            }
+
+            let html = '';
+            blocks.forEach(block => {
+                const blockClass = block.type === 'daily' ? 'block-daily' :
+                    block.type === 'tips' ? 'block-tips' : 'block';
+
+                html += `
+                    <div class="${blockClass}">
+                        <div class="block-type">类型: ${block.type}</div>
+                        <div class="block-content">${block.content}</div>
+                    </div>
+                `;
+            });
+
+            outputDiv.innerHTML = html;
+        }
+
+        // 自动解析处理
+        const inputText = document.getElementById('inputText');
+        const autoParseCheckbox = document.getElementById('autoParseCheckbox');
+        let debounceTimer;
+
+        inputText.addEventListener('input', () => {
+            if (!autoParseCheckbox.checked) return;
+
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                const result = parseContent(inputText.value, 'travel');
+                displayResults(result);
+            }, 300);
+        });
+
+        // 清空按钮
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            inputText.value = '';
+            document.getElementById('output').innerHTML = '';
+        });
+    </script>
+</body>
+
+</html>
