@@ -1,69 +1,344 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>Eye Ball Move on Mousemove</title>
-    <!-- <link rel="stylesheet" href="css/EyeAnimation.css"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>眼睛跟随鼠标动画</title>
     <style>
-        *{
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        body{
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
             min-height: 100vh;
-            background: radial-gradient(#f2761e,#ef4921);
+            padding: 20px;
+            overflow-x: hidden;
         }
-        .box{
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .eyes-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+        
+        .eye-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+        
+        .eye-section:hover {
+            transform: translateY(-10px);
+        }
+        
+        .eye-section h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            color: #ffcc00;
+        }
+        
+        .eye-pair {
             display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 20px 0;
         }
-        .box .eye{
+        
+        .eye {
             position: relative;
             width: 120px;
             height: 120px;
-            display: block;
-            background: #fff;
-            margin: 0 20px;
+            background: white;
             border-radius: 50%;
-            box-shadow: 0 5px 45px rgba(0,0,0,0.2),
-            inset 0 0 15px #f2761e,
-            inset 0 0 25px #f2761e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
         }
-        .box .eye::before{
-            content: '';
+        
+        .pupil {
             position: absolute;
-            top: 50%;
-            left: 35%;
-            transform: translate(-50%,-50%);
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
+            background: #222;
             border-radius: 50%;
-            background: #000000;
-            border: 10px solid #2196f3;
-            box-sizing: border-box;
+            transition: all 0.1s ease-out;
+        }
+        
+        /* 不同眼睛样式 */
+        .human .eye {
+            border: 8px solid #f0f0f0;
+        }
+        
+        .human .pupil {
+            background: radial-gradient(circle, #333, #000);
+        }
+        
+        .alien .eye {
+            background: #aaffaa;
+            border: 5px solid #88cc88;
+        }
+        
+        .alien .pupil {
+            background: radial-gradient(circle, #335533, #112211);
+            width: 30px;
+            height: 60px;
+            border-radius: 50%;
+        }
+        
+        .cat .eye {
+            background: #ffcc99;
+            border: 6px solid #ffaa66;
+        }
+        
+        .cat .pupil {
+            background: #222;
+            width: 20px;
+            height: 60px;
+            border-radius: 50%;
+        }
+        
+        .robot .eye {
+            background: #cccccc;
+            border: 10px solid #999999;
+        }
+        
+        .robot .pupil {
+            background: #ff3333;
+            width: 30px;
+            height: 30px;
+            border-radius: 0;
+            transform: rotate(45deg);
+        }
+        
+        .controls {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            margin-top: 30px;
+        }
+        
+        .controls h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ffcc00;
+        }
+        
+        .slider-container {
+            margin-bottom: 20px;
+        }
+        
+        .slider-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+        }
+        
+        .instructions {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .eyes-container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="box">
-        <div class="eye"></div>
-        <div class="eye"></div>
+    <div class="container">
+        <header>
+            <h1>眼睛跟随鼠标动画</h1>
+            <p class="subtitle">移动鼠标，观察眼睛如何跟随你的光标</p>
+        </header>
+        
+        <div class="eyes-container">
+            <div class="eye-section human">
+                <h2>人类眼睛</h2>
+                <div class="eye-pair">
+                    <div class="eye">
+                        <div class="pupil" id="human-pupil-1"></div>
+                    </div>
+                    <div class="eye">
+                        <div class="pupil" id="human-pupil-2"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="eye-section alien">
+                <h2>外星人眼睛</h2>
+                <div class="eye-pair">
+                    <div class="eye">
+                        <div class="pupil" id="alien-pupil-1"></div>
+                    </div>
+                    <div class="eye">
+                        <div class="pupil" id="alien-pupil-2"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="eye-section cat">
+                <h2>猫眼</h2>
+                <div class="eye-pair">
+                    <div class="eye">
+                        <div class="pupil" id="cat-pupil-1"></div>
+                    </div>
+                    <div class="eye">
+                        <div class="pupil" id="cat-pupil-2"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="eye-section robot">
+                <h2>机器人眼睛</h2>
+                <div class="eye-pair">
+                    <div class="eye">
+                        <div class="pupil" id="robot-pupil-1"></div>
+                    </div>
+                    <div class="eye">
+                        <div class="pupil" id="robot-pupil-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <h2>自定义设置</h2>
+            <div class="slider-container">
+                <label for="sensitivity">眼睛灵敏度</label>
+                <input type="range" id="sensitivity" min="0.1" max="1" step="0.1" value="0.5">
+            </div>
+            <div class="slider-container">
+                <label for="smoothness">动画平滑度</label>
+                <input type="range" id="smoothness" min="0.01" max="0.2" step="0.01" value="0.1">
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <p>这个动画展示了如何使用CSS和JavaScript创建眼睛跟随鼠标的效果。</p>
+            <p>每个眼睛类型都有不同的样式和瞳孔形状，但它们都会跟随你的鼠标移动。</p>
+            <p>尝试调整上方的设置来改变眼睛的灵敏度和动画平滑度。</p>
+        </div>
+        
+        <footer>
+            <p>眼睛跟随鼠标动画 | 使用纯CSS和JavaScript实现</p>
+        </footer>
     </div>
-    <script>
-        document.querySelector('body').addEventListener('mousemove',eyeball);
-        function eyeball(e) {
-            const eye=document.querySelectorAll('.eye');
-            eye.forEach(function (eye) {
-                let x=(eye.getBoundingClientRect().left)+(eye.clientWidth/2);
-                let y=(eye.getBoundingClientRect().top)+(eye.clientHeight/2);
 
-                let radian=Math.atan2(e.pageX-x,e.pageY-y);
-                let rotation=(radian*(180/Math.PI)*-1)+270;
-                eye.style.transform="rotate("+rotation+"deg)"
-            })
-        }
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取所有瞳孔元素
+            const pupils = document.querySelectorAll('.pupil');
+            
+            // 获取控制元素
+            const sensitivitySlider = document.getElementById('sensitivity');
+            const smoothnessSlider = document.getElementById('smoothness');
+            
+            // 初始化参数
+            let sensitivity = parseFloat(sensitivitySlider.value);
+            let smoothness = parseFloat(smoothnessSlider.value);
+            
+            // 更新参数
+            sensitivitySlider.addEventListener('input', function() {
+                sensitivity = parseFloat(this.value);
+            });
+            
+            smoothnessSlider.addEventListener('input', function() {
+                smoothness = parseFloat(this.value);
+            });
+            
+            // 鼠标移动事件
+            document.addEventListener('mousemove', function(e) {
+                pupils.forEach(pupil => {
+                    const eye = pupil.parentElement;
+                    const eyeRect = eye.getBoundingClientRect();
+                    
+                    // 计算眼睛中心点
+                    const eyeCenterX = eyeRect.left + eyeRect.width / 2;
+                    const eyeCenterY = eyeRect.top + eyeRect.height / 2;
+                    
+                    // 计算鼠标相对于眼睛中心的位置
+                    const mouseX = e.clientX - eyeCenterX;
+                    const mouseY = e.clientY - eyeCenterY;
+                    
+                    // 计算角度
+                    const angle = Math.atan2(mouseY, mouseX);
+                    
+                    // 计算瞳孔在眼睛内的最大移动距离
+                    const maxMove = (eyeRect.width - pupil.offsetWidth) / 2 * sensitivity;
+                    
+                    // 计算瞳孔新位置
+                    const pupilX = Math.cos(angle) * maxMove;
+                    const pupilY = Math.sin(angle) * maxMove;
+                    
+                    // 应用平滑过渡
+                    pupil.style.transition = `all ${smoothness}s ease-out`;
+                    
+                    // 更新瞳孔位置
+                    pupil.style.transform = `translate(${pupilX}px, ${pupilY}px)`;
+                });
+            });
+        });
     </script>
 </body>
 </html>
