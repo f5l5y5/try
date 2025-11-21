@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片裁剪框演示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .demo-item {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .demo-desc {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .pros {
+            color: #27ae60;
+        }
+
+        .cons {
+            color: #e74c3c;
+        }
+
+        .demo-area {
+            width: 100%;
+            height: 300px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect fill="%23ddd" width="400" height="300"/><text x="50%" y="50%" text-anchor="middle" fill="%23999" font-size="20">演示区域</text><circle cx="100" cy="100" r="30" fill="%234CAF50"/><rect x="250" y="150" width="80" height="60" fill="%232196F3"/></svg>') center/cover;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        /* 方法2需要特殊处理overflow */
+        .demo-item:nth-child(2) .demo-area {
+            overflow: visible;
+            clip-path: inset(0 0 0 0);
+        }
+
+        /* 方法1: box-shadow */
+        .method1-crop {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            width: 200px;
+            height: 150px;
+            border: 2px dashed #fff;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+            cursor: move;
+        }
+
+        /* 方法2: border */
+        .method2-wrapper {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            width: 200px;
+            height: 150px;
+            overflow: visible;
+        }
+
+        .method2-crop {
+            width: 200px;
+            height: 150px;
+            border: 9999px solid rgba(0, 0, 0, 0.5);
+            box-sizing: content-box;
+            cursor: move;
+            margin: -9999px;
+        }
+
+        .method2-inner {
+            border: 2px dashed #fff;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        /* 方法3: 多个div */
+        .method3-wrapper {
+            position: absolute;
+            inset: 0;
+        }
+
+        .method3-crop-box {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            width: 200px;
+            height: 150px;
+            border: 2px dashed #fff;
+            z-index: 5;
+            cursor: move;
+        }
+
+        .mask-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+        }
+
+        .mask-bottom {
+            position: absolute;
+            top: 200px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+        }
+
+        .mask-left {
+            position: absolute;
+            top: 50px;
+            left: 0;
+            width: 50px;
+            height: 150px;
+            background: rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+        }
+
+        .mask-right {
+            position: absolute;
+            top: 50px;
+            left: 250px;
+            right: 0;
+            height: 150px;
+            background: rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+        }
+
+        /* 方法4: 伪元素 + clip-path */
+        .method4-wrapper {
+            position: absolute;
+            inset: 0;
+        }
+
+        .method4-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            clip-path: polygon(
+                0 0,
+                0 100%,
+                50px 100%,
+                50px 50px,
+                250px 50px,
+                250px 200px,
+                50px 200px,
+                50px 100%,
+                100% 100%,
+                100% 0
+            );
+            pointer-events: none;
+        }
+
+        .method4-crop {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            width: 200px;
+            height: 150px;
+            border: 2px dashed #fff;
+            z-index: 5;
+            cursor: move;
+        }
+
+        /* 方法5: outline */
+        .method5-crop {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            width: 200px;
+            height: 150px;
+            border: 2px dashed #fff;
+            outline: 9999px solid rgba(0, 0, 0, 0.5);
+            cursor: move;
+        }
+
+        /* 方法6: background渐变 */
+        .method6-wrapper {
+            position: absolute;
+            inset: 0;
+            background-image:
+                /* 上方遮罩 */
+                linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                /* 下方遮罩 */
+                linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                /* 左侧遮罩 */
+                linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                /* 右侧遮罩 */
+                linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5));
+            background-size:
+                100% 50px,      /* 上方 */
+                100% calc(100% - 200px), /* 下方 */
+                50px 150px,     /* 左侧 */
+                calc(100% - 250px) 150px; /* 右侧 */
+            background-position:
+                0 0,            /* 上方 */
+                0 200px,        /* 下方 */
+                0 50px,         /* 左侧 */
+                250px 50px;     /* 右侧 */
+            background-repeat: no-repeat;
+            pointer-events: none;
+        }
+
+        .method6-crop {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            width: 200px;
+            height: 150px;
+            border: 2px dashed #fff;
+            z-index: 5;
+            cursor: move;
+        }
+
+        .note {
+            margin-top: 10px;
+            padding: 10px;
+            background: #fff3cd;
+            border-left: 3px solid #ffc107;
+            font-size: 12px;
+            color: #856404;
+            border-radius: 3px;
+        }
+
+        code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>图片裁剪框实现方法 - 6种方案对比</h1>
+
+    <div class="container">
+        <!-- 方法1: box-shadow -->
+        <div class="demo-item">
+            <div class="demo-title">1. box-shadow 方法</div>
+            <div class="demo-desc">
+                <span class="pros">✓ 代码量少</span><br>
+                <span class="pros">✓ 性能好</span><br>
+                <span class="pros">✓ 实现简单</span><br>
+                <span class="cons">✗ 可能存在边缘渲染问题</span>
+            </div>
+            <div class="demo-area">
+                <div class="method1-crop"></div>
+            </div>
+            <div class="note">
+                <code>box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);</code>
+            </div>
+        </div>
+
+        <!-- 方法2: border -->
+        <div class="demo-item">
+            <div class="demo-title">2. border 方法</div>
+            <div class="demo-desc">
+                <span class="pros">✓ 兼容性好</span><br>
+                <span class="pros">✓ 相对稳定</span><br>
+                <span class="cons">✗ 需要嵌套多层</span><br>
+                <span class="cons">✗ 需要配合box-sizing</span>
+            </div>
+            <div class="demo-area">
+                <div class="method2-wrapper">
+                    <div class="method2-crop">
+                        <div class="method2-inner"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="note">
+                <code>border: 9999px solid rgba(0,0,0,0.5);</code><br>
+                需配合 <code>box-sizing: content-box</code>
+            </div>
+        </div>
+
+        <!-- 方法3: 多个div -->
+        <div class="demo-item">
+            <div class="demo-title">3. 多个 div 方法</div>
+            <div class="demo-desc">
+                <span class="pros">✓ 最精确、最可控</span><br>
+                <span class="pros">✓ 兼容性最好</span><br>
+                <span class="cons">✗ DOM结构复杂</span><br>
+                <span class="cons">✗ 需要JS动态计算</span>
+            </div>
+            <div class="demo-area">
+                <div class="method3-wrapper">
+                    <div class="mask-top"></div>
+                    <div class="mask-bottom"></div>
+                    <div class="mask-left"></div>
+                    <div class="mask-right"></div>
+                    <div class="method3-crop-box"></div>
+                </div>
+            </div>
+            <div class="note">
+                使用4个div分别覆盖上下左右区域
+            </div>
+        </div>
+
+        <!-- 方法4: 伪元素 + clip-path -->
+        <div class="demo-item">
+            <div class="demo-title">4. 伪元素 + clip-path</div>
+            <div class="demo-desc">
+                <span class="pros">✓ 不增加DOM</span><br>
+                <span class="pros">✓ 效果优雅</span><br>
+                <span class="cons">✗ clip-path 语法复杂</span><br>
+                <span class="cons">✗ 动态调整困难</span>
+            </div>
+            <div class="demo-area">
+                <div class="method4-wrapper">
+                    <div class="method4-crop"></div>
+                </div>
+            </div>
+            <div class="note">
+                使用 <code>::before</code> 伪元素 + <code>clip-path</code> 裁剪镂空区域
+            </div>
+        </div>
+
+        <!-- 方法5: outline -->
+        <div class="demo-item">
+            <div class="demo-title">5. outline 方法</div>
+            <div class="demo-desc">
+                <span class="pros">✓ 代码极简</span><br>
+                <span class="pros">✓ 不占用布局空间</span><br>
+                <span class="pros">✓ 性能好</span><br>
+                <span class="cons">✗ 渲染可能存在边缘问题</span>
+            </div>
+            <div class="demo-area">
+                <div class="method5-crop"></div>
+            </div>
+            <div class="note">
+                <code>outline: 9999px solid rgba(0,0,0,0.5);</code><br>
+                与box-shadow类似但不占用布局空间
+            </div>
+        </div>
+
+        <!-- 方法6: background渐变 -->
+        <div class="demo-item">
+            <div class="demo-title">6. background 渐变方法</div>
+            <div class="demo-desc">
+                <span class="pros">✓ 纯CSS实现</span><br>
+                <span class="pros">✓ 可创造特殊效果</span><br>
+                <span class="cons">✗ 语法复杂</span><br>
+                <span class="cons">✗ 代码可读性差</span>
+            </div>
+            <div class="demo-area">
+                <div class="method6-wrapper"></div>
+                <div class="method6-crop"></div>
+            </div>
+            <div class="note">
+                使用 <code>linear-gradient</code> 创建十字交叉的渐变遮罩
+            </div>
+        </div>
+    </div>
+
+    <div style="max-width: 1400px; margin: 30px auto; padding: 20px; background: white; border-radius: 8px;">
+        <h2 style="margin-bottom: 15px;">方案选型建议</h2>
+        <ul style="line-height: 2; color: #555;">
+            <li><strong>简单场景：</strong>使用 <code>box-shadow</code> 或 <code>outline</code> 方法（方法1、5）</li>
+            <li><strong>兼容性要求高：</strong>使用 <code>box-shadow</code> 或 <code>多个div</code>（方法1、3）</li>
+            <li><strong>精确控制：</strong>使用 <code>多个div</code>（方法3）配合JS动态计算</li>
+            <li><strong>特殊效果：</strong>使用 <code>background渐变</code>（方法6）</li>
+            <li><strong>不想增加DOM：</strong>推荐使用 <code>clip-path</code>（方法4）</li>
+        </ul>
+    </div>
+</body>
+</html>

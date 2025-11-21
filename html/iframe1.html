@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iframe 1</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #e3f2fd;
+        }
+        h2 {
+            color: #1976d2;
+        }
+        .message-box {
+            margin: 20px 0;
+        }
+        input {
+            padding: 8px;
+            width: 300px;
+            border: 1px solid #1976d2;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #1976d2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        button:hover {
+            background-color: #1565c0;
+        }
+        .log {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #1976d2;
+            border-radius: 4px;
+            min-height: 100px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .log-item {
+            padding: 5px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <h2>Iframe 1 - 发送方</h2>
+
+    <div class="message-box">
+        <input type="text" id="messageInput" placeholder="输入消息...">
+        <button onclick="sendToIframe2()">发送到 Iframe 2</button>
+        <button onclick="sendToParent()">发送到父页面</button>
+    </div>
+
+    <div class="log">
+        <strong>接收日志：</strong>
+        <div id="receiveLog"></div>
+    </div>
+
+    <script>
+        // 接收消息
+        window.addEventListener('message', function(event) {
+            const log = document.getElementById('receiveLog');
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item';
+            logItem.innerHTML = `
+                <small>${new Date().toLocaleTimeString()}</small><br>
+                来自: ${event.origin}<br>
+                消息: ${JSON.stringify(event.data)}
+            `;
+            log.appendChild(logItem);
+            log.scrollTop = log.scrollHeight;
+        });
+
+        // 发送消息到 iframe2（通过父窗口）
+        function sendToIframe2() {
+            const message = document.getElementById('messageInput').value;
+            if (!message) {
+                alert('请输入消息');
+                return;
+            }
+
+            // 发送消息给父窗口，让父窗口转发给 iframe2
+            window.parent.postMessage({
+                target: 'iframe2',
+                from: 'iframe1',
+                message: message
+            }, '*');
+
+            document.getElementById('messageInput').value = '';
+        }
+
+        // 发送消息到父页面
+        function sendToParent() {
+            const message = document.getElementById('messageInput').value;
+            if (!message) {
+                alert('请输入消息');
+                return;
+            }
+
+            window.parent.postMessage({
+                target: 'parent',
+                from: 'iframe1',
+                message: message
+            }, '*');
+
+            document.getElementById('messageInput').value = '';
+        }
+    </script>
+</body>
+</html>

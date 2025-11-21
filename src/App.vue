@@ -1,12 +1,10 @@
 <template>
-   <dazhuanpan />
+  <div id="app">
+    <router-view />
+  </div>
 </template>
 
-
 <script setup>
-import dazhuanpan from './components/dazhuanpan.vue';
-
-
 
 </script>
 

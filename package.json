@@ -29,6 +29,7 @@
     "satori": "0.0.44",
     "satori-html": "0.3.2",
     "vue": "^3.2.47",
+    "vue-router": "^4.6.3",
     "vue3-print-nb": "^0.1.4",
     "xlsx": "^0.18.5"
   },

@@ -7,9 +7,10 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import Print from "vue3-print-nb";
 import { vSize } from './directives'
+import router from './router'
 
 
 
 const app = createApp(App)
 app.directive('size', vSize)
-app.use(ElementPlus).use(Antd).use(Print).mount('#app')
+app.use(router).use(ElementPlus).use(Antd).use(Print).mount('#app')

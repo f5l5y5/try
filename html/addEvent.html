@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button class="btn">点击事件</button>
+</body>
+
+</html>
+
+<script>
+
+    init()
+
+    function init() {
+        this.handleEvent = function (event, param) {
+            console.log('param:', param);
+            if (event.type === 'click') {
+                alert('点击了按钮');
+                console.log('this 指向:', this); // 这里的 this 指向 handler 对象
+                console.log('触发事件的元素:', event.target);
+            }
+        };
+        const btnNode = document.querySelector('.btn');
+        console.log('打印***this', this)
+        btnNode.addEventListener('click', this);
+    }
+</script>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iframe 通讯测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .iframe-wrapper {
+            flex: 1;
+            border: 2px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+        }
+        .parent-log {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: white;
+            border: 2px solid #4caf50;
+            border-radius: 8px;
+        }
+        .parent-log h3 {
+            margin-top: 0;
+            color: #4caf50;
+        }
+        .log-item {
+            padding: 8px;
+            margin: 5px 0;
+            background-color: #f1f8e9;
+            border-left: 3px solid #4caf50;
+            border-radius: 4px;
+        }
+        .instructions {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffc107;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #856404;
+        }
+        .parent-message-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px solid #ff9800;
+        }
+        .parent-message-box h3 {
+            margin-top: 0;
+            color: #ff9800;
+        }
+        .parent-message-box input {
+            padding: 10px;
+            width: 400px;
+            border: 1px solid #ff9800;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        .parent-message-box button {
+            padding: 10px 20px;
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        .parent-message-box button:hover {
+            background-color: #f57c00;
+        }
+    </style>
+</head>
+<body>
+    <h1>Iframe 通讯测试页面</h1>
+
+    <div class="instructions">
+        <h3>使用说明：</h3>
+        <ul>
+            <li>左侧是 Iframe 1，右侧是 Iframe 2</li>
+            <li>可以在任意 iframe 中输入消息并发送给另一个 iframe 或父页面</li>
+            <li>所有消息都通过父页面（当前页面）进行转发</li>
+            <li>使用 postMessage API 实现跨 iframe 通讯</li>
+        </ul>
+    </div>
+
+    <div class="parent-message-box">
+        <h3>父页面发送消息</h3>
+        <div>
+            <input type="text" id="parentMessageInput" placeholder="输入消息..." />
+            <button onclick="sendMessageToIframe1()">发送到 Iframe 1 (Home)</button>
+            <button onclick="sendMessageToIframe2()">发送到 Iframe 2 (About)</button>
+            <button onclick="sendMessageToAll()">广播到所有 Iframe</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="iframe-wrapper">
+            <iframe id="iframe1" src="http://localhost:5173/home"></iframe>
+        </div>
+        <div class="iframe-wrapper">
+            <iframe id="iframe2" src="http://localhost:5173/about"></iframe>
+        </div>
+    </div>
+
+    <div class="parent-log">
+        <h3>父页面接收日志：</h3>
+        <div id="parentLog"></div>
+    </div>
+
+    <script>
+        const iframe1 = document.getElementById('iframe1');
+        const iframe2 = document.getElementById('iframe2');
+        const parentLog = document.getElementById('parentLog');
+
+        // 监听来自 iframe 的消息
+        window.addEventListener('message', function(event) {
+            console.log('父页面收到消息:', event.data);
+
+            // 处理 sessionStorage 更新通知
+            if (event.data.type === 'SESSION_STORAGE_UPDATE') {
+                console.log('父页面转发 sessionStorage 更新通知');
+
+                // 记录到日志
+                const logItem = document.createElement('div');
+                logItem.className = 'log-item';
+                logItem.innerHTML = `
+                    <small>${new Date().toLocaleTimeString()}</small><br>
+                    <strong>来自:</strong> ${event.data.from || '未知'}<br>
+                    <strong>类型:</strong> sessionStorage 更新<br>
+                    <strong>键:</strong> ${event.data.key}<br>
+                    <strong>值:</strong> ${event.data.value}
+                `;
+                parentLog.appendChild(logItem);
+                parentLog.scrollTop = parentLog.scrollHeight;
+
+                // 广播给所有 iframe（除了发送者）
+                iframe1.contentWindow.postMessage(event.data, '*');
+                iframe2.contentWindow.postMessage(event.data, '*');
+                return;
+            }
+
+            // 记录普通消息到父页面日志
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item';
+            logItem.innerHTML = `
+                <small>${new Date().toLocaleTimeString()}</small><br>
+                <strong>来自:</strong> ${event.data.from || '未知'}<br>
+                <strong>目标:</strong> ${event.data.target || '未知'}<br>
+                <strong>消息:</strong> ${event.data.message || JSON.stringify(event.data)}
+            `;
+            parentLog.appendChild(logItem);
+            parentLog.scrollTop = parentLog.scrollHeight;
+
+            // 根据目标转发消息
+            if (event.data.target === 'iframe1') {
+                iframe1.contentWindow.postMessage(event.data, '*');
+            } else if (event.data.target === 'iframe2') {
+                iframe2.contentWindow.postMessage(event.data, '*');
+            } else if (event.data.target === 'parent') {
+                // 父页面处理消息
+                console.log('父页面处理消息:', event.data.message);
+            }
+        });
+
+        // 父页面发送消息到 iframe1
+        function sendMessageToIframe1() {
+            const input = document.getElementById('parentMessageInput');
+            const message = input.value.trim();
+
+            if (!message) {
+                alert('请输入消息');
+                return;
+            }
+
+            iframe1.contentWindow.postMessage({
+                from: 'Parent (父页面)',
+                message: message
+            }, '*');
+
+            input.value = '';
+            console.log('父页面发送消息到 Iframe 1:', message);
+        }
+
+        // 父页面发送消息到 iframe2
+        function sendMessageToIframe2() {
+            const input = document.getElementById('parentMessageInput');
+            const message = input.value.trim();
+
+            if (!message) {
+                alert('请输入消息');
+                return;
+            }
+
+            iframe2.contentWindow.postMessage({
+                from: 'Parent (父页面)',
+                message: message
+            }, '*');
+
+            input.value = '';
+            console.log('父页面发送消息到 Iframe 2:', message);
+        }
+
+        // 父页面广播消息到所有 iframe
+        function sendMessageToAll() {
+            const input = document.getElementById('parentMessageInput');
+            const message = input.value.trim();
+
+            if (!message) {
+                alert('请输入消息');
+                return;
+            }
+
+            const messageData = {
+                from: 'Parent (父页面 - 广播)',
+                message: message
+            };
+
+            iframe1.contentWindow.postMessage(messageData, '*');
+            iframe2.contentWindow.postMessage(messageData, '*');
+
+            input.value = '';
+            console.log('父页面广播消息到所有 Iframe:', message);
+        }
+
+        // 支持回车键发送
+        document.getElementById('parentMessageInput').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                sendMessageToAll();
+            }
+        });
+
+        // 可选：供控制台使用的函数
+        function sendToIframe1(message) {
+            iframe1.contentWindow.postMessage({
+                from: 'parent',
+                message: message
+            }, '*');
+        }
+
+        function sendToIframe2(message) {
+            iframe2.contentWindow.postMessage({
+                from: 'parent',
+                message: message
+            }, '*');
+        }
+
+        window.sendToIframe1 = sendToIframe1;
+        window.sendToIframe2 = sendToIframe2;
+
+        console.log('提示: 可以在控制台使用 sendToIframe1("消息") 或 sendToIframe2("消息") 从父页面发送消息');
+    </script>
+</body>
+</html>
