@@ -8,7 +8,8 @@
       <h3>发送消息</h3>
       <input v-model="messageInput" type="text" placeholder="输入消息..." @keyup.enter="sendToHome">
       <button @click="sendToHome">发送到 Home 页面</button>
-      <button @click="sendStorageAbout">发送到 About 页面(storage)</button>
+      <button @click="sendStorageAbout">发送到 Home 页面(storage)</button>
+      <button @click="sendMessageByBroadChannel">发送到 Home 页面(BroadChannel)</button>
       <button @click="sendToParent">发送到父页面</button>
     </div>
 
@@ -124,9 +125,36 @@ const sendStorageAbout = () => {
 
 const sessionData = ref(sessionStorage.getItem('key'))
 
+function sendMessageByBroadChannel() {
+  // 1. 创建频道
+  const parentChannel = new BroadcastChannel('parent-child-channel');
+
+  // 2. 点击按钮向子窗口发送消息
+  parentChannel.postMessage({
+    type: 'refresh-data',
+    message: '父页面指令：请刷新数据'
+  });
+
+
+  // 3. 页面卸载时关闭频道
+  window.addEventListener('beforeunload', () => {
+    parentChannel.close();
+  });
+}
+
+const receiveMsg = () => {
+  const parentChannel = new BroadcastChannel('parent-child-channel');
+  parentChannel.onmessage = (e) => {
+
+    console.log('打印***e about', e)
+  }
+}
+receiveMsg()
+
 onMounted(() => {
   window.addEventListener('message', handleMessage)
   console.log('About 页面已挂载，开始监听消息和 sessionStorage 更新')
+
 })
 
 onUnmounted(() => {
