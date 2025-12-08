@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前端跨页面通讯终极指南</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 36px;
+            font-weight: bold;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .intro {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .intro h2 {
+            color: #333;
+            margin-top: 0;
+            font-size: 24px;
+        }
+        .intro p {
+            color: #666;
+            line-height: 1.6;
+        }
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .method-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .method-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+        .method-header {
+            background-color: #2196F3;
+            color: white;
+            padding: 20px;
+        }
+        .method-header h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+        .method-content {
+            padding: 20px;
+        }
+        .method-content p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .method-features {
+            margin: 15px 0;
+        }
+        .method-features h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .method-features ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .method-features li {
+            color: #666;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        .method-features li::before {
+            content: "✓";
+            color: #4CAF50;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        .method-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+        .footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+        .footer p {
+            margin: 0;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>前端跨页面通讯终极指南</h1>
+        <p>9种跨页面通讯方式的实践案例和详细说明</p>
+    </div>
+    
+    <div class="container">
+        <div class="intro">
+            <h2>什么是跨页面通讯？</h2>
+            <p>跨页面通讯是指在浏览器中不同页面之间传递数据和消息的技术。在现代 Web 应用中，跨页面通讯是实现多标签页协同、状态同步、实时通知等功能的重要基础。</p>
+            <p>本指南收集了9种常用的前端跨页面通讯方式，包括它们的基本原理、使用方法、优缺点和实践案例。每种方式都有完整的代码示例和详细说明，方便你学习和使用。</p>
+        </div>
+        
+        <div class="methods-grid">
+            <!-- postMessage -->
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>1. postMessage</h3>
+                </div>
+                <div class="method-content">
+                    <p>HTML5 引入的 API，允许来自不同源的脚本采用异步方式进行有限的通信，可以实现跨窗口、跨域的消息传递。</p>
+                    <div class="method-features">
+                        <h4>核心特性</h4>
+                        <ul>
+                            <li>支持跨域通信</li>
+                            <li>双向通信</li>
+                            <li>异步操作</li>
+                            <li>浏览器兼容性好</li>
+                        </ul>
+                    </div>
+                    <div class="method-actions">
+                        <a href="postMessage.html" class="btn btn-primary">查看示例</a>
+                        <a href="postMessage.md" class="btn btn-secondary">查看文档</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- BroadcastChannel -->
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>2. BroadcastChannel</h3>
+                </div>
+                <div class="method-content">
+                    <p>HTML5 引入的 API，允许同源下的不同浏览器上下文之间进行简单的广播通信。</p>
+                    <div class="method-features">
+                        <h4>核心特性</h4>
+                        <ul>
+                            <li>自动关联相同名称的频道</li>
+                            <li>广播机制</li>
+                            <li>简单易用</li>
+                            <li>异步通信</li>
+                        </ul>
+                    </div>
+                    <div class="method-actions">
+                        <a href="broadcastChannel.html" class="btn btn-primary">查看示例</a>
+                        <a href="broadcastChannel.md" class="btn btn-secondary">查看文档</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- MessageChannel -->
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>3. MessageChannel</h3>
+                </div>
+                <div class="method-content">
+                    <p>HTML5 引入的 API，用于创建一个双向通信通道，允许两个不同的执行上下文之间进行高效、安全的通信。</p>
+                    <div class="method-features">
+                        <h4>核心特性</h4>
+                        <ul>
+                            <li>双向通道</li>
+                            <li>端口传递</li>
+                            <li>高效传输</li>
+                            <li>支持 Transferable 对象</li>
+                        </ul>
+                    </div>
+                    <div class="method-actions">
+                        <a href="messageChannel.html" class="btn btn-primary">查看示例</a>
+                        <a href="messageChannel.md" class="btn btn-secondary">查看文档</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- localStorage -->
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>4. localStorage</h3>
+                </div>
+                <div class="method-content">
+                    <p>HTML5 引入的 Web Storage API 的一部分，用于在浏览器中存储键值对数据，通过监听 storage 事件实现跨页面通信。</p>
+                    <div class="method-features">
+                        <h4>核心特性</h4>
+                        <ul>
+                            <li>持久存储</li>
+                            <li>简单易用</li>
+                            <li>事件驱动</li>
+                            <li>浏览器兼容性好</li>
+                        </ul>
+                    </div>
+                    <div class="method-actions">
+                        <a href="localStorage.html" class="btn btn-primary">查看示例</a>
+                        <a href="localStorage.md" class="btn btn-secondary">查看文档</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- sharedWorker -->
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>5. SharedWorker</h3>
+                </div>
+                <div class="method-content">
+                    <p>Web Workers API 的一部分，用于创建可以被多个同源页面共享的后台线程，实现真正的跨页面通信。</p>
+                    <div class="method-features">
+                        <h4>核心特性</h4>
+                        <ul>
+                            <li>多页面共享</li>
+                            <li>后台运行</li>
+                            <li>持久存在</li>
+                            <li>支持点对点和广播消息</li>
+                        </ul>
+                    </div>
+                    <div class="method-actions">
+                        <a href="sharedWorker.html" class="btn btn-primary">查看示例</a>
+                        <a href="sharedWorker.md" class="btn btn-secondary">查看文档</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- window.name -->
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>6. window.name</h3>
+                </div>
+                <div class="method-content">
+                    <p>浏览器窗口的一个属性，用于获取或设置窗口的名称。在页面导航时，window.name 属性的值会保持不变，可以用于跨页面传递数据。</p>
+                    <div class="method-features">
+                        <h4>核心特性</h4>
+                        <ul>
+                            <li>持久性</li>
+                            <li>跨域支持</li>
+                            <li>简单易用</li>
+                            <li>大容量</li>
+                        </ul>
+                    </div>
+                    <div class="method-actions">
+                        <a href="windowName.html" class="btn btn-primary">查看示例</a>
+                        <a href="windowName.md" class="btn btn-secondary">查看文档</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ServiceWorker -->
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>7. ServiceWorker</h3>
+                </div>
+                <div class="method-content">
+                    <p>浏览器在后台运行的脚本，独立于网页，用于增强网页的功能。可以拦截网络请求、管理缓存、推送通知等，也可以用于实现跨页面通讯。</p>
+                    <div class="method-features">
+                        <h4>核心特性</h4>
+                        <ul>
+                            <li>后台运行</li>
+                            <li>网络拦截</li>
+                            <li>缓存管理</li>
+                            <li>推送通知</li>
+                        </ul>
+                    </div>
+                    <div class="method-actions">
+                        <a href="serviceWorker.html" class="btn btn-primary">查看示例</a>
+                        <a href="serviceWorker.md" class="btn btn-secondary">查看文档</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- indexDB -->
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>8. indexDB</h3>
+                </div>
+                <div class="method-content">
+                    <p>浏览器提供的本地数据库，用于存储大量结构化数据。通过监听数据库变化实现跨页面数据同步。</p>
+                    <div class="method-features">
+                        <h4>核心特性</h4>
+                        <ul>
+                            <li>大容量存储</li>
+                            <li>结构化数据</li>
+                            <li>事务支持</li>
+                            <li>索引支持</li>
+                        </ul>
+                    </div>
+                    <div class="method-actions">
+                        <a href="indexDB.html" class="btn btn-primary">查看示例</a>
+                        <a href="indexDB.md" class="btn btn-secondary">查看文档</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Cookie 和 Clipboard 轮询 -->
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>9. Cookie 和 Clipboard 轮询</h3>
+                </div>
+                <div class="method-content">
+                    <p>通过定期检查 Cookie 或剪贴板的变化来实现跨页面通信。Cookie 轮询简单易用，Clipboard 轮询支持大容量数据。</p>
+                    <div class="method-features">
+                        <h4>核心特性</h4>
+                        <ul>
+                            <li>Cookie 轮询：简单易用，兼容性好</li>
+                            <li>Clipboard 轮询：大容量，近实时</li>
+                            <li>需要定期检查</li>
+                            <li>实现简单</li>
+                        </ul>
+                    </div>
+                    <div class="method-actions">
+                        <a href="cookieClipboard.html" class="btn btn-primary">查看示例</a>
+                        <a href="cookieClipboard.md" class="btn btn-secondary">查看文档</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>前端跨页面通讯终极指南 © 2025</p>
+    </div>
+</body>
+</html>

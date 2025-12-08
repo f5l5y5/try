@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>页面A</title>
+</head>
+
+<body>
+    <h3>页面A（标识：page-123）</h3>
+    <input type="text" id="msgInput" placeholder="输入消息">
+    <button onclick="sendBroadcast()">广播消息</button>
+    <button onclick="sendToPageB()">发给页面B</button>
+    <div id="log"></div>
+
+    <script>
+        // 页面唯一标识
+        const pageId = 'page-123';
+        // 1. 创建SharedWorker实例，指定Worker脚本路径
+        const worker = new SharedWorker('./share.js');
+        // 2. 获取与Worker的通讯端口
+        const port = worker.port;
+
+        // 3. 允许端口通讯（必须在监听器之前调用）
+        port.start();
+
+        // 4. 监听Worker发来的消息（使用onmessage更可靠）
+        port.onmessage = (msg) => {
+            console.log('页面A收到消息:', msg.data);
+            const log = document.getElementById('log');
+            log.innerHTML += `<p>收到：${JSON.stringify(msg.data)}</p>`;
+        };
+
+        // 5. 连接成功后立即发送注册消息
+        port.postMessage({
+            type: 'register',
+            pageId: pageId
+        });
+
+        // 发送广播消息
+        function sendBroadcast() {
+            const input = document.getElementById('msgInput');
+            port.postMessage({
+                type: 'broadcast',
+                pageId: pageId,
+                data: input.value
+            });
+        }
+
+        // 发送点对点消息给页面B（页面B标识为page-456）
+        function sendToPageB() {
+            const input = document.getElementById('msgInput');
+            port.postMessage({
+                type: 'private',
+                pageId: pageId,
+                target: 'page-456',
+                data: input.value
+            });
+        }
+
+        // 页面关闭时断开连接
+        window.addEventListener('beforeunload', () => {
+            port.close();
+        });
+    </script>
+</body>
+
+</html>

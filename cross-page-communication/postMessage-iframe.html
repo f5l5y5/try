@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>postMessage iframe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 100%;
+        }
+        h2 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        input[type="text"] {
+            width: 200px;
+            padding: 6px;
+            margin-right: 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        button {
+            padding: 6px 12px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #0b7dda;
+        }
+        .log {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 14px;
+        }
+        .log-item {
+            margin: 4px 0;
+            padding: 4px;
+            background-color: white;
+            border-left: 3px solid #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 id="iframeTitle">iframe 页面</h2>
+        <div class="input-group">
+            <input type="text" id="iframeMessageInput" placeholder="输入要发送的消息...">
+            <button id="sendToParentBtn">发送到主页面</button>
+            <select id="siblingSelect">
+                <option value="iframe1">发送到 iframe 1</option>
+                <option value="iframe2">发送到 iframe 2</option>
+            </select>
+            <button id="sendToSiblingBtn">发送到兄弟iframe</button>
+        </div>
+        <div class="log">
+            <h3>接收日志</h3>
+            <div id="iframeLogContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // 为iframe分配唯一标识符
+        const iframeId = window.location.search ? window.location.search.substring(1) : 'iframe1';
+        document.getElementById('iframeTitle').textContent = `iframe ${iframeId === 'iframe1' ? '1' : '2'} 页面`;
+        
+        // 日志函数
+        function addLog(message) {
+            const logContainer = document.getElementById('iframeLogContainer');
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item';
+            logItem.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            logContainer.appendChild(logItem);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // 接收消息
+        window.addEventListener('message', (event) => {
+            // 验证消息来源（在实际应用中应该验证 origin）
+            const data = event.data;
+            
+            if (typeof data === 'string') {
+                // 兼容旧格式
+                addLog(`从主页面接收: ${data}`);
+            } else {
+                if (data.type === 'parent-to-child') {
+                    addLog(`从主页面接收: ${data.message}`);
+                } else if (data.type === 'sibling-to-sibling') {
+                    if (data.recipient === iframeId) {
+                        addLog(`从 ${data.sender} 接收: ${data.message}`);
+                    }
+                }
+            }
+        });
+
+        // 发送消息到主页面
+        document.getElementById('sendToParentBtn').addEventListener('click', () => {
+            const input = document.getElementById('iframeMessageInput');
+            const message = input.value;
+            if (message) {
+                window.parent.postMessage({
+                    type: 'child-to-parent',
+                    message: message,
+                    sender: iframeId,
+                    recipient: 'parent'
+                }, '*');
+                addLog(`发送到主页面: ${message}`);
+                input.value = '';
+            }
+        });
+
+        // 发送消息到兄弟iframe
+        document.getElementById('sendToSiblingBtn').addEventListener('click', () => {
+            const input = document.getElementById('iframeMessageInput');
+            const message = input.value;
+            const recipient = document.getElementById('siblingSelect').value;
+            
+            if (message && recipient) {
+                window.parent.postMessage({
+                    type: 'sibling-to-sibling',
+                    message: message,
+                    sender: iframeId,
+                    recipient: recipient
+                }, '*');
+                addLog(`发送到 ${recipient}: ${message}`);
+                input.value = '';
+            }
+        });
+    </script>
+</body>
+</html>

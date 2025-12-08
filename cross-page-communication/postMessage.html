@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>postMessage 跨页面通讯</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .demo-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .iframe-container {
+            margin: 20px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100%;
+            height: 200px;
+            border: none;
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        input[type="text"] {
+            width: 300px;
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .log {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .log-item {
+            margin: 5px 0;
+            padding: 5px;
+            background-color: white;
+            border-left: 3px solid #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>postMessage 跨页面通讯演示</h1>
+        
+        <div class="demo-section">
+            <h2>主页面</h2>
+            <div class="input-group">
+                <input type="text" id="messageInput" placeholder="输入要发送的消息...">
+                <button id="sendBtn">发送消息到 iframe</button>
+            </div>
+            <div class="log">
+                <h3>接收日志</h3>
+                <div id="logContainer"></div>
+            </div>
+        </div>
+        
+        <div class="iframe-container">
+            <h3>iframe 1（子页面1）</h3>
+            <iframe id="targetIframe1" src="postMessage-iframe.html?iframe1"></iframe>
+        </div>
+        
+        <div class="iframe-container">
+            <h3>iframe 2（子页面2）</h3>
+            <iframe id="targetIframe2" src="postMessage-iframe.html?iframe2"></iframe>
+        </div>
+    </div>
+
+    <script>
+        // 日志函数
+        function addLog(message) {
+            const logContainer = document.getElementById('logContainer');
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item';
+            logItem.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            logContainer.appendChild(logItem);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // 发送消息到指定iframe
+        document.getElementById('sendBtn').addEventListener('click', () => {
+            const input = document.getElementById('messageInput');
+            const message = input.value;
+            if (message) {
+                // 发送到iframe 1
+                const iframe1 = document.getElementById('targetIframe1');
+                iframe1.contentWindow.postMessage({
+                    type: 'parent-to-child',
+                    message: message,
+                    sender: 'parent',
+                    recipient: 'iframe1'
+                }, '*');
+                
+                // 发送到iframe 2
+                const iframe2 = document.getElementById('targetIframe2');
+                iframe2.contentWindow.postMessage({
+                    type: 'parent-to-child',
+                    message: message,
+                    sender: 'parent',
+                    recipient: 'iframe2'
+                }, '*');
+                
+                addLog(`发送到所有 iframe: ${message}`);
+                input.value = '';
+            }
+        });
+
+        // 接收来自 iframe 的消息
+        window.addEventListener('message', (event) => {
+            // 验证消息来源（在实际应用中应该验证 origin）
+            const data = event.data;
+            
+            if (data.type === 'child-to-parent') {
+                addLog(`从 ${data.sender} 接收: ${data.message}`);
+            } else if (data.type === 'sibling-to-sibling') {
+                // 转发兄弟iframe之间的消息
+                if (data.recipient === 'iframe1') {
+                    const iframe1 = document.getElementById('targetIframe1');
+                    iframe1.contentWindow.postMessage(data, '*');
+                } else if (data.recipient === 'iframe2') {
+                    const iframe2 = document.getElementById('targetIframe2');
+                    iframe2.contentWindow.postMessage(data, '*');
+                }
+                addLog(`转发消息: ${data.sender} -> ${data.recipient}: ${data.message}`);
+            }
+        });
+    </script>
+</body>
+</html>

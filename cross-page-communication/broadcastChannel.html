@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BroadcastChannel 跨页面通讯</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .demo-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        input[type="text"] {
+            width: 350px;
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button.secondary {
+            background-color: #f44336;
+        }
+        button.secondary:hover {
+            background-color: #da190b;
+        }
+        .info {
+            margin: 15px 0;
+            padding: 12px;
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            border-radius: 4px;
+            color: #1565c0;
+        }
+        .log {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .log-item {
+            margin: 8px 0;
+            padding: 10px;
+            background-color: white;
+            border-left: 4px solid #4CAF50;
+            border-radius: 3px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .log-item .timestamp {
+            font-weight: bold;
+            color: #666;
+            margin-right: 10px;
+        }
+        .log-item .message {
+            color: #333;
+        }
+        .log-item .sender {
+            font-style: italic;
+            color: #888;
+            margin-left: 10px;
+        }
+        .channel-info {
+            margin: 15px 0;
+            padding: 12px;
+            background-color: #fff3e0;
+            border-left: 4px solid #ff9800;
+            border-radius: 4px;
+        }
+        .channel-info strong {
+            color: #e65100;
+        }
+        .iframe-container {
+            margin: 20px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100%;
+            height: 250px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BroadcastChannel 跨页面通讯演示</h1>
+        
+        <div class="info">
+            <strong>提示：</strong>此示例展示了 BroadcastChannel 在父子、子父、兄弟通讯场景下的应用。主页面和 iframe 页面共享同一个广播频道。
+        </div>
+        
+        <div class="demo-section">
+            <h2>主页面 - 消息发送</h2>
+            <div class="channel-info">
+                <strong>频道名称：</strong> <span id="channelName">my_broadcast_channel</span>
+            </div>
+            <div class="input-group">
+                <input type="text" id="messageInput" placeholder="输入要广播的消息...">
+                <button id="sendBtn">发送广播</button>
+                <button id="closeBtn" class="secondary">关闭频道</button>
+            </div>
+        </div>
+        
+        <div class="iframe-container">
+            <h3>子页面 1（iframe）</h3>
+            <iframe id="childIframe1" src="broadcastChannel.html?child=1"></iframe>
+        </div>
+        
+        <div class="iframe-container">
+            <h3>子页面 2（iframe）</h3>
+            <iframe id="childIframe2" src="broadcastChannel.html?child=2"></iframe>
+        </div>
+        
+        <div class="demo-section">
+            <h2>消息接收日志</h2>
+            <div class="log" id="logContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // 检测页面类型（主页面或子页面）
+        const urlParams = new URLSearchParams(window.location.search);
+        const isChild = urlParams.has('child');
+        const childId = urlParams.get('child') || '';
+        
+        // 生成唯一标识符
+        const pageId = isChild ? `child_${childId}` : 'parent';
+        const channelName = 'my_broadcast_channel';
+        let broadcastChannel;
+        
+        // 调整页面标题和UI
+        if (isChild) {
+            document.querySelector('h1').textContent = `子页面 ${childId} - BroadcastChannel 通讯`;
+            // 隐藏iframe，避免嵌套
+            const iframeContainers = document.querySelectorAll('.iframe-container');
+            iframeContainers.forEach(container => container.style.display = 'none');
+        }
+        
+        // 日志函数
+        function addLog(message, sender, recipient, isSent = false) {
+            const logContainer = document.getElementById('logContainer');
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item';
+            
+            const timestamp = new Date().toLocaleTimeString();
+            let communicationType = '';
+            let borderColor = '#4CAF50';
+            
+            // 确定通讯类型和颜色
+            if (sender === 'parent' && recipient === `child_${childId}`) {
+                communicationType = '父子通讯';
+                borderColor = '#2196F3';
+            } else if (sender === `child_${childId}` && recipient === 'parent') {
+                communicationType = '子父通讯';
+                borderColor = '#FF9800';
+            } else if (sender.startsWith('child_') && recipient.startsWith('child_')) {
+                communicationType = '兄弟通讯';
+                borderColor = '#9C27B0';
+            } else if (sender === recipient) {
+                communicationType = '系统消息';
+                borderColor = '#607D8B';
+            }
+            
+            if (isSent) {
+                borderColor = '#4CAF50';
+            }
+            
+            logItem.innerHTML = `
+                <span class="timestamp">${timestamp}</span>
+                <span class="message">${message}</span>
+                <span class="sender">${sender} → ${recipient} ${communicationType ? `(${communicationType})` : ''}</span>
+            `;
+            logItem.style.borderLeftColor = borderColor;
+            
+            logContainer.appendChild(logItem);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        // 初始化 BroadcastChannel
+        function initBroadcastChannel() {
+            try {
+                broadcastChannel = new BroadcastChannel(channelName);
+                
+                // 监听消息
+                broadcastChannel.onmessage = (event) => {
+                    const data = event.data;
+                    addLog(data.message, data.sender, data.recipient);
+                };
+                
+                // 监听错误
+                broadcastChannel.onerror = (error) => {
+                    addLog(`错误: ${error}`, 'system', pageId);
+                };
+                
+                addLog(`BroadcastChannel 已初始化，频道: ${channelName}`, 'system', pageId, true);
+            } catch (error) {
+                addLog(`初始化失败: ${error.message}`, 'system', pageId);
+            }
+        }
+        
+        // 发送消息
+        document.getElementById('sendBtn').addEventListener('click', () => {
+            const input = document.getElementById('messageInput');
+            const message = input.value;
+            
+            if (message) {
+                if (broadcastChannel) {
+                    // 发送给所有页面（广播）
+                    broadcastChannel.postMessage({
+                        message: message,
+                        sender: pageId,
+                        recipient: 'all',
+                        timestamp: Date.now()
+                    });
+                    addLog(`发送: ${message}`, pageId, 'all', true);
+                    input.value = '';
+                } else {
+                    addLog('频道已关闭，请刷新页面重新初始化', 'system', pageId);
+                }
+            }
+        });
+        
+        // 关闭频道
+        document.getElementById('closeBtn').addEventListener('click', () => {
+            if (broadcastChannel) {
+                broadcastChannel.close();
+                broadcastChannel = null;
+                addLog('BroadcastChannel 已关闭', 'system', pageId, true);
+            }
+        });
+        
+        // 页面加载时初始化
+        window.addEventListener('load', initBroadcastChannel);
+        
+        // 页面关闭时清理
+        window.addEventListener('beforeunload', () => {
+            if (broadcastChannel) {
+                broadcastChannel.close();
+            }
+        });
+    </script>
+</body>
+</html>

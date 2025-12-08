@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiceWorker 跨页面通讯</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .demo-section {
+            margin: 25px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .box {
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: #fafafa;
+        }
+        .box h3 {
+            color: #4CAF50;
+            margin-top: 0;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        input[type="text"] {
+            width: 250px;
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button.secondary {
+            background-color: #2196F3;
+        }
+        button.secondary:hover {
+            background-color: #0b7dda;
+        }
+        button.danger {
+            background-color: #f44336;
+        }
+        button.danger:hover {
+            background-color: #da190b;
+        }
+        .info {
+            margin: 15px 0;
+            padding: 12px;
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            border-radius: 4px;
+            color: #1565c0;
+        }
+        .success {
+            margin: 15px 0;
+            padding: 12px;
+            background-color: #e8f5e8;
+            border-left: 4px solid #4CAF50;
+            border-radius: 4px;
+            color: #2e7d32;
+        }
+        .error {
+            margin: 15px 0;
+            padding: 12px;
+            background-color: #ffebee;
+            border-left: 4px solid #f44336;
+            border-radius: 4px;
+            color: #c62828;
+        }
+        .status {
+            margin: 15px 0;
+            padding: 12px;
+            background-color: #fff3e0;
+            border-left: 4px solid #ff9800;
+            border-radius: 4px;
+            color: #e65100;
+        }
+        .log {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .log-item {
+            margin: 8px 0;
+            padding: 10px;
+            background-color: white;
+            border-left: 4px solid #4CAF50;
+            border-radius: 3px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .log-item .timestamp {
+            font-weight: bold;
+            color: #666;
+            margin-right: 10px;
+        }
+        .log-item .action {
+            font-style: italic;
+            color: #888;
+            margin-right: 10px;
+        }
+        .log-item .message {
+            color: #333;
+        }
+        .registration-info {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #e3f2fd;
+            border-radius: 4px;
+        }
+        .registration-item {
+            margin: 8px 0;
+            padding: 8px;
+            background-color: white;
+            border-radius: 3px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+        .badge.success {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .badge.error {
+            background-color: #f44336;
+            color: white;
+        }
+        .badge.warning {
+            background-color: #ff9800;
+            color: white;
+        }
+        .iframe-container {
+            margin: 20px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100%;
+            height: 300px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ServiceWorker 跨页面通讯演示</h1>
+        
+        <div class="info">
+            <strong>说明：</strong>ServiceWorker 可以在后台运行，用于处理网络请求、推送通知等。本案例演示了通过 ServiceWorker 在不同页面之间传递消息。
+        </div>
+        
+        <div class="demo-section">
+            <h2>ServiceWorker 状态</h2>
+            <div id="swStatus" class="status">
+                <strong>状态：</strong> <span>正在检查 ServiceWorker 支持...</span>
+            </div>
+            <div id="registrationInfo" class="registration-info" style="display: none;">
+                <h3>注册信息</h3>
+                <div id="registrationDetails"></div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>消息发送</h2>
+            <div class="grid">
+                <div class="box">
+                    <h3>发送到 ServiceWorker</h3>
+                    <div class="input-group">
+                        <input type="text" id="messageInput" placeholder="输入要发送的消息...">
+                        <button id="sendBtn">发送消息</button>
+                    </div>
+                </div>
+                <div class="box">
+                    <h3>广播到所有客户端</h3>
+                    <div class="input-group">
+                        <input type="text" id="broadcastInput" placeholder="输入要广播的消息...">
+                        <button id="broadcastBtn">发送广播</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>iframe 演示 - 父子、子父、兄弟通讯</h2>
+            <div class="info">
+                <strong>提示：</strong>通过两个 iframe 演示 ServiceWorker 在父子、子父、兄弟通讯场景下的应用。
+            </div>
+            <div class="iframe-container">
+                <h3>子页面 1（iframe 1）</h3>
+                <iframe id="childIframe1" src="serviceWorker.html?child=1"></iframe>
+            </div>
+            <div class="iframe-container">
+                <h3>子页面 2（iframe 2）</h3>
+                <iframe id="childIframe2" src="serviceWorker.html?child=2"></iframe>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>消息接收日志</h2>
+            <div class="log" id="logContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // 检测页面类型（主页面或子页面）
+        const urlParams = new URLSearchParams(window.location.search);
+        const isChild = urlParams.has('child');
+        const childId = urlParams.get('child') || '';
+        
+        // 调整页面标题和UI
+        if (isChild) {
+            document.querySelector('h1').textContent = `子页面 ${childId} - ServiceWorker 通讯`;
+            // 隐藏iframe，避免嵌套
+            const iframeContainers = document.querySelectorAll('.iframe-container');
+            iframeContainers.forEach(container => container.style.display = 'none');
+        }
+        
+        // 日志函数
+        function addLog(message, action = '接收', communicationType = '') {
+            const logContainer = document.getElementById('logContainer');
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item';
+            
+            const timestamp = new Date().toLocaleTimeString();
+            let borderColor = '#4CAF50';
+            
+            // 根据通讯类型设置不同颜色
+            if (communicationType === '父子通讯') {
+                borderColor = '#2196F3';
+            } else if (communicationType === '子父通讯') {
+                borderColor = '#FF9800';
+            } else if (communicationType === '兄弟通讯') {
+                borderColor = '#9C27B0';
+            }
+            
+            logItem.innerHTML = `
+                <span class="timestamp">${timestamp}</span>
+                <span class="action">${action}:</span>
+                <span class="message">${message}</span>
+                ${communicationType ? `<span style="color: ${borderColor}; font-weight: bold; margin-left: 10px;">${communicationType}</span>` : ''}
+            `;
+            
+            logItem.style.borderLeftColor = borderColor;
+            logContainer.appendChild(logItem);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        // 更新 ServiceWorker 状态
+        function updateSWStatus(message, type = 'status') {
+            const status = document.getElementById('swStatus');
+            status.className = type;
+            status.innerHTML = `<strong>状态：</strong> <span>${message}</span>`;
+        }
+        
+        // 更新注册信息
+        function updateRegistrationInfo(registration) {
+            const info = document.getElementById('registrationInfo');
+            const details = document.getElementById('registrationDetails');
+            
+            info.style.display = 'block';
+            
+            details.innerHTML = `
+                <div class="registration-item">
+                    <strong>作用域：</strong> ${registration.scope}
+                </div>
+                <div class="registration-item">
+                    <strong>脚本 URL：</strong> ${registration.active ? registration.active.scriptURL : '无活动 ServiceWorker'}
+                </div>
+                <div class="registration-item">
+                    <strong>状态：</strong> ${registration.active ? '活动中' : '已注册'}
+                </div>
+            `;
+        }
+        
+        // 检查浏览器支持
+        if ('serviceWorker' in navigator) {
+            updateSWStatus('浏览器支持 ServiceWorker', 'success');
+            
+            // 注册 ServiceWorker
+            navigator.serviceWorker.register('serviceWorker.js')
+                .then(registration => {
+                    updateSWStatus('ServiceWorker 注册成功', 'success');
+                    updateRegistrationInfo(registration);
+                    addLog('ServiceWorker 注册成功', '系统');
+                    
+                    // 监听 ServiceWorker 消息
+                    navigator.serviceWorker.addEventListener('message', (event) => {
+                        // 确定通讯类型
+                        let communicationType = '';
+                        if (isChild) {
+                            // 子页面收到的消息可能来自父页面或兄弟页面
+                            communicationType = '兄弟通讯';
+                        } else {
+                            // 主页面收到的消息可能来自子页面
+                            communicationType = '子父通讯';
+                        }
+                        addLog(event.data, '来自 ServiceWorker', communicationType);
+                    });
+                    
+                    // 发送消息到 ServiceWorker
+                    document.getElementById('sendBtn').addEventListener('click', () => {
+                        const input = document.getElementById('messageInput');
+                        const message = input.value;
+                        
+                        if (message) {
+                            navigator.serviceWorker.controller.postMessage({
+                                type: 'message',
+                                content: message,
+                                sender: isChild ? `child_${childId}` : 'parent',
+                                communicationType: isChild ? '子父通讯' : '父子通讯'
+                            });
+                            addLog(message, '发送到 ServiceWorker', isChild ? '子父通讯' : '父子通讯');
+                            input.value = '';
+                        }
+                    });
+                    
+                    // 广播消息
+                    document.getElementById('broadcastBtn').addEventListener('click', () => {
+                        const input = document.getElementById('broadcastInput');
+                        const message = input.value;
+                        
+                        if (message) {
+                            navigator.serviceWorker.controller.postMessage({
+                                type: 'broadcast',
+                                content: message,
+                                sender: isChild ? `child_${childId}` : 'parent',
+                                communicationType: isChild ? '兄弟通讯' : '父子通讯'
+                            });
+                            addLog(message, '发送广播', isChild ? '兄弟通讯' : '父子通讯');
+                            input.value = '';
+                        }
+                    });
+                    
+                })
+                .catch(error => {
+                    updateSWStatus(`ServiceWorker 注册失败: ${error}`, 'error');
+                    addLog(`ServiceWorker 注册失败: ${error}`, '错误');
+                });
+            
+            // 监听控制器变化
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                addLog('ServiceWorker 控制器已变化', '系统');
+            });
+            
+        } else {
+            updateSWStatus('浏览器不支持 ServiceWorker', 'error');
+            addLog('浏览器不支持 ServiceWorker', '错误');
+        }
+    </script>
+</body>
+</html>

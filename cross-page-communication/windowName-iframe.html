@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>window.name iframe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 10px;
+            padding: 15px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 100%;
+        }
+        h2 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #2196F3;
+            padding-bottom: 8px;
+        }
+        .info {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            border-radius: 3px;
+            color: #1565c0;
+            font-size: 14px;
+        }
+        .window-name-display {
+            margin: 15px 0;
+            padding: 12px;
+            background-color: #e8f5e8;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .window-name-display strong {
+            color: #2e7d32;
+        }
+        .btn-group {
+            margin: 15px 0;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 8px;
+        }
+        button:hover {
+            background-color: #0b7dda;
+        }
+        button.secondary {
+            background-color: #4CAF50;
+        }
+        button.secondary:hover {
+            background-color: #45a049;
+        }
+        .log {
+            margin: 15px 0;
+            padding: 12px;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            max-height: 150px;
+            overflow-y: auto;
+            font-size: 14px;
+        }
+        .log-item {
+            margin: 6px 0;
+            padding: 6px;
+            background-color: white;
+            border-left: 3px solid #2196F3;
+            border-radius: 2px;
+        }
+        .log-item .timestamp {
+            font-weight: bold;
+            color: #666;
+            margin-right: 8px;
+            font-size: 12px;
+        }
+        .log-item .message {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+            <h2 id="iframeTitle">window.name iframe 页面</h2>
+            
+            <div class="info">
+                <strong>说明：</strong>这是一个用于演示 window.name 跨页面通讯的 iframe 页面，支持父子、子父、兄弟通讯。
+            </div>
+            
+            <div class="window-name-display">
+                <strong>当前 window.name 值：</strong> <span id="currentWindowName"></span>
+            </div>
+            
+            <div class="btn-group">
+                <button id="refreshBtn">刷新页面</button>
+                <button id="navigateBtn" class="secondary">导航到测试页面</button>
+            </div>
+            
+            <div class="input-group" style="margin: 15px 0;">
+                <input type="text" id="sendToParentInput" placeholder="输入要发送给主页面的消息..." style="width: 200px; padding: 8px; margin-right: 8px; border: 1px solid #ddd; border-radius: 3px;">
+                <button id="sendToParentBtn" style="padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 3px; cursor: pointer;">发送给主页面</button>
+            </div>
+            
+            <div class="input-group" style="margin: 15px 0;">
+                <input type="text" id="sendToSiblingInput" placeholder="输入要发送给兄弟iframe的消息..." style="width: 200px; padding: 8px; margin-right: 8px; border: 1px solid #ddd; border-radius: 3px;">
+                <button id="sendToSiblingBtn" style="padding: 8px 16px; background-color: #9C27B0; color: white; border: none; border-radius: 3px; cursor: pointer;">发送给兄弟iframe</button>
+            </div>
+            
+            <div class="log" id="logContainer"></div>
+        </div>
+
+    <script>
+        // 获取iframe标识符
+        const urlParams = new URLSearchParams(window.location.search);
+        const iframeId = urlParams.get('iframe') || '1';
+        const isIframe1 = iframeId === '1';
+        const siblingId = isIframe1 ? '2' : '1';
+        
+        // 更新页面标题
+        document.getElementById('iframeTitle').textContent = `window.name iframe ${iframeId} 页面`;
+        
+        // 日志函数
+        function addLog(message, communicationType = '') {
+            const logContainer = document.getElementById('logContainer');
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item';
+            
+            const timestamp = new Date().toLocaleTimeString();
+            let borderColor = '#2196F3';
+            
+            // 根据通讯类型设置不同颜色
+            if (communicationType === '父子通讯') {
+                borderColor = '#2196F3';
+            } else if (communicationType === '子父通讯') {
+                borderColor = '#FF9800';
+            } else if (communicationType === '兄弟通讯') {
+                borderColor = '#9C27B0';
+            }
+            
+            logItem.innerHTML = `
+                <span class="timestamp">${timestamp}</span>
+                <span class="message">${message}</span>
+                ${communicationType ? `<span style="color: ${borderColor}; font-weight: bold; margin-left: 10px;">${communicationType}</span>` : ''}
+            `;
+            
+            logItem.style.borderLeftColor = borderColor;
+            logContainer.appendChild(logItem);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        // 更新当前 window.name 显示
+        function updateCurrentWindowName() {
+            console.log('打印***window.parent.name',window.parent.name, window.name)
+            document.getElementById('currentWindowName').textContent = JSON.stringify(window.name);
+        }
+        
+        // 初始化
+        updateCurrentWindowName();
+        addLog(`iframe ${iframeId} 页面已加载`);
+        
+        // 检查是否有通过 window.name 传递的数据
+        if (window.name && window.name !== '""') {
+            try {
+                const data = JSON.parse(window.name);
+                if (data && data.type === 'message') {
+                    const communicationType = data.communicationType || '未知通讯';
+                    addLog(`收到通过 window.name 传递的数据: ${data.content}`, communicationType);
+                }
+            } catch (error) {
+                addLog(`window.name 包含无效 JSON: ${window.name}`);
+            }
+        }
+        
+        // 刷新页面
+        document.getElementById('refreshBtn').addEventListener('click', () => {
+            window.location.reload();
+        });
+        
+        // 导航到测试页面
+        document.getElementById('navigateBtn').addEventListener('click', () => {
+            window.location.href = 'windowName-test.html';
+        });
+        
+        // 发送消息给主页面（子父通讯）
+        document.getElementById('sendToParentBtn').addEventListener('click', () => {
+            const input = document.getElementById('sendToParentInput');
+            const message = input.value;
+            
+            if (message) {
+                // 由于iframe无法直接修改父窗口的window.name，我们通过postMessage通知父窗口
+                // 父窗口可以通过其他方式处理这个消息
+                window.parent.postMessage({
+                    type: 'child-to-parent',
+                    content: message,
+                    sender: `iframe${iframeId}`,
+                    communicationType: '子父通讯',
+                    timestamp: Date.now()
+                }, '*');
+                
+                addLog(`已发送消息给主页面: ${message}`, '子父通讯');
+                input.value = '';
+            }
+        });
+        
+        // 发送消息给兄弟iframe（兄弟通讯）
+        document.getElementById('sendToSiblingBtn').addEventListener('click', () => {
+            const input = document.getElementById('sendToSiblingInput');
+            const message = input.value;
+            
+            if (message) {
+                // 由于iframe无法直接修改兄弟iframe的window.name，我们通过postMessage通知父窗口
+                // 父窗口作为中介，将消息传递给目标iframe
+                window.parent.postMessage({
+                    type: 'sibling-to-sibling',
+                    content: message,
+                    sender: `iframe${iframeId}`,
+                    recipient: `iframe${siblingId}`,
+                    communicationType: '兄弟通讯',
+                    timestamp: Date.now()
+                }, '*');
+                
+                addLog(`已发送消息给兄弟iframe ${siblingId}: ${message}`, '兄弟通讯');
+                input.value = '';
+            }
+        });
+        
+        // 监听来自父窗口的消息
+        window.addEventListener('message', (event) => {
+            const data = event.data;
+            if (data && data.type === 'parent-to-child') {
+                addLog(`收到主页面消息: ${data.content}`, '父子通讯');
+            } else if (data && data.type === 'sibling-to-sibling') {
+                if (data.recipient === `iframe${iframeId}`) {
+                    addLog(`收到兄弟iframe ${data.sender} 消息: ${data.content}`, '兄弟通讯');
+                }
+            }
+        });
+        
+        // 监听页面卸载
+        window.addEventListener('beforeunload', () => {
+            addLog(`iframe ${iframeId} 页面即将卸载`);
+        });
+    </script>
+</body>
+</html>

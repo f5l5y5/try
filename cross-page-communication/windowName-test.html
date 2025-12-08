@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>window.name 测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .info {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            border-radius: 4px;
+            color: #1565c0;
+        }
+        .success {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e8f5e8;
+            border-left: 4px solid #4CAF50;
+            border-radius: 4px;
+            color: #2e7d32;
+        }
+        .window-name-display {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #fff3e0;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 18px;
+            text-align: center;
+        }
+        .window-name-display strong {
+            color: #e65100;
+        }
+        .btn-group {
+            margin: 25px 0;
+            text-align: center;
+        }
+        button {
+            padding: 12px 24px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button.secondary {
+            background-color: #2196F3;
+        }
+        button.secondary:hover {
+            background-color: #0b7dda;
+        }
+        .log {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .log-item {
+            margin: 8px 0;
+            padding: 10px;
+            background-color: white;
+            border-left: 3px solid #4CAF50;
+            border-radius: 3px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .log-item .timestamp {
+            font-weight: bold;
+            color: #666;
+            margin-right: 10px;
+        }
+        .log-item .message {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>window.name 测试页面</h1>
+        
+        <div class="info">
+            <strong>说明：</strong>这是一个测试页面，用于演示 window.name 在页面导航时的持久性。如果您从主页面导航到这里，应该能看到之前设置的 window.name 值。
+        </div>
+        
+        <div class="window-name-display">
+            <strong>当前 window.name 值：</strong><br>
+            <span id="currentWindowName"></span>
+        </div>
+        
+        <div class="success" id="dataReceived" style="display: none;">
+            <strong>成功！</strong> 收到了通过 window.name 传递的数据！
+        </div>
+        
+        <div class="btn-group">
+            <button id="backBtn">返回主页面</button>
+            <button id="clearBtn" class="secondary">清除 window.name</button>
+        </div>
+        
+        <div class="log" id="logContainer"></div>
+    </div>
+
+    <script>
+        // 日志函数
+        function addLog(message) {
+            const logContainer = document.getElementById('logContainer');
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item';
+            
+            const timestamp = new Date().toLocaleTimeString();
+            
+            logItem.innerHTML = `
+                <span class="timestamp">${timestamp}</span>
+                <span class="message">${message}</span>
+            `;
+            
+            logContainer.appendChild(logItem);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        // 更新当前 window.name 显示
+        function updateCurrentWindowName() {
+            const display = document.getElementById('currentWindowName');
+            display.textContent = JSON.stringify(window.name);
+        }
+        
+        // 初始化
+        updateCurrentWindowName();
+        addLog('测试页面已加载');
+        
+        // 检查是否有通过 window.name 传递的数据
+        if (window.name && window.name !== '""') {
+            try {
+                const data = JSON.parse(window.name);
+                if (data && data.type === 'message') {
+                    addLog(`收到通过 window.name 传递的数据: ${data.content}`);
+                    document.getElementById('dataReceived').style.display = 'block';
+                }
+            } catch (error) {
+                addLog(`window.name 包含无效 JSON: ${window.name}`);
+            }
+        } else {
+            addLog('未收到通过 window.name 传递的数据');
+        }
+        
+        // 返回主页面
+        document.getElementById('backBtn').addEventListener('click', () => {
+            window.location.href = 'windowName.html';
+        });
+        
+        // 清除 window.name
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            window.name = '';
+            updateCurrentWindowName();
+            addLog('已清除 window.name');
+            document.getElementById('dataReceived').style.display = 'none';
+        });
+        
+        // 监听页面卸载
+        window.addEventListener('beforeunload', () => {
+            addLog('页面即将卸载');
+        });
+    </script>
+</body>
+</html>

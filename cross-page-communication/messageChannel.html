@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MessageChannel 跨页面通讯</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .demo-section {
+            margin: 25px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .box {
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: #fafafa;
+        }
+
+        .box h3 {
+            color: #4CAF50;
+            margin-top: 0;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+
+        .iframe-container {
+            margin: 20px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        iframe {
+            width: 100%;
+            height: 300px;
+            border: none;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        input[type="text"] {
+            width: 250px;
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button.secondary {
+            background-color: #2196F3;
+        }
+
+        button.secondary:hover {
+            background-color: #0b7dda;
+        }
+
+        .info {
+            margin: 15px 0;
+            padding: 12px;
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            border-radius: 4px;
+            color: #1565c0;
+        }
+
+        .log {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-item {
+            margin: 8px 0;
+            padding: 10px;
+            background-color: white;
+            border-left: 4px solid #4CAF50;
+            border-radius: 3px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .log-item .timestamp {
+            font-weight: bold;
+            color: #666;
+            margin-right: 10px;
+        }
+
+        .log-item .direction {
+            font-style: italic;
+            color: #888;
+            margin-right: 10px;
+        }
+
+        .log-item .message {
+            color: #333;
+        }
+
+        .status {
+            margin: 15px 0;
+            padding: 12px;
+            background-color: #fff3e0;
+            border-left: 4px solid #ff9800;
+            border-radius: 4px;
+        }
+
+        .status strong {
+            color: #e65100;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>MessageChannel 跨页面通讯演示</h1>
+
+        <div class="info">
+            <strong>提示：</strong>MessageChannel 用于创建双向通信通道，本案例演示了主页面与 iframe 之间通过 MessageChannel 进行双向通信。
+        </div>
+
+        <div class="demo-section">
+            <h2>主页面</h2>
+            <div class="status">
+                <strong>状态：</strong> <span id="status">等待 iframe 加载...</span>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <h3>发送到 iframe</h3>
+                    <div class="input-group">
+                        <input type="text" id="mainToIframeInput" placeholder="输入要发送到 iframe 的消息...">
+                        <button id="mainSendBtn">发送</button>
+                    </div>
+                </div>
+
+                <div class="box">
+                    <h3>接收日志</h3>
+                    <div class="log" id="mainLogContainer"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>子页面 1（iframe）</h2>
+            <div class="iframe-container">
+                <iframe id="targetIframe1" src="messageChannel-iframe1.html"></iframe>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>子页面 2（iframe）</h2>
+            <div class="iframe-container">
+                <iframe id="targetIframe2" src="messageChannel-iframe2.html"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 日志函数
+        function addLog(containerId, message, direction, communicationType = '') {
+            const logContainer = document.getElementById(containerId);
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item';
+
+            const timestamp = new Date().toLocaleTimeString();
+            let borderColor = '#4CAF50';
+
+            // 根据通讯类型设置不同颜色
+            if (communicationType === '父子通讯') {
+                borderColor = '#2196F3';
+            } else if (communicationType === '子父通讯') {
+                borderColor = '#FF9800';
+            } else if (communicationType === '兄弟通讯') {
+                borderColor = '#9C27B0';
+            }
+
+            logItem.innerHTML = `
+                <span class="timestamp">${timestamp}</span>
+                <span class="direction">${direction}</span>
+                <span class="message">${message}</span>
+                ${communicationType ? `<span style="color: ${borderColor}; font-weight: bold; margin-left: 10px;">${communicationType}</span>` : ''}
+            `;
+
+            logItem.style.borderLeftColor = borderColor;
+            logContainer.appendChild(logItem);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // 存储 iframe 相关信息
+        const iframes = {
+            iframe1: {
+                element: null,
+                port: null,
+                channel: null
+            },
+            iframe2: {
+                element: null,
+                port: null,
+                channel: null
+            }
+        };
+
+        let initializedIframes = 0;
+
+        // 初始化 iframe 连接
+        function initIframeConnection(iframeId, iframeElement) {
+            // 创建 MessageChannel
+            const channel = new MessageChannel();
+            const port1 = channel.port1;
+
+            // 存储相关信息
+            iframes[iframeId].element = iframeElement;
+            iframes[iframeId].port = port1;
+            iframes[iframeId].channel = channel;
+
+            // 监听来自 iframe 的消息
+            port1.onmessage = (event) => {
+                const data = event.data;
+                if (typeof data === 'object' && data.type) {
+                    if (data.type === 'child-to-parent') {
+                        // 子父通讯
+                        addLog('mainLogContainer', data.message, `来自 ${iframeId}:`, '子父通讯');
+                    } else if (data.type === 'sibling-to-sibling') {
+                        // 兄弟通讯，转发消息
+                        const recipient = data.recipient;
+                        if (iframes[recipient] && iframes[recipient].port) {
+                            iframes[recipient].port.postMessage({
+                                type: 'sibling-to-sibling',
+                                message: data.message,
+                                sender: iframeId
+                            });
+                            addLog('mainLogContainer', `${iframeId} -> ${recipient}: ${data.message}`, '转发消息:', '兄弟通讯');
+                        }
+                    }
+                } else {
+                    // 兼容旧格式
+                    addLog('mainLogContainer', data, `来自 ${iframeId}:`);
+                }
+            };
+
+            // 监听错误
+            port1.onerror = (error) => {
+                addLog('mainLogContainer', `错误 (${iframeId}): ${error}`, '错误:');
+            };
+
+            // 传递 port2 给 iframe
+            iframeElement.contentWindow.postMessage('init', '*', [channel.port2]);
+            addLog('mainLogContainer', `${iframeId} 连接已建立`, '系统:');
+
+            initializedIframes++;
+            if (initializedIframes === 2) {
+                document.getElementById('status').textContent = '所有 iframe 连接已建立';
+            }
+        }
+
+        // 发送消息到指定 iframe
+        document.getElementById('mainSendBtn').addEventListener('click', () => {
+            const input = document.getElementById('mainToIframeInput');
+            const message = input.value;
+
+            if (message) {
+                // 发送到所有 iframe（父子通讯）
+                Object.keys(iframes).forEach(iframeId => {
+                    if (iframes[iframeId].port) {
+                        iframes[iframeId].port.postMessage({
+                            type: 'parent-to-child',
+                            message: message,
+                            sender: 'parent'
+                        });
+                    }
+                });
+                addLog('mainLogContainer', message, '发送到所有 iframe:', '父子通讯');
+                input.value = '';
+            }
+        });
+
+        // 等待 iframe 加载完成
+        const iframe1 = document.getElementById('targetIframe1');
+        const iframe2 = document.getElementById('targetIframe2');
+        const globalChannel = new MessageChannel();
+
+
+        iframe1.addEventListener('load', () => {
+            console.log('打印***2', 2)
+            // 3. 将 port1 发送给 iframe1
+            iframe1.contentWindow.postMessage('port', '*', [globalChannel.port1]);
+            initIframeConnection('iframe1', iframe1);
+        });
+
+        iframe2.addEventListener('load', () => {
+            console.log('打印***3', 3)
+              // 4. 将 port2 发送给 iframe2
+            iframe2.contentWindow.postMessage('port', '*', [globalChannel.port2]);
+            initIframeConnection('iframe2', iframe2);
+        });
+
+    </script>
+</body>
+
+</html>
