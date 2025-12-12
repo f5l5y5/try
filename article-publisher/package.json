@@ -1,0 +1,19 @@
+{
+  "name": "article-publisher",
+  "version": "1.0.0",
+  "description": "多平台文章一键发布工具",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "publish": "node scripts/publish.js",
+    "upload": "node scripts/image-uploader.js",
+    "server": "node scripts/server.js",
+    "all": "node scripts/publish.js && node scripts/server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "gray-matter": "^4.0.3",
+    "form-data": "^4.0.0"
+  }
+}

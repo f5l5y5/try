@@ -1,0 +1,25 @@
+{
+  "obsidianDir": "C:\\Users\\fuyunlong\\Desktop\\lvyun\\yinuoVault",
+  "platforms": {
+    "juejin": {
+      "enabled": true,
+      "editorUrl": "https://juejin.cn/editor/drafts/new",
+      "headless": false
+    },
+    "wechat": {
+      "enabled": true,
+      "editorUrl": "https://mp.weixin.qq.com",
+      "headless": false
+    }
+  },
+  "browser": {
+    "userDataDir": "./browser-data",
+    "connectToExisting": false,
+    "cdpEndpoint": "http://localhost:9222",
+    "usePersistentContext": true,
+    "imageUpload": {
+      "enabled": false,
+      "provider": "smms"
+    }
+  }
+}

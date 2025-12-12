@@ -269,22 +269,21 @@ const connections = new Map();
 console.log('打印***self', self)
 // 监听新页面的连接请求
 self.addEventListener('connect', (e) => {
-    console.log('打印***e', e, connections)
     // 获取当前页面的通讯端口
     const port = e.ports[0];
 
     // 注意：此时还不知道 pageId，需要等待 register 消息
     console.log(`新页面尝试连接，等待注册...`);
 
-    // // 允许端口通讯（必须在注册监听器之前调用）
-    // port.start();
+    // 允许端口通讯
+    port.start();
 
-    // // 向页面发送连接成功消息（用于调试）
-    // port.postMessage({
-    //     from: 'Worker',
-    //     type: 'connected',
-    //     data: `Worker 已连接，当前连接数：${connections.size}`
-    // });
+    // 向页面发送连接成功消息（用于调试）
+    port.postMessage({
+        from: 'Worker',
+        type: 'connected',
+        data: `Worker 已连接，当前连接数：${connections.size}`
+    });
 
     // 监听端口的消息事件（接收页面发来的消息）
     port.onmessage = (msg) => {
@@ -307,7 +306,7 @@ self.addEventListener('connect', (e) => {
             // 保存新连接
             port.pageId = pageId;
             connections.set(pageId, port);
-            console.log(`页面 ${pageId} 已注册，当前在线：[${Array.from(connections.keys()).join(', ')}]`);
+            console.log(`页面 ${pageId} 已注册，当前在线：[${Array.from(connections.keys()).join(', ')}]`,connections);
             return;
         }
 

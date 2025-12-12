@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(npm install:*)",
-      "Bash(dir /b)"
+      "Bash(dir /b)",
+      "Bash(dir:*)",
+      "Bash(mkdir:*)",
+      "Bash(npx playwright install:*)"
     ],
     "deny": [],
     "ask": []

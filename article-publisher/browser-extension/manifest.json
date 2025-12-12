@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "文章一键发布助手",
+  "version": "1.0.0",
+  "description": "多平台文章一键发布工具的浏览器插件",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://juejin.cn/*",
+    "https://editor.csdn.net/*",
+    "https://zhuanlan.zhihu.com/*",
+    "https://i.cnblogs.com/*",
+    "https://mp.weixin.qq.com/*",
+    "https://editor.mdnice.com/*",
+    "http://localhost:*/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://juejin.cn/editor/*"],
+      "js": ["content-scripts/juejin.js"],
+      "css": ["content-scripts/style.css"]
+    },
+    {
+      "matches": ["https://editor.csdn.net/*"],
+      "js": ["content-scripts/csdn.js"],
+      "css": ["content-scripts/style.css"]
+    },
+    {
+      "matches": ["https://zhuanlan.zhihu.com/write*"],
+      "js": ["content-scripts/zhihu.js"],
+      "css": ["content-scripts/style.css"]
+    },
+    {
+      "matches": ["https://i.cnblogs.com/posts/edit*"],
+      "js": ["content-scripts/cnblogs.js"],
+      "css": ["content-scripts/style.css"]
+    },
+    {
+      "matches": ["https://mp.weixin.qq.com/*"],
+      "js": ["content-scripts/wechat.js"],
+      "css": ["content-scripts/style.css"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

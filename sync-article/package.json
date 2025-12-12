@@ -1,0 +1,22 @@
+{
+  "name": "obsidian-sync-publisher",
+  "version": "1.0.0",
+  "description": "同步 Obsidian 文章到掘金和微信公众号",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "sync": "node index.js"
+  },
+  "keywords": [
+    "obsidian",
+    "juejin",
+    "wechat",
+    "article-sync"
+  ],
+  "dependencies": {
+    "clipboardy": "^4.0.0",
+    "form-data": "^4.0.5",
+    "marked": "^11.1.1",
+    "playwright": "^1.48.0"
+  }
+}

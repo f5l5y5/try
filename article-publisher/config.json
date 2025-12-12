@@ -1,0 +1,54 @@
+{
+  "article": {
+    "sourceDir": "./articles",
+    "outputDir": "./output"
+  },
+  "logo": {
+    "backgroundColor": "#1e3a5f",
+    "textColor": "#ffffff",
+    "fontFamily": "Microsoft YaHei",
+    "normalSize": { "width": 800, "height": 450 },
+    "wechatSize": { "width": 900, "height": 383 }
+  },
+  "cnblogs": {
+    "blogId": "your-blog-id",
+    "username": "your-username",
+    "password": "your-password"
+  },
+  "platforms": {
+    "juejin": {
+      "enabled": true,
+      "name": "掘金",
+      "editorUrl": "https://juejin.cn/editor/drafts/new",
+      "hook": "\n\n---\n关注公众号【前端欧阳】，获取更多前端干货\n"
+    },
+    "csdn": {
+      "enabled": true,
+      "name": "CSDN",
+      "editorUrl": "https://editor.csdn.net/md",
+      "hook": "\n\n---\n原创不易，转载请注明出处\n"
+    },
+    "zhihu": {
+      "enabled": true,
+      "name": "知乎",
+      "editorUrl": "https://zhuanlan.zhihu.com/write",
+      "hook": "\n\n---\n欢迎关注我的知乎专栏\n"
+    },
+    "cnblogs": {
+      "enabled": true,
+      "name": "博客园",
+      "editorUrl": "https://i.cnblogs.com/posts/edit",
+      "hook": "\n\n---\n本文首发于博客园\n"
+    },
+    "wechat": {
+      "enabled": true,
+      "name": "微信公众号",
+      "mdniceUrl": "https://editor.mdnice.com/",
+      "editorUrl": "https://mp.weixin.qq.com/cgi-bin/appmsg",
+      "hook": ""
+    }
+  },
+  "server": {
+    "port": 3456
+  }
+}

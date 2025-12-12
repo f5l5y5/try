@@ -1,0 +1,6 @@
+node_modules/
+browser-data/
+sync-history.json
+.env
+*.log
+.DS_Store

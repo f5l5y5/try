@@ -259,19 +259,10 @@
                     <input type="radio" id="cookieMethod" name="method" value="cookie" checked>
                     <label for="cookieMethod">Cookie 轮询</label>
                 </div>
-                <div class="method-option">
-                    <input type="radio" id="clipboardMethod" name="method" value="clipboard">
-                    <label for="clipboardMethod">Clipboard 轮询</label>
-                </div>
             </div>
         </div>
         
-        <div class="demo-section">
-            <h2>Clipboard 权限状态</h2>
-            <div id="clipboardStatus" class="clipboard-status">
-                <strong>状态：</strong> <span>正在检查剪贴板权限...</span>
-            </div>
-        </div>
+        <!-- Clipboard 功能已移除 -->
         
         <div class="demo-section">
             <h2>消息发送</h2>
@@ -368,12 +359,7 @@
             logContainer.scrollTop = logContainer.scrollHeight;
         }
         
-        // 更新剪贴板状态
-        function updateClipboardStatus(status, allowed) {
-            const element = document.getElementById('clipboardStatus');
-            element.innerHTML = `<strong>状态：</strong> <span>${status}</span>`;
-            element.className = `clipboard-status ${allowed ? 'allowed' : ''}`;
-        }
+        // Cookie 轮询相关函数已保留，Clipboard 功能已移除
         
         // 更新 Cookie 显示
         function updateCookieDisplay() {
@@ -428,30 +414,39 @@
         // 配置
         const POLLING_INTERVAL = 1000; // 轮询间隔（毫秒）
         const COOKIE_NAME = 'cross_page_message';
-        const CLIPBOARD_KEY = 'cross_page_clipboard_message';
-        
+
         // 状态
-        let currentMethod = 'cookie';
         let lastCookieValue = '';
-        let lastClipboardValue = '';
         let messages = [];
-        let clipboardAllowed = false;
         let pollingInterval = null;
         
         // 检查剪贴板权限
         async function checkClipboardPermission() {
             try {
-                const permission = await navigator.permissions.query({ name: 'clipboard-read' });
-                updateClipboardPermission(permission.state, permission.state === 'granted');
-                clipboardAllowed = permission.state === 'granted';
-                
-                // 监听权限变化
-                permission.onchange = () => {
+                // 尝试使用 navigator.permissions.query
+                if ('permissions' in navigator) {
+                    const permission = await navigator.permissions.query({ name: 'clipboard-read' });
                     updateClipboardPermission(permission.state, permission.state === 'granted');
                     clipboardAllowed = permission.state === 'granted';
-                };
+
+                    // 监听权限变化
+                    permission.onchange = () => {
+                        updateClipboardPermission(permission.state, permission.state === 'granted');
+                        clipboardAllowed = permission.state === 'granted';
+                    };
+                } else {
+                    // 降级方案：尝试直接访问剪贴板
+                    try {
+                        await navigator.clipboard.readText().catch(() => {});
+                        updateClipboardStatus('权限已自动获取', true, '通过首次访问自动获取');
+                        clipboardAllowed = true;
+                    } catch (error) {
+                        updateClipboardStatus('权限未知', false, '浏览器不支持权限查询 API');
+                        clipboardAllowed = false;
+                    }
+                }
             } catch (error) {
-                updateClipboardPermission('不支持权限查询', false);
+                updateClipboardStatus('权限检查失败', false, `错误: ${error.message}`);
                 clipboardAllowed = false;
             }
         }
@@ -543,6 +538,7 @@
         
         // 轮询 Cookie
         function pollCookie() {
+            console.log('执行 Cookie 轮询');
             const cookieValue = getCookie(COOKIE_NAME);
             if (cookieValue && cookieValue !== lastCookieValue) {
                 try {
@@ -559,45 +555,18 @@
             }
         }
         
-        // 轮询 Clipboard
-        async function pollClipboard() {
-            if (!clipboardAllowed) return;
-            
-            try {
-                const clipboardValue = await navigator.clipboard.readText();
-                if (clipboardValue && clipboardValue !== lastClipboardValue) {
-                    try {
-                        const message = JSON.parse(clipboardValue);
-                        if (message && message.sender !== clientId) {
-                            messages.push(message);
-                            updateMessageList(messages);
-                            addLog(`通过 Clipboard 收到消息: ${message.content}`, '接收');
-                        }
-                        lastClipboardValue = clipboardValue;
-                    } catch (error) {
-                        // 忽略非 JSON 内容
-                    }
-                }
-            } catch (error) {
-                addLog(`读取剪贴板失败: ${error}`, '错误');
-            }
-        }
-        
         // 启动轮询
         function startPolling() {
             if (pollingInterval) {
                 clearInterval(pollingInterval);
             }
-            
+
             pollingInterval = setInterval(() => {
-                if (currentMethod === 'cookie') {
-                    pollCookie();
-                } else {
-                    pollClipboard();
-                }
+                console.log('执行 Cookie 轮询');
+                pollCookie();
             }, POLLING_INTERVAL);
-            
-            addLog(`开始轮询，方式: ${currentMethod}，间隔: ${POLLING_INTERVAL}ms`, '系统');
+
+            addLog(`开始轮询，方式: Cookie，间隔: ${POLLING_INTERVAL}ms`, '系统');
         }
         
         // 停止轮询
@@ -621,39 +590,31 @@
         function init() {
             // 检查剪贴板权限
             checkClipboardPermission();
-            
+
             // 更新 Cookie 显示
             updateCookieDisplay();
-            
+
             // 启动轮询
             startPolling();
-            
-            // 监听通讯方式变化
-            document.querySelectorAll('input[name="method"]').forEach(radio => {
-                radio.addEventListener('change', (event) => {
-                    currentMethod = event.target.value;
-                    stopPolling();
-                    startPolling();
-                });
-            });
-            
+
+            // 只保留 Cookie 轮询，移除通讯方式切换监听
+
             // 发送消息
             document.getElementById('sendBtn').addEventListener('click', () => {
                 const input = document.getElementById('messageInput');
                 const message = input.value;
-                
+
                 if (message) {
-                    if (currentMethod === 'cookie') {
-                        sendMessageByCookie(message);
-                    } else {
-                        sendMessageByClipboard(message);
-                    }
+                    console.log('发送消息，使用 Cookie 方式');
+                    sendMessageByCookie(message);
                     input.value = '';
                 }
             });
-            
+
             // 清空消息
             document.getElementById('clearBtn').addEventListener('click', clearMessages);
+
+            // Clipboard 权限请求功能已移除
         }
         
         // 页面加载完成后初始化
