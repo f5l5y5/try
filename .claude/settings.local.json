@@ -5,7 +5,10 @@
       "Bash(dir /b)",
       "Bash(dir:*)",
       "Bash(mkdir:*)",
-      "Bash(npx playwright install:*)"
+      "Bash(npx playwright install:*)",
+      "Bash(ls:*)",
+      "Bash(node:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []
